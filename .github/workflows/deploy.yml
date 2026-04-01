@@ -49,7 +49,7 @@ jobs:
         run: pnpm run sync-content
         env:
           CONTENT_REPO_URL: ${{ secrets.CONTENT_REPO_URL }}
-          USE_SUBMODULE: true
+#          USE_SUBMODULE: true
 
       - name: Build site
         run: pnpm run build
