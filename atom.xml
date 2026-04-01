@@ -5,7 +5,7 @@
   <link href="https://lysj.work/" rel="alternate" type="text/html"/>
   <link href="https://lysj.work/atom.xml" rel="self" type="application/atom+xml"/>
   <id>https://lysj.work/</id>
-  <updated>2026-04-01T16:49:19.520Z</updated>
+  <updated>2026-04-01T16:57:09.740Z</updated>
   <language>zh_CN</language>
   <entry>
     <title>Markdown Tutorial</title>
@@ -839,10 +839,6 @@ draft: false
 <td>Whether this post is pinned to the top of the post list.</td>
 </tr>
 <tr>
-<td><code>priority</code></td>
-<td>The priority of the pinned post. Smaller value means higher priority (0, 1, 2...).</td>
-</tr>
-<tr>
 <td><code>description</code></td>
 <td>A short description of the post. Displayed on index page.</td>
 </tr>
@@ -881,7 +877,7 @@ draft: false
 <pre><code>src/content/posts/
 ├── post-1.md
 └── post-2/
-    ├── cover.webp
+    ├── cover.png
     └── index.md
 </code></pre>
 ]]></content>
@@ -889,6 +885,20 @@ draft: false
       <name>Sekiro</name>
     </author>
     <category term="Guides"></category>
+  </entry>
+  <entry>
+    <title>test</title>
+    <link href="https://lysj.work/posts/test/" rel="alternate" type="text/html"/>
+    <id>https://lysj.work/posts/test/</id>
+    <published>2024-01-01T00:00:00.000Z</published>
+    <updated>2024-01-01T00:00:00.000Z</updated>
+    <summary>文章描述</summary>
+    <content type="html"><![CDATA[<h2>test</h2>
+]]></content>
+    <author>
+      <name>Sekiro</name>
+    </author>
+    <category term="分类"></category>
   </entry>
   <entry>
     <title>Markdown Mermaid</title>

@@ -797,10 +797,6 @@ draft: false
 &lt;td&gt;Whether this post is pinned to the top of the post list.&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td&gt;&lt;code&gt;priority&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;The priority of the pinned post. Smaller value means higher priority (0, 1, 2...).&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
 &lt;td&gt;&lt;code&gt;description&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;A short description of the post. Displayed on index page.&lt;/td&gt;
 &lt;/tr&gt;
@@ -839,9 +835,10 @@ draft: false
 &lt;pre&gt;&lt;code&gt;src/content/posts/
 ├── post-1.md
 └── post-2/
-    ├── cover.webp
+    ├── cover.png
     └── index.md
 &lt;/code&gt;&lt;/pre&gt;
+</content:encoded></item><item><title>test</title><link>https://lysj.work/posts/test/</link><guid isPermaLink="true">https://lysj.work/posts/test/</guid><description>文章描述</description><pubDate>Mon, 01 Jan 2024 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;test&lt;/h2&gt;
 </content:encoded></item><item><title>Markdown Mermaid</title><link>https://lysj.work/posts/markdown-mermaid/</link><guid isPermaLink="true">https://lysj.work/posts/markdown-mermaid/</guid><description>A simple example of a Markdown blog post with Mermaid.</description><pubDate>Sun, 01 Oct 2023 00:00:00 GMT</pubDate><content:encoded>&lt;h1&gt;Complete Guide to Markdown with Mermaid Diagrams&lt;/h1&gt;
 &lt;p&gt;This article demonstrates how to create various complex diagrams using Mermaid in Markdown documents, including flowcharts, sequence diagrams, Gantt charts, class diagrams, and state diagrams.&lt;/p&gt;
 &lt;h2&gt;Flowchart Example&lt;/h2&gt;
