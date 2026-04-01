@@ -5,6 +5,7 @@ on:
   # 如果你使用了别的分支名，请按需将 `main` 替换成你的分支名
   push:
     branches: [ main ]
+
   repository_dispatch: # 👈 添加这个
     types:
       - content-updated
@@ -24,29 +25,40 @@ jobs:
         with:
           submodules: true  # 支持 Git Submodule 模式
           token: ${{ secrets.GITHUB_TOKEN }}  # 自动访问同账号下的私有仓库
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          
+          node-version: '24'
+
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
           version: 10.22.0
           run_install: false
-          
+
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile
-      
+
+      - name: Setup SSH key for content repo
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Sync Content
+        run: pnpm run sync-content
+        env:
+          CONTENT_REPO_URL: ${{ secrets.CONTENT_REPO_URL }}
+          USE_SUBMODULE: true
+
       - name: Build site
         run: pnpm run build
         env:
-          # 如果需要启用内容分离,取消以下注释并配置
-           ENABLE_CONTENT_SYNC: true
-           CONTENT_REPO_URL: ${{ secrets.CONTENT_REPO_URL }}
-           USE_SUBMODULE: true
-      
+      #          # 如果需要启用内容分离,取消以下注释并配置
+          ENABLE_CONTENT_SYNC: true
+          CONTENT_REPO_URL: ${{ secrets.CONTENT_REPO_URL }}
+          USE_SUBMODULE: true
+
       - name: Deploy to pages branch
         uses: JamesIves/github-pages-deploy-action@v4
         with:
