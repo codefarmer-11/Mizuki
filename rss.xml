@@ -708,7 +708,27 @@ This is another regular paragraph.
 &lt;strong&gt;No Work&lt;/strong&gt;
 &amp;lt;/div&amp;gt;&lt;/p&gt;
 &lt;hr /&gt;
-</content:encoded></item><item><title>【markdown】Emoji简码列表</title><link>https://lysj.work/posts/cookbook/markdownemoji%E7%AE%80%E7%A0%81%E5%88%97%E8%A1%A8/</link><guid isPermaLink="true">https://lysj.work/posts/cookbook/markdownemoji%E7%AE%80%E7%A0%81%E5%88%97%E8%A1%A8/</guid><description>文章描述</description><pubDate>Thu, 02 Apr 2026 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;未显示则是不支持此阅读器&lt;/p&gt;
+</content:encoded></item><item><title>【Git】ssh连接建立</title><link>https://lysj.work/posts/cookbook/gitssh%E8%BF%9E%E6%8E%A5%E5%BB%BA%E7%AB%8B/</link><guid isPermaLink="true">https://lysj.work/posts/cookbook/gitssh%E8%BF%9E%E6%8E%A5%E5%BB%BA%E7%AB%8B/</guid><description>文章描述</description><pubDate>Thu, 02 Apr 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h1&gt;简易ssh连接代码仓库&lt;/h1&gt;
+&lt;h2&gt;连接&lt;/h2&gt;
+&lt;p&gt;修改git配置&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;git config --global user.name &quot;你的Gitee用户名&quot;
+git config --global user.email &quot;你的Gitee注册邮箱&quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;生成公钥&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;ssh-keygen -t ed25519 -C &quot;你的邮箱@example.com&quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;测试连接&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;ssh -T git@github.com
+ssh -T git@gitee.com
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;git常用命令&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;git init // 初始化生成.git文件夹
+git add . // 添加到暂存区，后接路径
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;本地仓库连接在线仓库&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;git remote add origin git@gitee.com:你的用户名/你的仓库名.git
+&lt;/code&gt;&lt;/pre&gt;
+</content:encoded></item><item><title>【koishi】部署koishi</title><link>https://lysj.work/posts/cookbook/koishi%E9%83%A8%E7%BD%B2koishi/</link><guid isPermaLink="true">https://lysj.work/posts/cookbook/koishi%E9%83%A8%E7%BD%B2koishi/</guid><description>文章描述</description><pubDate>Thu, 02 Apr 2026 00:00:00 GMT</pubDate><content:encoded/></item><item><title>【markdown】Emoji简码列表</title><link>https://lysj.work/posts/cookbook/markdownemoji%E7%AE%80%E7%A0%81%E5%88%97%E8%A1%A8/</link><guid isPermaLink="true">https://lysj.work/posts/cookbook/markdownemoji%E7%AE%80%E7%A0%81%E5%88%97%E8%A1%A8/</guid><description>文章描述</description><pubDate>Thu, 02 Apr 2026 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;未显示则是不支持此阅读器&lt;/p&gt;
 &lt;p&gt;People&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;

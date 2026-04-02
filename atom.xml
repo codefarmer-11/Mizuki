@@ -5,7 +5,7 @@
   <link href="https://lysj.work/" rel="alternate" type="text/html"/>
   <link href="https://lysj.work/atom.xml" rel="self" type="application/atom+xml"/>
   <id>https://lysj.work/</id>
-  <updated>2026-04-02T08:16:41.465Z</updated>
+  <updated>2026-04-02T08:24:53.017Z</updated>
   <language>zh_CN</language>
   <entry>
     <title>Markdown Tutorial</title>
@@ -729,6 +729,52 @@ This is another regular paragraph.
       <name>Sekiro</name>
     </author>
     <category term="Examples"></category>
+  </entry>
+  <entry>
+    <title>【Git】ssh连接建立</title>
+    <link href="https://lysj.work/posts/cookbook/gitssh%E8%BF%9E%E6%8E%A5%E5%BB%BA%E7%AB%8B/" rel="alternate" type="text/html"/>
+    <id>https://lysj.work/posts/cookbook/gitssh%E8%BF%9E%E6%8E%A5%E5%BB%BA%E7%AB%8B/</id>
+    <published>2026-04-02T00:00:00.000Z</published>
+    <updated>2026-04-02T00:00:00.000Z</updated>
+    <summary>文章描述</summary>
+    <content type="html"><![CDATA[<h1>简易ssh连接代码仓库</h1>
+<h2>连接</h2>
+<p>修改git配置</p>
+<pre><code>git config --global user.name "你的Gitee用户名"
+git config --global user.email "你的Gitee注册邮箱"
+</code></pre>
+<p>生成公钥</p>
+<pre><code>ssh-keygen -t ed25519 -C "你的邮箱@example.com"
+</code></pre>
+<p>测试连接</p>
+<pre><code>ssh -T git@github.com
+ssh -T git@gitee.com
+</code></pre>
+<h2>git常用命令</h2>
+<pre><code>git init // 初始化生成.git文件夹
+git add . // 添加到暂存区，后接路径
+</code></pre>
+<h3>本地仓库连接在线仓库</h3>
+<pre><code>git remote add origin git@gitee.com:你的用户名/你的仓库名.git
+</code></pre>
+]]></content>
+    <author>
+      <name>Sekiro</name>
+    </author>
+    <category term="分类"></category>
+  </entry>
+  <entry>
+    <title>【koishi】部署koishi</title>
+    <link href="https://lysj.work/posts/cookbook/koishi%E9%83%A8%E7%BD%B2koishi/" rel="alternate" type="text/html"/>
+    <id>https://lysj.work/posts/cookbook/koishi%E9%83%A8%E7%BD%B2koishi/</id>
+    <published>2026-04-02T00:00:00.000Z</published>
+    <updated>2026-04-02T00:00:00.000Z</updated>
+    <summary>文章描述</summary>
+    <content type="html"><![CDATA[]]></content>
+    <author>
+      <name>Sekiro</name>
+    </author>
+    <category term="分类"></category>
   </entry>
   <entry>
     <title>【markdown】Emoji简码列表</title>
