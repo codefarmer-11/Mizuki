@@ -5,7 +5,7 @@
   <link href="https://lysj.work/" rel="alternate" type="text/html"/>
   <link href="https://lysj.work/atom.xml" rel="self" type="application/atom+xml"/>
   <id>https://lysj.work/</id>
-  <updated>2026-04-02T08:32:21.890Z</updated>
+  <updated>2026-04-02T08:57:01.339Z</updated>
   <language>zh_CN</language>
   <entry>
     <title>Markdown Tutorial</title>
@@ -761,7 +761,7 @@ git add . // 添加到暂存区，后接路径
     <author>
       <name>Sekiro</name>
     </author>
-    <category term="分类"></category>
+    <category term="cookbook"></category>
   </entry>
   <entry>
     <title>【koishi】部署koishi</title>
@@ -774,7 +774,7 @@ git add . // 添加到暂存区，后接路径
     <author>
       <name>Sekiro</name>
     </author>
-    <category term="分类"></category>
+    <category term="cookbook"></category>
   </entry>
   <entry>
     <title>【markdown】Emoji简码列表</title>
@@ -2283,7 +2283,7 @@ git add . // 添加到暂存区，后接路径
     <author>
       <name>Sekiro</name>
     </author>
-    <category term="分类"></category>
+    <category term="cookbook"></category>
   </entry>
   <entry>
     <title>【Windows】延长Windows更新时间</title>
@@ -2307,7 +2307,7 @@ git add . // 添加到暂存区，后接路径
     <author>
       <name>Sekiro</name>
     </author>
-    <category term="分类"></category>
+    <category term="cookbook"></category>
   </entry>
   <entry>
     <title>Markdown Extended Features</title>
