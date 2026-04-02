@@ -5,7 +5,7 @@
   <link href="https://lysj.work/" rel="alternate" type="text/html"/>
   <link href="https://lysj.work/atom.xml" rel="self" type="application/atom+xml"/>
   <id>https://lysj.work/</id>
-  <updated>2026-04-02T08:01:55.555Z</updated>
+  <updated>2026-04-02T08:10:29.063Z</updated>
   <language>zh_CN</language>
   <entry>
     <title>Markdown Tutorial</title>
@@ -2233,6 +2233,30 @@ This is another regular paragraph.
 </tr>
 </tbody>
 </table>
+]]></content>
+    <author>
+      <name>Sekiro</name>
+    </author>
+    <category term="分类"></category>
+  </entry>
+  <entry>
+    <title>【Windows】延长Windows更新时间</title>
+    <link href="https://lysj.work/posts/cookbook/windows%E5%BB%B6%E9%95%BFwindows%E6%9B%B4%E6%96%B0%E6%97%B6%E9%97%B4/" rel="alternate" type="text/html"/>
+    <id>https://lysj.work/posts/cookbook/windows%E5%BB%B6%E9%95%BFwindows%E6%9B%B4%E6%96%B0%E6%97%B6%E9%97%B4/</id>
+    <published>2026-04-02T00:00:00.000Z</published>
+    <updated>2026-04-02T00:00:00.000Z</updated>
+    <summary>文章描述</summary>
+    <content type="html"><![CDATA[<h2>通过注册表延长暂停 Windows 更新</h2>
+<ol>
+<li><code>win+R</code>，输入<code>regedit</code>进入注册表</li>
+<li>进入以下路径</li>
+</ol>
+<pre><code>HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\WindowsUpdate\UX\Settings
+</code></pre>
+<ol>
+<li>新建DWORD（32 位）值，名称为<code>FlightSettingsMaxPauseDays</code>,修改值为十进制10000（30年）</li>
+<li>到设置更新中，选择暂停时间时长</li>
+</ol>
 ]]></content>
     <author>
       <name>Sekiro</name>

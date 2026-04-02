@@ -2204,6 +2204,17 @@ This is another regular paragraph.
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
+</content:encoded></item><item><title>【Windows】延长Windows更新时间</title><link>https://lysj.work/posts/cookbook/windows%E5%BB%B6%E9%95%BFwindows%E6%9B%B4%E6%96%B0%E6%97%B6%E9%97%B4/</link><guid isPermaLink="true">https://lysj.work/posts/cookbook/windows%E5%BB%B6%E9%95%BFwindows%E6%9B%B4%E6%96%B0%E6%97%B6%E9%97%B4/</guid><description>文章描述</description><pubDate>Thu, 02 Apr 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;通过注册表延长暂停 Windows 更新&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;win+R&lt;/code&gt;，输入&lt;code&gt;regedit&lt;/code&gt;进入注册表&lt;/li&gt;
+&lt;li&gt;进入以下路径&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\WindowsUpdate\UX\Settings
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ol&gt;
+&lt;li&gt;新建DWORD（32 位）值，名称为&lt;code&gt;FlightSettingsMaxPauseDays&lt;/code&gt;,修改值为十进制10000（30年）&lt;/li&gt;
+&lt;li&gt;到设置更新中，选择暂停时间时长&lt;/li&gt;
+&lt;/ol&gt;
 </content:encoded></item><item><title>Markdown Extended Features</title><link>https://lysj.work/posts/markdown-extended/</link><guid isPermaLink="true">https://lysj.work/posts/markdown-extended/</guid><description>Read more about Markdown features in Mizuki</description><pubDate>Wed, 01 May 2024 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;GitHub Repository Cards&lt;/h2&gt;
 &lt;p&gt;You can add dynamic cards that link to GitHub repositories, on page load, the repository information is pulled from the GitHub API.&lt;/p&gt;
 &lt;p&gt;::github{repo=&quot;matsuzaka-yuki/Mizuki&quot;}&lt;/p&gt;
