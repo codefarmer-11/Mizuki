@@ -57,7 +57,7 @@ export const siteConfig: SiteConfig = {
 		// 顶栏标题文本
 		text: "MoonL",
 		// 顶栏标题图标路径，默认使用 public/assets/home/home.webp
-		icon: "assets/home/home.webp",
+		icon: "assets/home/Moon.png",
 		// 网站Logo图片路径
 		logo: "assets/home/default-logo.webp",
 	},
