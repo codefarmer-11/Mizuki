@@ -1,20 +1,171 @@
 ---
-
-import { i18n } from "@i18n/translation";
-import I18nKey from "@i18n/i18nKey";
-import MainGridLayout from "@layouts/MainGridLayout.astro";
+// 组件：QRCodeTool.astro
+// 功能：二维码生成 + 本地上传解析（纯前端，无后端）
 ---
-<MainGridLayout
-	title={i18n(I18nKey.notFound)}
-	description={i18n(I18nKey.notFoundDescription)}
->
-	<!-- 引入右侧边栏布局管理器 -->
-	<script>
-		import("@/scripts/right-sidebar-layout.js");
-	</script>
-	<div
-		class="flex w-full rounded-[var(--radius-large)] overflow-hidden relative min-h-96"
-	>
-		二维码
+
+<div class="qr-container">
+	<div class="panel">
+		<h2>📱 生成二维码</h2>
+		<input type="text" id="qrInput" placeholder="输入文字或网址" value="https://astro.build" />
+		<button id="generateBtn">生成二维码</button>
+		<div class="canvas-wrapper">
+			<canvas id="qrCanvas"></canvas>
+		</div>
+		<p class="hint">点击生成，Canvas 将显示二维码</p>
 	</div>
-</MainGridLayout>
+
+	<div class="panel">
+		<h2>🔍 解析二维码</h2>
+		<input type="file" id="qrFile" accept="image/*" />
+		<div class="preview-area">
+			<img id="previewImg" style="display:none; max-width: 200px;" alt="预览图" />
+		</div>
+		<p>解析结果：<span id="decodeResult">等待上传图片...</span></p>
+		<p class="hint">支持手机拍照、截图中的二维码</p>
+	</div>
+</div>
+
+<style>
+    .qr-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2rem;
+        justify-content: center;
+    }
+    .panel {
+        border: 1px solid #eaeaea;
+        border-radius: 12px;
+        padding: 1.5rem;
+        width: 320px;
+        background: var(--card-bg, #fff);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .canvas-wrapper {
+        margin: 1rem 0;
+        min-height: 200px;
+        display: flex;
+        justify-content: center;
+    }
+    canvas {
+        border: 1px dashed #ccc;
+        border-radius: 8px;
+    }
+    input {
+        width: 100%;
+        padding: 8px 12px;
+        margin: 8px 0;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        box-sizing: border-box;
+    }
+    button {
+        background: #0070f3;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 500;
+        width: 100%;
+    }
+    button:hover {
+        background: #0051a2;
+    }
+    .hint {
+        font-size: 0.8rem;
+        color: #666;
+        margin-top: 0.5rem;
+    }
+    #decodeResult {
+        font-family: monospace;
+        word-break: break-all;
+        background: #f5f5f5;
+        padding: 8px;
+        border-radius: 4px;
+    }
+</style>
+
+<script>
+	import QRCode from 'qrcode'
+	import jsQR from 'jsqr'
+
+	// --- 生成二维码 ---
+	const canvas = document.getElementById('qrCanvas')
+	const input = document.getElementById('qrInput')
+	const genBtn = document.getElementById('generateBtn')
+
+	async function generateQR() {
+		const text = input?.value.trim()
+		if (!text) {
+			alert('请输入内容')
+			return
+		}
+		try {
+			// 生成 250x250 的二维码到 canvas
+			await QRCode.toCanvas(canvas, text, { width: 250, margin: 2 })
+		} catch (err) {
+			alert('生成失败：' + err.message)
+		}
+	}
+
+	genBtn?.addEventListener('click', generateQR)
+	// 初始化默认生成一次
+	generateQR()
+
+	// --- 解析二维码 (纯前端 jsQR) ---
+	const fileInput = document.getElementById('qrFile')
+	const resultSpan = document.getElementById('decodeResult')
+	const previewImg = document.getElementById('previewImg')
+
+	fileInput?.addEventListener('change', (e) => {
+		const file = e.target.files[0]
+		if (!file) return
+
+		// 显示预览
+		const url = URL.createObjectURL(file)
+		previewImg.src = url
+		previewImg.style.display = 'block'
+		resultSpan.textContent = '解析中...'
+
+		const img = new Image()
+		img.src = url
+		img.onload = () => {
+			// 创建 canvas 并绘制图片
+			const canvasElem = document.createElement('canvas')
+			const ctx = canvasElem.getContext('2d')
+
+			// 为了防止图片过大导致性能问题，限制最大宽度 800px 进行解析
+			const maxWidth = 800
+			let width = img.width
+			let height = img.height
+			if (width > maxWidth) {
+				height = Math.floor(height * (maxWidth / width))
+				width = maxWidth
+			}
+
+			canvasElem.width = width
+			canvasElem.height = height
+			ctx.drawImage(img, 0, 0, width, height)
+
+			// 获取像素数据
+			const imageData = ctx.getImageData(0, 0, width, height)
+
+			// 使用 jsQR 解析
+			const code = jsQR(imageData.data, width, height)
+
+			if (code) {
+				resultSpan.textContent = code.data
+			} else {
+				resultSpan.textContent = '❌ 未识别到二维码，请确保图片清晰且包含二维码'
+			}
+
+			// 释放内存（重要！）
+			URL.revokeObjectURL(url)
+		}
+
+		img.onerror = () => {
+			resultSpan.textContent = '图片加载失败，请重试'
+			URL.revokeObjectURL(url)
+		}
+	})
+</script>
