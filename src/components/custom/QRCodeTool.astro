@@ -1,96 +1,6 @@
 ---
 // 组件：QRCodeTool.astro
 // 已修复 TypeScript 类型错误，通过 astro check 检查
-
-import QRCode from 'qrcode'
-import jsQR from 'jsqr'
-
-// --- 生成部分 ---
-const canvas = document.getElementById('qrCanvas') as HTMLCanvasElement | null
-const input = document.getElementById('qrInput') as HTMLInputElement | null
-const genBtn = document.getElementById('generateBtn') as HTMLButtonElement | null
-
-// 初始化时检查必须元素
-if (!canvas || !input || !genBtn) {
-	throw new Error('生成二维码所需的 DOM 元素未找到')
-}
-
-async function generateQR() {
-	// TypeScript 仍然会在此函数作用域内认为 input 可能为 null，使用非空断言或局部变量
-	const text = input!.value.trim()
-	if (!text) {
-		alert('请输入内容')
-		return
-	}
-	try {
-		await QRCode.toCanvas(canvas!, text, { width: 250, margin: 2 })
-	} catch (err) {
-		alert('生成失败：' + (err instanceof Error ? err.message : String(err)))
-	}
-}
-
-genBtn.addEventListener('click', generateQR)
-generateQR() // 默认生成示例
-
-// --- 解析部分 ---
-const fileInput = document.getElementById('qrFile') as HTMLInputElement | null
-const resultDiv = document.getElementById('decodeResult') as HTMLDivElement | null
-const previewImg = document.getElementById('previewImg') as HTMLImageElement | null
-
-if (!fileInput || !resultDiv || !previewImg) {
-	throw new Error('解析二维码所需的 DOM 元素未找到')
-}
-
-fileInput.addEventListener('change', (e: Event) => {
-	const target = e.target as HTMLInputElement | null
-	const file = target?.files?.[0]
-	if (!file) return
-
-	const url = URL.createObjectURL(file)
-	previewImg.src = url
-	previewImg.style.display = 'block'
-	resultDiv.textContent = '🔍 解析中...'
-
-	const img = new Image()
-	img.src = url
-	img.onload = () => {
-		const canvasElem = document.createElement('canvas')
-		const ctx = canvasElem.getContext('2d')
-		if (!ctx) {
-			resultDiv.textContent = '无法获取 Canvas 上下文'
-			return
-		}
-
-		const maxWidth = 800
-		let width = img.width
-		let height = img.height
-		if (width > maxWidth) {
-			height = Math.floor(height * (maxWidth / width))
-			width = maxWidth
-		}
-
-		canvasElem.width = width
-		canvasElem.height = height
-		ctx.drawImage(img, 0, 0, width, height)
-
-		const imageData = ctx.getImageData(0, 0, width, height)
-		const code = jsQR(imageData.data, width, height)
-
-		if (code) {
-			resultDiv.textContent = code.data
-		} else {
-			resultDiv.textContent = '❌ 未识别到二维码，请确保图片清晰'
-		}
-
-		URL.revokeObjectURL(url)
-	}
-
-	img.onerror = () => {
-		resultDiv.textContent = '图片加载失败，请重试'
-		URL.revokeObjectURL(url)
-	}
-})
-
 ---
 
 <div class="qr-tool">
@@ -297,5 +207,92 @@ fileInput.addEventListener('change', (e: Event) => {
 </style>
 
 <script>
+	import QRCode from 'qrcode'
+	import jsQR from 'jsqr'
 
+	// --- 生成部分 ---
+	const canvas = document.getElementById('qrCanvas') as HTMLCanvasElement | null
+	const input = document.getElementById('qrInput') as HTMLInputElement | null
+	const genBtn = document.getElementById('generateBtn') as HTMLButtonElement | null
+
+	// 初始化时检查必须元素
+	if (!canvas || !input || !genBtn) {
+		throw new Error('生成二维码所需的 DOM 元素未找到')
+	}
+
+	async function generateQR() {
+		// TypeScript 仍然会在此函数作用域内认为 input 可能为 null，使用非空断言或局部变量
+		const text = input!.value.trim()
+		if (!text) {
+			alert('请输入内容')
+			return
+		}
+		try {
+			await QRCode.toCanvas(canvas!, text, { width: 250, margin: 2 })
+		} catch (err) {
+			alert('生成失败：' + (err instanceof Error ? err.message : String(err)))
+		}
+	}
+
+	genBtn.addEventListener('click', generateQR)
+	generateQR() // 默认生成示例
+
+	// --- 解析部分 ---
+	const fileInput = document.getElementById('qrFile') as HTMLInputElement | null
+	const resultDiv = document.getElementById('decodeResult') as HTMLDivElement | null
+	const previewImg = document.getElementById('previewImg') as HTMLImageElement | null
+
+	if (!fileInput || !resultDiv || !previewImg) {
+		throw new Error('解析二维码所需的 DOM 元素未找到')
+	}
+
+	fileInput.addEventListener('change', (e: Event) => {
+		const target = e.target as HTMLInputElement | null
+		const file = target?.files?.[0]
+		if (!file) return
+
+		const url = URL.createObjectURL(file)
+		previewImg.src = url
+		previewImg.style.display = 'block'
+		resultDiv.textContent = '🔍 解析中...'
+
+		const img = new Image()
+		img.src = url
+		img.onload = () => {
+			const canvasElem = document.createElement('canvas')
+			const ctx = canvasElem.getContext('2d')
+			if (!ctx) {
+				resultDiv.textContent = '无法获取 Canvas 上下文'
+				return
+			}
+
+			const maxWidth = 800
+			let width = img.width
+			let height = img.height
+			if (width > maxWidth) {
+				height = Math.floor(height * (maxWidth / width))
+				width = maxWidth
+			}
+
+			canvasElem.width = width
+			canvasElem.height = height
+			ctx.drawImage(img, 0, 0, width, height)
+
+			const imageData = ctx.getImageData(0, 0, width, height)
+			const code = jsQR(imageData.data, width, height)
+
+			if (code) {
+				resultDiv.textContent = code.data
+			} else {
+				resultDiv.textContent = '❌ 未识别到二维码，请确保图片清晰'
+			}
+
+			URL.revokeObjectURL(url)
+		}
+
+		img.onerror = () => {
+			resultDiv.textContent = '图片加载失败，请重试'
+			URL.revokeObjectURL(url)
+		}
+	})
 </script>
