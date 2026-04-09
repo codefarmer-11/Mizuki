@@ -445,6 +445,7 @@ export const shareConfig: ShareConfig = {
 	enable: true, // 启用分享功能
 };
 
+
 export const announcementConfig: AnnouncementConfig = {
 	title: "", // 公告标题，填空使用i18n字符串Key.announcement
 	content: "这是一个公告", // 公告内容
