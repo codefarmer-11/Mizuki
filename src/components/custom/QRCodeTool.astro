@@ -1,87 +1,218 @@
 ---
 // 组件：QRCodeTool.astro
-// 功能：二维码生成 + 本地上传解析（纯前端，无后端）
+// 样式优化：无边框，左右并排，干净简洁
 ---
 
-<div class="qr-container">
-	<div class="panel">
-		<h2>📱 生成二维码</h2>
-		<input type="text" id="qrInput" placeholder="输入文字或网址" value="https://astro.build" />
-		<button id="generateBtn">生成二维码</button>
-		<div class="canvas-wrapper">
-			<canvas id="qrCanvas"></canvas>
+<div class="qr-tool">
+	<!-- 左侧：生成 -->
+	<div class="qr-panel">
+		<div class="panel-header">
+			<span class="icon">📱</span>
+			<h3>生成二维码</h3>
 		</div>
-		<p class="hint">点击生成，Canvas 将显示二维码</p>
+		<div class="panel-body">
+			<input type="text" id="qrInput" placeholder="输入文字或链接" value="https://astro.build" />
+			<button id="generateBtn">生成二维码</button>
+			<div class="qr-canvas-container">
+				<canvas id="qrCanvas"></canvas>
+			</div>
+			<p class="footnote">支持文字、网址，点击按钮即生成</p>
+		</div>
 	</div>
 
-	<div class="panel">
-		<h2>🔍 解析二维码</h2>
-		<input type="file" id="qrFile" accept="image/*" />
-		<div class="preview-area">
-			<img id="previewImg" style="display:none; max-width: 200px;" alt="预览图" />
+	<!-- 右侧：解析 -->
+	<div class="qr-panel">
+		<div class="panel-header">
+			<span class="icon">🔍</span>
+			<h3>解析二维码</h3>
 		</div>
-		<p>解析结果：<span id="decodeResult">等待上传图片...</span></p>
-		<p class="hint">支持手机拍照、截图中的二维码</p>
+		<div class="panel-body">
+			<label for="qrFile" class="file-label">
+				<span>📁 选择图片上传</span>
+			</label>
+			<input type="file" id="qrFile" accept="image/*" hidden />
+			<div class="preview-box">
+				<img id="previewImg" alt="预览图" style="display: none;" />
+			</div>
+			<div class="result-box" id="decodeResult">等待上传图片...</div>
+			<p class="footnote">支持拍照、截图，本地解析，安全快速</p>
+		</div>
 	</div>
 </div>
 
 <style>
-    .qr-container {
+    .qr-tool {
         display: flex;
         flex-wrap: wrap;
         gap: 2rem;
         justify-content: center;
+        margin: 2rem 0;
     }
-    .panel {
-        border: 1px solid #eaeaea;
-        border-radius: 12px;
-        padding: 1.5rem;
-        width: 320px;
-        background: var(--card-bg, #fff);
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+
+    .qr-panel {
+        flex: 1 1 300px;
+        max-width: 360px;
+        background: transparent; /* 无背景边框感 */
+        border-radius: 0;
+        padding: 0;
+        box-shadow: none;
     }
-    .canvas-wrapper {
-        margin: 1rem 0;
-        min-height: 200px;
+
+    .panel-header {
         display: flex;
-        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+        border-bottom: 1px solid var(--color-border, #eaeaea);
+        padding-bottom: 0.75rem;
     }
-    canvas {
-        border: 1px dashed #ccc;
-        border-radius: 8px;
+
+    .panel-header .icon {
+        font-size: 1.5rem;
     }
-    input {
+
+    .panel-header h3 {
+        margin: 0;
+        font-size: 1.3rem;
+        font-weight: 500;
+        color: var(--color-text, #222);
+    }
+
+    .panel-body {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    /* 输入框 */
+    input[type="text"] {
         width: 100%;
-        padding: 8px 12px;
-        margin: 8px 0;
-        border: 1px solid #ddd;
-        border-radius: 6px;
+        padding: 12px 16px;
+        font-size: 1rem;
+        border: 1px solid var(--color-border, #ddd);
+        border-radius: 8px;
+        background: var(--color-bg-secondary, #f9f9f9);
+        transition: border-color 0.2s;
         box-sizing: border-box;
     }
+
+    input[type="text"]:focus {
+        outline: none;
+        border-color: var(--color-primary, #0070f3);
+        background: var(--color-bg, #fff);
+    }
+
+    /* 按钮 */
     button {
-        background: #0070f3;
+        background: var(--color-primary, #0070f3);
         color: white;
         border: none;
-        padding: 8px 16px;
-        border-radius: 6px;
+        padding: 12px 16px;
+        font-size: 1rem;
+        border-radius: 8px;
         cursor: pointer;
         font-weight: 500;
+        transition: background 0.2s;
         width: 100%;
     }
+
     button:hover {
         background: #0051a2;
     }
-    .hint {
-        font-size: 0.8rem;
-        color: #666;
-        margin-top: 0.5rem;
+
+    /* 文件上传按钮美化 */
+    .file-label {
+        display: inline-block;
+        width: 100%;
+        padding: 12px 16px;
+        background: var(--color-bg-secondary, #f5f5f5);
+        border: 1px dashed var(--color-border, #ccc);
+        border-radius: 8px;
+        text-align: center;
+        cursor: pointer;
+        transition: border 0.2s;
+        box-sizing: border-box;
     }
-    #decodeResult {
-        font-family: monospace;
+
+    .file-label:hover {
+        border-color: var(--color-primary, #0070f3);
+        background: var(--color-bg, #fff);
+    }
+
+    /* 画布容器 */
+    .qr-canvas-container {
+        display: flex;
+        justify-content: center;
+        margin: 0.5rem 0;
+    }
+
+    canvas {
+        display: block;
+        max-width: 100%;
+        height: auto;
+        border-radius: 12px;
+        /* 完全无边框 */
+        border: none;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    /* 预览图片区域 */
+    .preview-box {
+        display: flex;
+        justify-content: center;
+        min-height: 100px;
+    }
+
+    #previewImg {
+        max-width: 100%;
+        max-height: 200px;
+        object-fit: contain;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    /* 解析结果显示框 */
+    .result-box {
+        padding: 14px 16px;
+        background: var(--color-bg-secondary, #f9f9f9);
+        border-radius: 8px;
+        font-family: 'JetBrains Mono', monospace;
         word-break: break-all;
-        background: #f5f5f5;
-        padding: 8px;
-        border-radius: 4px;
+        font-size: 0.95rem;
+        border: 1px solid var(--color-border, #eee);
+    }
+
+    /* 脚注小字 */
+    .footnote {
+        font-size: 0.8rem;
+        color: var(--color-text-secondary, #777);
+        margin: 0.5rem 0 0 0;
+        text-align: center;
+    }
+
+    /* 适配暗色模式（使用 Astro 常用变量） */
+    :root {
+        --color-primary: #0070f3;
+        --color-bg: #ffffff;
+        --color-bg-secondary: #f9f9f9;
+        --color-text: #222222;
+        --color-text-secondary: #666666;
+        --color-border: #e0e0e0;
+    }
+
+    html.dark {
+        --color-bg: #1e1e1e;
+        --color-bg-secondary: #2d2d2d;
+        --color-text: #eeeeee;
+        --color-text-secondary: #aaaaaa;
+        --color-border: #444444;
+    }
+
+    /* 响应式：小屏幕自动上下堆叠 */
+    @media (max-width: 640px) {
+        .qr-tool {
+            gap: 1rem;
+        }
     }
 </style>
 
@@ -89,7 +220,7 @@
 	import QRCode from 'qrcode'
 	import jsQR from 'jsqr'
 
-	// --- 生成二维码 ---
+	// --- 生成部分 ---
 	const canvas = document.getElementById('qrCanvas')
 	const input = document.getElementById('qrInput')
 	const genBtn = document.getElementById('generateBtn')
@@ -101,7 +232,6 @@
 			return
 		}
 		try {
-			// 生成 250x250 的二维码到 canvas
 			await QRCode.toCanvas(canvas, text, { width: 250, margin: 2 })
 		} catch (err) {
 			alert('生成失败：' + err.message)
@@ -109,32 +239,28 @@
 	}
 
 	genBtn?.addEventListener('click', generateQR)
-	// 初始化默认生成一次
-	generateQR()
+	generateQR() // 默认生成示例
 
-	// --- 解析二维码 (纯前端 jsQR) ---
+	// --- 解析部分 ---
 	const fileInput = document.getElementById('qrFile')
-	const resultSpan = document.getElementById('decodeResult')
+	const resultDiv = document.getElementById('decodeResult')
 	const previewImg = document.getElementById('previewImg')
 
 	fileInput?.addEventListener('change', (e) => {
 		const file = e.target.files[0]
 		if (!file) return
 
-		// 显示预览
 		const url = URL.createObjectURL(file)
 		previewImg.src = url
 		previewImg.style.display = 'block'
-		resultSpan.textContent = '解析中...'
+		resultDiv.textContent = '🔍 解析中...'
 
 		const img = new Image()
 		img.src = url
 		img.onload = () => {
-			// 创建 canvas 并绘制图片
 			const canvasElem = document.createElement('canvas')
 			const ctx = canvasElem.getContext('2d')
 
-			// 为了防止图片过大导致性能问题，限制最大宽度 800px 进行解析
 			const maxWidth = 800
 			let width = img.width
 			let height = img.height
@@ -147,24 +273,20 @@
 			canvasElem.height = height
 			ctx.drawImage(img, 0, 0, width, height)
 
-			// 获取像素数据
 			const imageData = ctx.getImageData(0, 0, width, height)
-
-			// 使用 jsQR 解析
 			const code = jsQR(imageData.data, width, height)
 
 			if (code) {
-				resultSpan.textContent = code.data
+				resultDiv.textContent = code.data
 			} else {
-				resultSpan.textContent = '❌ 未识别到二维码，请确保图片清晰且包含二维码'
+				resultDiv.textContent = '❌ 未识别到二维码，请确保图片清晰'
 			}
 
-			// 释放内存（重要！）
 			URL.revokeObjectURL(url)
 		}
 
 		img.onerror = () => {
-			resultSpan.textContent = '图片加载失败，请重试'
+			resultDiv.textContent = '图片加载失败，请重试'
 			URL.revokeObjectURL(url)
 		}
 	})
