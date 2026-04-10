@@ -70,6 +70,13 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Debug - Check if links.md exists
+        run: |
+          echo "Listing src/content/spec/"
+          ls -la src/content/spec/
+          echo "Content of links.md:"
+          cat src/content/spec/links.md || echo "File not found"
+
       - name: Run Astro Build
         run: pnpm astro build
         env:
