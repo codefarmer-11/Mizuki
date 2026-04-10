@@ -206,7 +206,7 @@ export enum LinkPreset {
 	Home = 0,
 	Archive = 1,
 	About = 2,
-	Friends = 3,
+	Resources = 3,
 	Anime = 4,
 	Diary = 5,
 	Albums = 6,

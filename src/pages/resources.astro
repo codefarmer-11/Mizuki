@@ -1,5 +1,5 @@
 ---
-import linksCard from "@components/features/links/LinkCard.astro";
+import linksCard from "../components/features/links/LinkCard.astro";
 import { PageHeader } from "@components/features/page-header";
 import Markdown from "@components/misc/Markdown.astro";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
@@ -99,7 +99,7 @@ const allTags = Array.from(new Set(linksList.flatMap((item) => item.tags)));
 				id="linkss-grid"
 				class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 mb-6"
 			>
-				{linksList.map((item) => <LinkCard links={item} />)}
+				{linksList.map((item) => <LinkCard link={item} />)}
 			</div>
 
 			<!-- 无结果提示 -->
