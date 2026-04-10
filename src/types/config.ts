@@ -67,7 +67,6 @@ export interface SiteConfig {
 		timeline: boolean; // 时间线页面开关
 		albums: boolean; // 相册页面开关
 		devices: boolean; // 设备页面开关
-		resources: boolean; // 资源页面开关
 	};
 
 	// 文章列表布局配置
