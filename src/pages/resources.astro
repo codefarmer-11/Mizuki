@@ -1,38 +1,38 @@
 ---
-import FriendCard from "@components/features/friends/FriendCard.astro";
+import linksCard from "@components/features/links/LinkCard.astro";
 import { PageHeader } from "@components/features/page-header";
 import Markdown from "@components/misc/Markdown.astro";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
 import { getEntry, render } from "astro:content";
 
 import { siteConfig } from "../config";
-import { getShuffledFriendsList } from "../data/friends";
+import { getShuffledlinksList } from "../data/links";
 import I18nKey from "../i18n/i18nKey";
 import { i18n } from "../i18n/translation";
 
 export const prerender = true;
 
-if (!siteConfig.featurePages.friends) {
+if (!siteConfig.featurePages.links) {
 	return Astro.redirect("/404/");
 }
 
-const friendsPost = await getEntry("spec", "friends");
+const linksPost = await getEntry("spec", "links");
 
-if (!friendsPost) {
-	throw new Error("friends page content not found");
+if (!linksPost) {
+	throw new Error("links page content not found");
 }
 
-const { Content } = await render(friendsPost);
-const friendsList = getShuffledFriendsList();
-const allTags = Array.from(new Set(friendsList.flatMap((item) => item.tags)));
+const { Content } = await render(linksPost);
+const linksList = getShuffledlinksList();
+const allTags = Array.from(new Set(linksList.flatMap((item) => item.tags)));
 ---
 
 <MainGridLayout
-	title={i18n(I18nKey.friends)}
-	description={i18n(I18nKey.friends)}
+	title={i18n(I18nKey.links)}
+	description={i18n(I18nKey.links)}
 >
 	<script is:inline>
-		window.isFriendsPage = true;
+		window.islinkssPage = true;
 	</script>
 	<script>
 		import("../scripts/right-sidebar-layout.js");
@@ -43,8 +43,8 @@ const allTags = Array.from(new Set(friendsList.flatMap((item) => item.tags)));
 	>
 		<div class="card-base z-10 px-9 py-6 relative w-full">
 			<PageHeader
-				title={i18n(I18nKey.friends)}
-				subtitle={i18n(I18nKey.friendsSubtitle)}
+				title={i18n(I18nKey.links)}
+				subtitle={i18n(I18nKey.linksSubtitle)}
 			/>
 
 			<!-- 搜索和筛选栏 -->
@@ -54,8 +54,8 @@ const allTags = Array.from(new Set(friendsList.flatMap((item) => item.tags)));
 					<div class="relative">
 						<input
 							type="text"
-							id="friend-search"
-							placeholder={i18n(I18nKey.friendsSearchPlaceholder)}
+							id="links-search"
+							placeholder={i18n(I18nKey.linksSearchPlaceholder)}
 							class="w-full px-4 py-2 pl-10 rounded-lg bg-[var(--btn-regular-bg)]
 									text-black/90 dark:text-white/90
 									border border-black/10 dark:border-white/10
@@ -81,7 +81,7 @@ const allTags = Array.from(new Set(friendsList.flatMap((item) => item.tags)));
 				<!-- 标签筛选 -->
 				<div class="filter-container flex flex-wrap gap-2">
 					<button class="filter-tag active" data-tag="all">
-						{i18n(I18nKey.friendsFilterAll)}
+						{i18n(I18nKey.linksFilterAll)}
 					</button>
 					{
 						allTags.map((tag) => (
@@ -95,10 +95,10 @@ const allTags = Array.from(new Set(friendsList.flatMap((item) => item.tags)));
 
 			<!-- 友链卡片网格 -->
 			<div
-				id="friends-grid"
+				id="linkss-grid"
 				class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 mb-6"
 			>
-				{friendsList.map((item) => <FriendCard friend={item} />)}
+				{linksList.map((item) => <LinkCard links={item} />)}
 			</div>
 
 			<!-- 无结果提示 -->
@@ -117,7 +117,7 @@ const allTags = Array.from(new Set(friendsList.flatMap((item) => item.tags)));
 					></path>
 				</svg>
 				<p class="text-black/50 dark:text-white/50 text-lg">
-					{i18n(I18nKey.friendsNoResults)}
+					{i18n(I18nKey.linksNoResults)}
 				</p>
 			</div>
 
@@ -127,19 +127,19 @@ const allTags = Array.from(new Set(friendsList.flatMap((item) => item.tags)));
 			</Markdown>
 
 			<!-- 隐藏元素用于传递 i18n 文本到全局脚本 -->
-			<div id="friends-copy-success-text" style="display: none;">
-				{i18n(I18nKey.friendsCopySuccess)}
+			<div id="linkss-copy-success-text" style="display: none;">
+				{i18n(I18nKey.linksCopySuccess)}
 			</div>
 		</div>
 	</div>
 
 	<!-- 引用全局脚本 -->
-	<script is:inline src="/js/friends-page-handler.js"></script>
+	<script is:inline src="/js/linkss-page-handler.js"></script>
 </MainGridLayout>
 
 <style>
 	/* 搜索框焦点效果 */
-	#friend-search:focus {
+	#links-search:focus {
 		box-shadow: 0 0 0 3px var(--primary) / 0.1;
 	}
 
