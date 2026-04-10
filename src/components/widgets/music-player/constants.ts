@@ -7,17 +7,17 @@ export const DEFAULT_VOLUME = 0.7;
 export const LOCAL_PLAYLIST: Song[] = [
 	{
 		id: 1,
-		title: "口笛で愛は歌えない",
-		artist: "Dazbee",
-		cover: "assets/music/cover/dazbee.webp",
+		title: "Secret Betrayal",
+		artist: "北村友香",
+		cover: "assets/music/cover/Secret Betrayal.jpg",
 		url: "assets/music/url/dazbee.mp3",
 		duration: 0,
 	},
 	{
 		id: 2,
-		title: "ひとり上手",
-		artist: "Kaya",
-		cover: "assets/music/cover/hitori.webp",
+		title: "Delicate Weapon",
+		artist: "Grimes/Lizzy Wizzy",
+		cover: "assets/music/cover/Delicate Weapon.jpg",
 		url: "assets/music/url/hitori.mp3",
 		duration: 240,
 	},
