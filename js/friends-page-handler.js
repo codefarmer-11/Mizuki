@@ -19,7 +19,7 @@
 		console.log("[Friends Global] initFriendsPage called");
 
 		var searchInput = document.getElementById("friend-search");
-		var friendsGrid = document.getElementById("friends-grid");
+		var friendsGrid = document.getElementById("links-grid");
 		var noResults = document.getElementById("no-results");
 
 		// 如果关键元素不存在，直接返回
@@ -39,7 +39,7 @@
 
 		// 从页面获取复制成功文本
 		var copySuccessTextElement = document.getElementById(
-			"friends-copy-success-text",
+			"links-copy-success-text",
 		);
 		if (copySuccessTextElement) {
 			window.friendsPageState.copySuccessText =
@@ -211,9 +211,9 @@
 							var node = mutation.addedNodes[j];
 							if (node.nodeType === 1) {
 								if (
-									node.id === "friends-grid" ||
+									node.id === "links-grid" ||
 									node.id === "friend-search" ||
-									(node.querySelector && node.querySelector("#friends-grid"))
+									(node.querySelector && node.querySelector("#links-grid"))
 								) {
 									shouldInit = true;
 									break;
