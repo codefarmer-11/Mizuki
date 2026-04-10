@@ -348,16 +348,6 @@ enum I18nKey {
 	smartRecommend = "smartRecommend",
 	randomRecommend = "randomRecommend",
 
-	// 网站资源
-	links = "资源",
-	linksSubtitle = "实用工具与网站收藏",
-	linksSearchPlaceholder = "搜索资源...",
-	linksFilterAll = "全部",
-	linksNoResults = "没有找到相关资源",
-	linksCopySuccess = "链接已复制到剪贴板",
-	linksVisit = "访问",
-	linksCopyLink = "复制链接",
-
 }
 
 export default I18nKey;
