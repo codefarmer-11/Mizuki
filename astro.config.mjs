@@ -41,7 +41,8 @@ export default defineConfig({
 
 	integrations: [
 		umami({
-			shareUrl: false,
+			shareUrl:
+				"https://cloud.umami.is/analytics/us/share/CIh2chcWIjtzbH9b",
 		}),
 		swup({
 			theme: false,
