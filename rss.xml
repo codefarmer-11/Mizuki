@@ -2224,7 +2224,7 @@ git add . // 添加到暂存区，后接路径
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-</content:encoded></item><item><title>【Windows】延长Windows更新时间</title><link>https://lysj.work/posts/cookbook/windows%E5%BB%B6%E9%95%BFwindows%E6%9B%B4%E6%96%B0%E6%97%B6%E9%97%B4/</link><guid isPermaLink="true">https://lysj.work/posts/cookbook/windows%E5%BB%B6%E9%95%BFwindows%E6%9B%B4%E6%96%B0%E6%97%B6%E9%97%B4/</guid><description>文章描述</description><pubDate>Thu, 02 Apr 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;通过注册表延长暂停 Windows 更新&lt;/h2&gt;
+</content:encoded></item><item><title>【Windows】延长Windows更新时间</title><link>https://lysj.work/posts/cookbook/windows%E5%BB%B6%E9%95%BFwindows%E6%9B%B4%E6%96%B0%E6%97%B6%E9%97%B4/</link><guid isPermaLink="true">https://lysj.work/posts/cookbook/windows%E5%BB%B6%E9%95%BFwindows%E6%9B%B4%E6%96%B0%E6%97%B6%E9%97%B4/</guid><description>修改注册表延长可暂停的时间</description><pubDate>Thu, 02 Apr 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;通过注册表延长暂停 Windows 更新&lt;/h2&gt;
 &lt;ol&gt;
 &lt;li&gt;&lt;code&gt;win+R&lt;/code&gt;，输入&lt;code&gt;regedit&lt;/code&gt;进入注册表&lt;/li&gt;
 &lt;li&gt;进入以下路径&lt;/li&gt;
