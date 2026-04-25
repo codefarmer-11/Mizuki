@@ -1,0 +1,53 @@
+---
+import ArchivePanel from "@components/features/archive/ArchivePanel.svelte";
+import { PageHeader } from "@components/features/page-header";
+import MainGridLayout from "@layouts/MainGridLayout.astro";
+import { getSortedPostsList } from "@utils/content-utils";
+
+const sortedPostsList = await getSortedPostsList();
+const filteredPosts = sortedPostsList.filter((post) =>
+	post.data.tags?.includes("essay"),
+);
+
+const posts = filteredPosts.map((post) => ({
+	...post,
+	data: {
+		...post.data,
+		category: post.data.category === null ? undefined : post.data.category,
+	},
+}));
+---
+
+<MainGridLayout title="Essay">
+	<script>
+		import("../scripts/right-sidebar-layout.js");
+	</script>
+
+	<div
+		class="card-base z-10 px-6 sm:px-9 py-6 relative w-full rounded-[var(--radius-large)]"
+	>
+		<PageHeader title="Essay" subtitle="按 essay 标签归档" />
+
+		{posts.length > 0 ? (
+			<ArchivePanel
+				sortedPosts={posts}
+				tags={[]}
+				categories={[]}
+				client:only="svelte"
+			/>
+		) : (
+			<div class="empty-tip">
+				当前还没有带 `essay` 标签的文章。你可以在文章 frontmatter 的 `tags`
+				中加入它。
+			</div>
+		)}
+	</div>
+</MainGridLayout>
+
+<style>
+	@reference "tailwindcss";
+
+	.empty-tip {
+		@apply mt-6 rounded-2xl border border-dashed border-black/10 dark:border-white/15 px-4 py-3 text-sm leading-6 text-black/60 dark:text-white/60;
+	}
+</style>

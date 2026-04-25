@@ -1,15 +1,30 @@
 ---
-import { Icon } from "astro-icon/components";
+import { PageHeader } from "@components/features/page-header";
 
 import I18nKey from "../i18n/i18nKey";
 import { i18n } from "../i18n/translation";
 import MainGridLayout from "../layouts/MainGridLayout.astro";
+
+const title = i18n(I18nKey.extensionComponent);
+const subtitle = "收纳我写过的在线小工具";
+
+const tools = [
+	{
+		name: "QRCode",
+		description: "文本/链接一键生成二维码，可直接下载图片。",
+		url: "/QRCode/",
+		status: "已上线",
+	},
+	{
+		name: "更多工具开发中",
+		description: "预留位：后续可加入图片压缩、时间戳转换等实用工具。",
+		url: "",
+		status: "筹备中",
+	},
+];
 ---
 
-<MainGridLayout
-	title={i18n(I18nKey.notFound)}
-	description={i18n(I18nKey.notFoundDescription)}
->
+<MainGridLayout title={title} description={subtitle}>
 	<!-- 引入右侧边栏布局管理器 -->
 	<script>
 		import("../scripts/right-sidebar-layout.js");
@@ -18,14 +33,68 @@ import MainGridLayout from "../layouts/MainGridLayout.astro";
 		class="flex w-full rounded-[var(--radius-large)] overflow-hidden relative min-h-96"
 	>
 		<div
-			class="card-base z-10 px-9 py-12 relative w-full flex flex-col items-center justify-center text-center"
+			class="card-base z-10 px-6 sm:px-9 py-6 relative w-full"
 		>
-			<span>扩展</span>
-			<h1>标题</h1>
+			<PageHeader title={title} subtitle={subtitle} />
+
+			<div class="mt-8 grid gap-4 sm:grid-cols-2">
+				{
+					tools.map((tool) => (
+						<div class="tool-card">
+							<div class="tool-head">
+								<span class="tool-status">{tool.status}</span>
+							</div>
+
+							<h2 class="tool-name">{tool.name}</h2>
+							<p class="tool-desc">{tool.description}</p>
+
+							{tool.url ? (
+								<a class="tool-link" href={tool.url}>立即打开</a>
+							) : (
+								<span class="tool-link tool-link--disabled">
+									敬请期待
+								</span>
+							)}
+						</div>
+					))
+				}
+			</div>
 		</div>
 	</div>
 </MainGridLayout>
 
 <style>
+	@reference "tailwindcss";
 
+	.tool-card {
+		@apply rounded-2xl border border-black/5 dark:border-white/10 bg-white/65 dark:bg-white/5 p-5 transition;
+	}
+
+	.tool-card:hover {
+		@apply -translate-y-0.5 shadow-md dark:shadow-none;
+	}
+
+	.tool-head {
+		@apply flex items-center justify-end;
+	}
+
+	.tool-status {
+		@apply text-xs px-2 py-1 rounded-full bg-[var(--btn-plain-bg-hover)] text-black/65 dark:text-white/70;
+	}
+
+	.tool-name {
+		@apply mt-4 text-lg font-semibold text-black/85 dark:text-white/90;
+	}
+
+	.tool-desc {
+		@apply mt-2 text-sm leading-6 text-black/55 dark:text-white/55 min-h-12;
+	}
+
+	.tool-link {
+		@apply mt-5 inline-flex items-center text-sm font-medium text-[var(--primary)] hover:opacity-85 transition;
+	}
+
+	.tool-link--disabled {
+		@apply text-black/35 dark:text-white/35 cursor-not-allowed;
+	}
 </style>

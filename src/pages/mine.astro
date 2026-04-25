@@ -1,0 +1,74 @@
+---
+import { PageHeader } from "@components/features/page-header";
+import MainGridLayout from "../layouts/MainGridLayout.astro";
+
+const title = "Mine";
+const subtitle = "个人空间（建设中）";
+
+const sections = [
+	{
+		title: "关于我",
+		desc: "这里可以放你的个人简介、兴趣方向和正在做的事情。",
+	},
+	{
+		title: "近期计划",
+		desc: "可以记录接下来准备完成的项目和学习目标。",
+	},
+	{
+		title: "联系方式",
+		desc: "后续可补充邮箱、社交主页和协作方式。",
+	},
+];
+---
+
+<MainGridLayout title={title} description={subtitle}>
+	<!-- 引入右侧边栏布局管理器 -->
+	<script>
+		import("../scripts/right-sidebar-layout.js");
+	</script>
+
+	<div
+		class="flex w-full rounded-[var(--radius-large)] overflow-hidden relative min-h-32"
+	>
+		<div class="card-base z-10 px-6 sm:px-9 py-6 relative w-full">
+			<PageHeader title={title} subtitle={subtitle} />
+
+			<div class="mt-8 grid gap-4 md:grid-cols-3">
+				{
+					sections.map((section) => (
+						<div class="info-card">
+							<h2 class="info-title">{section.title}</h2>
+							<p class="info-desc">{section.desc}</p>
+						</div>
+					))
+				}
+			</div>
+
+			<div class="note-box mt-6">
+				<p class="text-sm text-black/60 dark:text-white/60 leading-6">
+					这是一个基础布局页，你后续只需要替换内容卡片就可以快速完善。
+				</p>
+			</div>
+		</div>
+	</div>
+</MainGridLayout>
+
+<style>
+	@reference "tailwindcss";
+
+	.info-card {
+		@apply rounded-2xl border border-black/5 dark:border-white/10 bg-white/65 dark:bg-white/5 p-5;
+	}
+
+	.info-title {
+		@apply text-lg font-semibold text-black/85 dark:text-white/90;
+	}
+
+	.info-desc {
+		@apply mt-2 text-sm leading-6 text-black/55 dark:text-white/55;
+	}
+
+	.note-box {
+		@apply rounded-2xl border border-dashed border-black/10 dark:border-white/15 px-4 py-3;
+	}
+</style>
