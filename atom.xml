@@ -1,0 +1,2672 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>MoonL</title>
+  <subtitle>One demo website</subtitle>
+  <link href="https://lysj.work/" rel="alternate" type="text/html"/>
+  <link href="https://lysj.work/atom.xml" rel="self" type="application/atom+xml"/>
+  <id>https://lysj.work/</id>
+  <updated>2026-04-27T01:03:38.334Z</updated>
+  <language>zh_CN</language>
+  <entry>
+    <title>Markdown Tutorial</title>
+    <link href="https://lysj.work/posts/markdown-tutorial/" rel="alternate" type="text/html"/>
+    <id>https://lysj.work/posts/markdown-tutorial/</id>
+    <published>2025-01-20T00:00:00.000Z</published>
+    <updated>2025-01-20T00:00:00.000Z</updated>
+    <summary>A simple example of a Markdown blog post.</summary>
+    <content type="html"><![CDATA[<h1>Markdown Tutorial</h1>
+<p>A markdown example shows how to write a markdown file. This document integrates core syntax and extensions (GMF).</p>
+<ul>
+<li><a href="#block-elements">Block Elements</a>
+<ul>
+<li><a href="#paragraphs-and-line-breaks">Paragraphs and Line Breaks</a></li>
+<li><a href="#headers">Headers</a></li>
+<li><a href="#blockquotes">Blockquotes</a></li>
+<li><a href="#lists">Lists</a></li>
+<li><a href="#code-blocks">Code Blocks</a></li>
+<li><a href="#horizontal-rules">Horizontal Rules</a></li>
+<li><a href="#table">Table</a></li>
+</ul>
+</li>
+<li><a href="#span-elements">Span Elements</a>
+<ul>
+<li><a href="#links">Links</a></li>
+<li><a href="#emphasis">Emphasis</a></li>
+<li><a href="#code">Code</a></li>
+<li><a href="#images">Images</a></li>
+<li><a href="#strikethrough">Strikethrough</a></li>
+</ul>
+</li>
+<li><a href="#miscellaneous">Miscellaneous</a>
+<ul>
+<li><a href="#automatic-links">Automatic Links</a></li>
+<li><a href="#backslash-escapes">Backslash Escapes</a></li>
+</ul>
+</li>
+<li><a href="#inline-html">Inline HTML</a></li>
+</ul>
+<h2>Block Elements</h2>
+<h3>Paragraphs and Line Breaks</h3>
+<h4>Paragraphs</h4>
+<p>HTML Tag: <code>&lt;p&gt;</code></p>
+<p>One or more blank lines. (A blank line is a line containing nothing but <strong>spaces</strong> or <strong>tabs</strong> is considered blank.)</p>
+<p>Code:</p>
+<pre><code>This will be
+inline.
+
+This is second paragraph.
+</code></pre>
+<p>Preview:</p>
+<hr />
+<p>This will be
+inline.</p>
+<p>This is second paragraph.</p>
+<hr />
+<h4>Line Breaks</h4>
+<p>HTML Tag: <code>&lt;br /&gt;</code></p>
+<p>End a line with <strong>two or more spaces</strong>.</p>
+<p>Code:</p>
+<pre><code>This will be not
+inline.
+</code></pre>
+<p>Preview:</p>
+<hr />
+<p>This will be not<br />
+inline.</p>
+<hr />
+<h3>Headers</h3>
+<p>Markdown supports two styles of headers, Setext and atx.</p>
+<h4>Setext</h4>
+<p>HTML Tags: <code>&lt;h1&gt;</code>, <code>&lt;h2&gt;</code></p>
+<p>"Underlined" using <strong>equal signs (=)</strong> as <code>&lt;h1&gt;</code> and <strong>dashes (-)</strong> as <code>&lt;h2&gt;</code> in any number.</p>
+<p>Code:</p>
+<pre><code>This is an H1
+=============
+This is an H2
+-------------
+</code></pre>
+<p>Preview:</p>
+<hr />
+<h1>This is an H1</h1>
+<h2>This is an H2</h2>
+<hr />
+<h4>atx</h4>
+<p>HTML Tags: <code>&lt;h1&gt;</code>, <code>&lt;h2&gt;</code>, <code>&lt;h3&gt;</code>, <code>&lt;h4&gt;</code>, <code>&lt;h5&gt;</code>, <code>&lt;h6&gt;</code></p>
+<p>Uses 1-6 <strong>hash characters (#)</strong> at the start of the line, corresponding to <code>&lt;h1&gt;</code> - <code>&lt;h6&gt;</code>.</p>
+<p>Code:</p>
+<pre><code># This is an H1
+## This is an H2
+###### This is an H6
+</code></pre>
+<p>Preview:</p>
+<hr />
+<h1>This is an H1</h1>
+<h2>This is an H2</h2>
+<h6>This is an H6</h6>
+<hr />
+<p>Optionally, you may "close" atx-style headers. The closing hashes <strong>don't need to match</strong> the number of hashes used to open the header.</p>
+<p>Code:</p>
+<pre><code># This is an H1 #
+## This is an H2 ##
+### This is an H3 ######
+</code></pre>
+<p>Preview:</p>
+<hr />
+<h1>This is an H1</h1>
+<h2>This is an H2</h2>
+<h3>This is an H3</h3>
+<hr />
+<h3>Blockquotes</h3>
+<p>HTML Tag: <code>&lt;blockquote&gt;</code></p>
+<p>Markdown uses email-style <strong>&gt;</strong> characters for blockquoting. It looks best if you hard wrap the text and put a &gt; before every line.</p>
+<p>Code:</p>
+<pre><code>&gt; This is a blockquote with two paragraphs. Lorem ipsum dolor sit amet,
+&gt; consectetuer adipiscing elit. Aliquam hendrerit mi posuere lectus.
+&gt; Vestibulum enim wisi, viverra nec, fringilla in, laoreet vitae, risus.
+&gt;
+&gt; Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse
+&gt; id sem consectetuer libero luctus adipiscing.
+</code></pre>
+<p>Preview:</p>
+<hr />
+<blockquote>
+<p>This is a blockquote with two paragraphs. Lorem ipsum dolor sit amet,
+consectetuer adipiscing elit. Aliquam hendrerit mi posuere lectus.
+Vestibulum enim wisi, viverra nec, fringilla in, laoreet vitae, risus.</p>
+<p>Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse
+id sem consectetuer libero luctus adipiscing.</p>
+</blockquote>
+<hr />
+<p>Markdown allows you to be lazy and only put the &gt; before the first line of a hard-wrapped paragraph.</p>
+<p>Code:</p>
+<pre><code>&gt; This is a blockquote with two paragraphs. Lorem ipsum dolor sit amet,
+consectetuer adipiscing elit. Aliquam hendrerit mi posuere lectus.
+Vestibulum enim wisi, viverra nec, fringilla in, laoreet vitae, risus.
+
+&gt; Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse
+id sem consectetuer libero luctus adipiscing.
+</code></pre>
+<p>Preview:</p>
+<hr />
+<blockquote>
+<p>This is a blockquote with two paragraphs. Lorem ipsum dolor sit amet,
+consectetuer adipiscing elit. Aliquam hendrerit mi posuere lectus.
+Vestibulum enim wisi, viverra nec, fringilla in, laoreet vitae, risus.</p>
+</blockquote>
+<blockquote>
+<p>Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse
+id sem consectetuer libero luctus adipiscing.</p>
+</blockquote>
+<hr />
+<p>Blockquotes can be nested (i.e. a blockquote-in-a-blockquote) by adding additional levels of &gt;.</p>
+<p>Code:</p>
+<pre><code>&gt; This is the first level of quoting.
+&gt;
+&gt; &gt; This is nested blockquote.
+&gt;
+&gt; Back to the first level.
+</code></pre>
+<p>Preview:</p>
+<hr />
+<blockquote>
+<p>This is the first level of quoting.</p>
+<blockquote>
+<p>This is nested blockquote.</p>
+</blockquote>
+<p>Back to the first level.</p>
+</blockquote>
+<hr />
+<p>Blockquotes can contain other Markdown elements, including headers, lists, and code blocks.</p>
+<p>Code:</p>
+<pre><code>&gt; ## This is a header.
+&gt;
+&gt; 1.   This is the first list item.
+&gt; 2.   This is the second list item.
+&gt;
+&gt; Here's some example code:
+&gt;
+&gt;     return shell_exec("echo $input | $markdown_script");
+</code></pre>
+<p>Preview:</p>
+<hr />
+<blockquote>
+<h2>This is a header.</h2>
+<ol>
+<li>This is the first list item.</li>
+<li>This is the second list item.</li>
+</ol>
+<p>Here's some example code:</p>
+<pre><code>return shell_exec("echo $input | $markdown_script");
+</code></pre>
+</blockquote>
+<hr />
+<h3>Lists</h3>
+<p>Markdown supports ordered (numbered) and unordered (bulleted) lists.</p>
+<h4>Unordered</h4>
+<p>HTML Tag: <code>&lt;ul&gt;</code></p>
+<p>Unordered lists use <strong>asterisks (*)</strong>, <strong>pluses (+)</strong>, and <strong>hyphens (-)</strong>.</p>
+<p>Code:</p>
+<pre><code>*   Red
+*   Green
+*   Blue
+</code></pre>
+<p>Preview:</p>
+<hr />
+<ul>
+<li>Red</li>
+<li>Green</li>
+<li>Blue</li>
+</ul>
+<hr />
+<p>is equivalent to:</p>
+<p>Code:</p>
+<pre><code>+   Red
++   Green
++   Blue
+</code></pre>
+<p>and:</p>
+<p>Code:</p>
+<pre><code>-   Red
+-   Green
+-   Blue
+</code></pre>
+<h4>Ordered</h4>
+<p>HTML Tag: <code>&lt;ol&gt;</code></p>
+<p>Ordered lists use numbers followed by periods:</p>
+<p>Code:</p>
+<pre><code>1.  Bird
+2.  McHale
+3.  Parish
+</code></pre>
+<p>Preview:</p>
+<hr />
+<ol>
+<li>Bird</li>
+<li>McHale</li>
+<li>Parish</li>
+</ol>
+<hr />
+<p>It's possible to trigger an ordered list by accident, by writing something like this:</p>
+<p>Code:</p>
+<pre><code>1986. What a great season.
+</code></pre>
+<p>Preview:</p>
+<hr />
+<ol>
+<li>What a great season.</li>
+</ol>
+<hr />
+<p>You can <strong>backslash-escape (\)</strong> the period:</p>
+<p>Code:</p>
+<pre><code>1986\. What a great season.
+</code></pre>
+<p>Preview:</p>
+<hr />
+<p>1986. What a great season.</p>
+<hr />
+<h4>Indented</h4>
+<h5>Blockquote</h5>
+<p>To put a blockquote within a list item, the blockquote's &gt; delimiters need to be indented:</p>
+<p>Code:</p>
+<pre><code>*   A list item with a blockquote:
+
+    &gt; This is a blockquote
+    &gt; inside a list item.
+</code></pre>
+<p>Preview:</p>
+<hr />
+<ul>
+<li>
+<p>A list item with a blockquote:</p>
+<blockquote>
+<p>This is a blockquote
+inside a list item.</p>
+</blockquote>
+</li>
+</ul>
+<hr />
+<h5>Code Block</h5>
+<p>To put a code block within a list item, the code block needs to be indented twice — <strong>8 spaces</strong> or <strong>two tabs</strong>:</p>
+<p>Code:</p>
+<pre><code>*   A list item with a code block:
+
+        &lt;code goes here&gt;
+</code></pre>
+<p>Preview:</p>
+<hr />
+<ul>
+<li>
+<p>A list item with a code block:</p>
+<pre><code>&lt;code goes here&gt;
+</code></pre>
+</li>
+</ul>
+<hr />
+<h5>Nested List</h5>
+<p>Code:</p>
+<pre><code>* A
+  * A1
+  * A2
+* B
+* C
+</code></pre>
+<p>Preview:</p>
+<hr />
+<ul>
+<li>A
+<ul>
+<li>A1</li>
+<li>A2</li>
+</ul>
+</li>
+<li>B</li>
+<li>C</li>
+</ul>
+<hr />
+<h3>Code Blocks</h3>
+<p>HTML Tag: <code>&lt;pre&gt;</code></p>
+<p>Indent every line of the block by at least <strong>4 spaces</strong> or <strong>1 tab</strong>.</p>
+<p>Code:</p>
+<pre><code>This is a normal paragraph:
+
+    This is a code block.
+</code></pre>
+<p>Preview:</p>
+<hr />
+<p>This is a normal paragraph:</p>
+<pre><code>This is a code block.
+</code></pre>
+<hr />
+<p>A code block continues until it reaches a line that is not indented (or the end of the article).</p>
+<p>Within a code block, <strong><em>ampersands (&amp;)</em></strong> and angle <strong>brackets (&lt; and &gt;)</strong> are automatically converted into HTML entities.</p>
+<p>Code:</p>
+<pre><code>    &lt;div class="footer"&gt;
+        &amp;copy; 2004 Foo Corporation
+    &lt;/div&gt;
+</code></pre>
+<p>Preview:</p>
+<hr />
+<pre><code>&lt;div class="footer"&gt;
+    &amp;copy; 2004 Foo Corporation
+&lt;/div&gt;
+</code></pre>
+<hr />
+<p>Following sections Fenced Code Blocks and Syntax Highlighting are extensions, you can use the other way to write the code block.</p>
+<h4>Fenced Code Blocks</h4>
+<p>Just wrap your code in <code>```</code> (as shown below) and you won't need to indent it by four spaces.</p>
+<p>Code:</p>
+<pre><code>Here's an example:
+
+```
+function test() {
+  console.log("notice the blank line before this function?");
+}
+```
+</code></pre>
+<p>Preview:</p>
+<hr />
+<p>Here's an example:</p>
+<pre><code>function test() {
+  console.log("notice the blank line before this function?");
+}
+</code></pre>
+<hr />
+<h4>Syntax Highlighting</h4>
+<p>In your fenced block, add an optional language identifier and we'll run it through syntax highlighting (<a href="https://github.com/github/linguist/blob/master/lib/linguist/languages.yml">Support Languages</a>).</p>
+<p>Code:</p>
+<pre><code>```ruby
+require 'redcarpet'
+markdown = Redcarpet.new("Hello World!")
+puts markdown.to_html
+```
+</code></pre>
+<p>Preview:</p>
+<hr />
+<pre><code>require 'redcarpet'
+markdown = Redcarpet.new("Hello World!")
+puts markdown.to_html
+</code></pre>
+<hr />
+<h3>Horizontal Rules</h3>
+<p>HTML Tag: <code>&lt;hr /&gt;</code>
+Places <strong>three or more hyphens (-), asterisks (*), or underscores (_)</strong> on a line by themselves. You may use spaces between the hyphens or asterisks.</p>
+<p>Code:</p>
+<pre><code>* * *
+***
+*****
+- - -
+---------------------------------------
+___
+</code></pre>
+<p>Preview:</p>
+<hr />
+<hr />
+<hr />
+<hr />
+<hr />
+<hr />
+<hr />
+<hr />
+<h3>Table</h3>
+<p>HTML Tag: <code>&lt;table&gt;</code></p>
+<p>It's an extension.</p>
+<p>Separates column by <strong>pipe (|)</strong> and header by <strong>dashes (-)</strong>, and uses <strong>colon (:)</strong> for alignment.</p>
+<p>The outer <strong>pipes (|)</strong> and alignment are optional. There are <strong>3 delimiters</strong> each cell at least for separating header.</p>
+<p>Code:</p>
+<pre><code>| Left | Center | Right |
+|:-----|:------:|------:|
+|aaa   |bbb     |ccc    |
+|ddd   |eee     |fff    |
+
+ A | B
+---|---
+123|456
+
+
+A |B
+--|--
+12|45
+</code></pre>
+<p>Preview:</p>
+<hr />
+<table>
+<thead>
+<tr>
+<th>Left</th>
+<th>Center</th>
+<th>Right</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>aaa</td>
+<td>bbb</td>
+<td>ccc</td>
+</tr>
+<tr>
+<td>ddd</td>
+<td>eee</td>
+<td>fff</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>A</th>
+<th>B</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>123</td>
+<td>456</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>A</th>
+<th>B</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>12</td>
+<td>45</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Span Elements</h2>
+<h3>Links</h3>
+<p>HTML Tag: <code>&lt;a&gt;</code></p>
+<p>Markdown supports two style of links: inline and reference.</p>
+<h4>Inline</h4>
+<p>Inline link format like this: <code>[Link Text](URL "Title")</code></p>
+<p>Title is optional.</p>
+<p>Code:</p>
+<pre><code>This is [an example](http://example.com/ "Title") inline link.
+
+[This link](http://example.net/) has no title attribute.
+</code></pre>
+<p>Preview:</p>
+<hr />
+<p>This is <a href="http://example.com/">an example</a> inline link.</p>
+<p><a href="http://example.net/">This link</a> has no title attribute.</p>
+<hr />
+<p>If you're referring to a local resource on the same server, you can use relative paths:</p>
+<p>Code:</p>
+<pre><code>See my [About](/about/) page for details.
+</code></pre>
+<p>Preview:</p>
+<hr />
+<p>See my <a href="/about/">About</a> page for details.</p>
+<hr />
+<h4>Reference</h4>
+<p>You could predefine link references. Format like this: <code>[id]: URL "Title"</code></p>
+<p>Title is also optional. And the you refer the link, format like this: <code>[Link Text][id]</code></p>
+<p>Code:</p>
+<pre><code>[id]: http://example.com/  "Optional Title Here"
+This is [an example][id] reference-style link.
+</code></pre>
+<p>Preview:</p>
+<hr />
+<p>This is <a href="http://example.com/">an example</a> reference-style link.</p>
+<hr />
+<p>That is:</p>
+<ul>
+<li>Square brackets containing the link identifier (<strong>not case sensitive</strong>, optionally indented from the left margin using up to three spaces);</li>
+<li>followed by a colon;</li>
+<li>followed by one or more spaces (or tabs);</li>
+<li>followed by the URL for the link;</li>
+<li>The link URL may, optionally, be surrounded by angle brackets.</li>
+<li>optionally followed by a title attribute for the link, enclosed in double or single quotes, or enclosed in parentheses.</li>
+</ul>
+<p>The following three link definitions are equivalent:</p>
+<p>Code:</p>
+<pre><code>[foo]: http://example.com/  "Optional Title Here"
+[foo]: http://example.com/  'Optional Title Here'
+[foo]: http://example.com/  (Optional Title Here)
+[foo]: &lt;http://example.com/&gt;  "Optional Title Here"
+</code></pre>
+<p>Uses an empty set of square brackets, the link text itself is used as the name.</p>
+<p>Code:</p>
+<pre><code>[Google]: http://google.com/
+[Google][]
+</code></pre>
+<p>Preview:</p>
+<hr />
+<p><a href="http://google.com/">Google</a></p>
+<hr />
+<h3>Emphasis</h3>
+<p>HTML Tags: <code>&lt;em&gt;</code>, <code>&lt;strong&gt;</code></p>
+<p>Markdown treats <strong>asterisks (*)</strong> and <strong>underscores (_)</strong> as indicators of emphasis. <strong>One delimiter</strong> will be <code>&lt;em&gt;</code>; *<em>double delimiters</em> will be <code>&lt;strong&gt;</code>.</p>
+<p>Code:</p>
+<pre><code>*single asterisks*
+
+_single underscores_
+
+**double asterisks**
+
+__double underscores__
+</code></pre>
+<p>Preview:</p>
+<hr />
+<p><em>single asterisks</em></p>
+<p><em>single underscores</em></p>
+<p><strong>double asterisks</strong></p>
+<p><strong>double underscores</strong></p>
+<hr />
+<p>But if you surround an * or _ with spaces, it'll be treated as a literal asterisk or underscore.</p>
+<p>You can backslash escape it:</p>
+<p>Code:</p>
+<pre><code>\*this text is surrounded by literal asterisks\*
+</code></pre>
+<p>Preview:</p>
+<hr />
+<p>*this text is surrounded by literal asterisks*</p>
+<hr />
+<h3>Code</h3>
+<p>HTML Tag: <code>&lt;code&gt;</code></p>
+<p>Wraps it with <strong>backtick quotes (`)</strong>.</p>
+<p>Code:</p>
+<pre><code>Use the `printf()` function.
+</code></pre>
+<p>Preview:</p>
+<hr />
+<p>Use the <code>printf()</code> function.</p>
+<hr />
+<p>To include a literal backtick character within a code span, you can use <strong>multiple backticks</strong> as the opening and closing delimiters:</p>
+<p>Code:</p>
+<pre><code>``There is a literal backtick (`) here.``
+</code></pre>
+<p>Preview:</p>
+<hr />
+<p><code>There is a literal backtick (`) here.</code></p>
+<hr />
+<p>The backtick delimiters surrounding a code span may include spaces — one after the opening, one before the closing. This allows you to place literal backtick characters at the beginning or end of a code span:</p>
+<p>Code:</p>
+<pre><code>A single backtick in a code span: `` ` ``
+
+A backtick-delimited string in a code span: `` `foo` ``
+</code></pre>
+<p>Preview:</p>
+<hr />
+<p>A single backtick in a code span: <code>`</code></p>
+<p>A backtick-delimited string in a code span: <code>`foo`</code></p>
+<hr />
+<h3>Images</h3>
+<p>HTML Tag: <code>&lt;img /&gt;</code></p>
+<p>Markdown uses an image syntax that is intended to resemble the syntax for links, allowing for two styles: inline and reference.</p>
+<h4>Inline</h4>
+<p>Inline image syntax looks like this: <code>![Alt text](URL "Title")</code></p>
+<p>Title is optional.</p>
+<p>Code:</p>
+<pre><code>![Alt text](/path/to/img.jpg)
+
+![Alt text](/path/to/img.jpg "Optional title")
+</code></pre>
+<p>Preview:</p>
+<hr />
+<p><img src="https://s2.loli.net/2024/08/20/5fszgXeOxmL3Wdv.webp" alt="Alt text" /></p>
+<p><img src="https://s2.loli.net/2024/08/20/5fszgXeOxmL3Wdv.webp" alt="Alt text" title="Optional title" /></p>
+<hr />
+<p>That is:</p>
+<ul>
+<li>An exclamation mark: !;</li>
+<li>followed by a set of square brackets, containing the alt attribute text for the image;</li>
+<li>followed by a set of parentheses, containing the URL or path to the image, and an optional title attribute enclosed in double or single quotes.</li>
+</ul>
+<h4>Reference</h4>
+<p>Reference-style image syntax looks like this: <code>![Alt text][id]</code></p>
+<p>Code:</p>
+<pre><code>[img id]: https://s2.loli.net/2024/08/20/5fszgXeOxmL3Wdv.webp  "Optional title attribute"
+![Alt text][img id]
+</code></pre>
+<p>Preview:</p>
+<hr />
+<p><img src="https://s2.loli.net/2024/08/20/5fszgXeOxmL3Wdv.webp" alt="Alt text" title="Optional title attribute" /></p>
+<hr />
+<h3>Strikethrough</h3>
+<p>HTML Tag: <code>&lt;del&gt;</code></p>
+<p>It's an extension.</p>
+<p>GFM adds syntax to strikethrough text.</p>
+<p>Code:</p>
+<pre><code>~~Mistaken text.~~
+</code></pre>
+<p>Preview:</p>
+<hr />
+<p><s>Mistaken text.</s></p>
+<hr />
+<h2>Miscellaneous</h2>
+<h3>Automatic Links</h3>
+<p>Markdown supports a shortcut style for creating "automatic" links for URLs and email addresses: simply surround the URL or email address with angle brackets.</p>
+<p>Code:</p>
+<pre><code>&lt;http://example.com/&gt;
+
+&lt;address@example.com&gt;
+</code></pre>
+<p>Preview:</p>
+<hr />
+<p><a href="http://example.com/">http://example.com/</a></p>
+<p><a href="mailto:address@example.com">address@example.com</a></p>
+<hr />
+<p>GFM will autolink standard URLs.</p>
+<p>Code:</p>
+<pre><code>https://github.com/emn178/markdown
+</code></pre>
+<p>Preview:</p>
+<hr />
+<p>https://github.com/emn178/markdown</p>
+<hr />
+<h3>Backslash Escapes</h3>
+<p>Markdown allows you to use backslash escapes to generate literal characters which would otherwise have special meaning in Markdown's formatting syntax.</p>
+<p>Code:</p>
+<pre><code>\*literal asterisks\*
+</code></pre>
+<p>Preview:</p>
+<hr />
+<p>*literal asterisks*</p>
+<hr />
+<p>Markdown provides backslash escapes for the following characters:</p>
+<p>Code:</p>
+<pre><code>\   backslash
+`   backtick
+*   asterisk
+_   underscore
+{}  curly braces
+[]  square brackets
+()  parentheses
+#   hash mark
++   plus sign
+-   minus sign (hyphen)
+.   dot
+!   exclamation mark
+</code></pre>
+<h2>Inline HTML</h2>
+<p>For any markup that is not covered by Markdown's syntax, you simply use HTML itself. There's no need to preface it or delimit it to indicate that you're switching from Markdown to HTML; you just use the tags.</p>
+<p>Code:</p>
+<pre><code>This is a regular paragraph.
+
+&lt;table&gt;
+    &lt;tr&gt;
+        &lt;td&gt;Foo&lt;/td&gt;
+    &lt;/tr&gt;
+&lt;/table&gt;
+
+This is another regular paragraph.
+</code></pre>
+<p>Preview:</p>
+<hr />
+<p>This is a regular paragraph.</p>
+<p>&lt;table&gt;
+&lt;tr&gt;
+&lt;td&gt;Foo&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;</p>
+<p>This is another regular paragraph.</p>
+<hr />
+<p>Note that Markdown formatting syntax is <strong>not processed within block-level HTML tags</strong>.</p>
+<p>Unlike block-level HTML tags, Markdown syntax is <strong>processed within span-level tags</strong>.</p>
+<p>Code:</p>
+<pre><code>&lt;span&gt;**Work**&lt;/span&gt;
+
+&lt;div&gt;
+    **No Work**
+&lt;/div&gt;
+</code></pre>
+<p>Preview:</p>
+<hr />
+<p>&lt;span&gt;<strong>Work</strong>&lt;/span&gt;</p>
+<p>&lt;div&gt;
+<strong>No Work</strong>
+&lt;/div&gt;</p>
+<hr />
+]]></content>
+    <author>
+      <name>Sekiro</name>
+    </author>
+    <category term="Examples"></category>
+  </entry>
+  <entry>
+    <title>【Git】ssh连接建立</title>
+    <link href="https://lysj.work/posts/cookbook/gitssh%E8%BF%9E%E6%8E%A5%E5%BB%BA%E7%AB%8B/" rel="alternate" type="text/html"/>
+    <id>https://lysj.work/posts/cookbook/gitssh%E8%BF%9E%E6%8E%A5%E5%BB%BA%E7%AB%8B/</id>
+    <published>2026-04-02T00:00:00.000Z</published>
+    <updated>2026-04-02T00:00:00.000Z</updated>
+    <summary>文章描述</summary>
+    <content type="html"><![CDATA[<h1>简易ssh连接代码仓库</h1>
+<h2>连接</h2>
+<p>修改git配置</p>
+<pre><code>git config --global user.name "你的Gitee用户名"
+git config --global user.email "你的Gitee注册邮箱"
+</code></pre>
+<p>生成公钥</p>
+<pre><code>ssh-keygen -t ed25519 -C "你的邮箱@example.com"
+</code></pre>
+<p>测试连接</p>
+<pre><code>ssh -T git@github.com
+ssh -T git@gitee.com
+</code></pre>
+<h2>git常用命令</h2>
+<pre><code>git init // 初始化生成.git文件夹
+git add . // 添加到暂存区，后接路径
+</code></pre>
+<h3>本地仓库连接在线仓库</h3>
+<pre><code>git remote add origin git@gitee.com:你的用户名/你的仓库名.git
+</code></pre>
+]]></content>
+    <author>
+      <name>Sekiro</name>
+    </author>
+    <category term="cookbook"></category>
+  </entry>
+  <entry>
+    <title>【koishi】部署koishi</title>
+    <link href="https://lysj.work/posts/cookbook/koishi%E9%83%A8%E7%BD%B2koishi/" rel="alternate" type="text/html"/>
+    <id>https://lysj.work/posts/cookbook/koishi%E9%83%A8%E7%BD%B2koishi/</id>
+    <published>2026-04-02T00:00:00.000Z</published>
+    <updated>2026-04-02T00:00:00.000Z</updated>
+    <summary>文章描述</summary>
+    <content type="html"><![CDATA[]]></content>
+    <author>
+      <name>Sekiro</name>
+    </author>
+    <category term="cookbook"></category>
+  </entry>
+  <entry>
+    <title>【markdown】Emoji简码列表</title>
+    <link href="https://lysj.work/posts/cookbook/markdownemoji%E7%AE%80%E7%A0%81%E5%88%97%E8%A1%A8/" rel="alternate" type="text/html"/>
+    <id>https://lysj.work/posts/cookbook/markdownemoji%E7%AE%80%E7%A0%81%E5%88%97%E8%A1%A8/</id>
+    <published>2026-04-02T00:00:00.000Z</published>
+    <updated>2026-04-02T00:00:00.000Z</updated>
+    <summary>文章描述</summary>
+    <content type="html"><![CDATA[<p>未显示则是不支持此阅读器</p>
+<p>People</p>
+<table>
+<thead>
+<tr>
+<th>:bowtie: <code>:bowtie:</code></th>
+<th>:smile: <code>:smile:</code></th>
+<th>:laughing: <code>:laughing:</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>:blush: <code>:blush:</code></td>
+<td>:smiley: <code>:smiley:</code></td>
+<td>:relaxed: <code>:relaxed:</code></td>
+</tr>
+<tr>
+<td>:smirk: <code>:smirk:</code></td>
+<td>:heart_eyes: <code>:heart_eyes:</code></td>
+<td>:kissing_heart: <code>:kissing_heart:</code></td>
+</tr>
+<tr>
+<td>:kissing_closed_eyes: <code>:kissing_closed_eyes:</code></td>
+<td>:flushed: <code>:flushed:</code></td>
+<td>:relieved: <code>:relieved:</code></td>
+</tr>
+<tr>
+<td>:satisfied: <code>:satisfied:</code></td>
+<td>:grin: <code>:grin:</code></td>
+<td>:wink: <code>:wink:</code></td>
+</tr>
+<tr>
+<td>:stuck_out_tongue_winking_eye: <code>:stuck_out_tongue_winking_eye:</code></td>
+<td>:stuck_out_tongue_closed_eyes: <code>:stuck_out_tongue_closed_eyes:</code></td>
+<td>:grinning: <code>:grinning:</code></td>
+</tr>
+<tr>
+<td>:kissing: <code>:kissing:</code></td>
+<td>:kissing_smiling_eyes: <code>:kissing_smiling_eyes:</code></td>
+<td>:stuck_out_tongue: <code>:stuck_out_tongue:</code></td>
+</tr>
+<tr>
+<td>:sleeping: <code>:sleeping:</code></td>
+<td>:worried: <code>:worried:</code></td>
+<td>:frowning: <code>:frowning:</code></td>
+</tr>
+<tr>
+<td>:anguished: <code>:anguished:</code></td>
+<td>:open_mouth: <code>:open_mouth:</code></td>
+<td>:grimacing: <code>:grimacing:</code></td>
+</tr>
+<tr>
+<td>:confused: <code>:confused:</code></td>
+<td>:hushed: <code>:hushed:</code></td>
+<td>:expressionless: <code>:expressionless:</code></td>
+</tr>
+<tr>
+<td>:unamused: <code>:unamused:</code></td>
+<td>:sweat_smile: <code>:sweat_smile:</code></td>
+<td>:sweat: <code>:sweat:</code></td>
+</tr>
+<tr>
+<td>:disappointed_relieved: <code>:disappointed_relieved:</code></td>
+<td>:weary: <code>:weary:</code></td>
+<td>:pensive: <code>:pensive:</code></td>
+</tr>
+<tr>
+<td>:disappointed: <code>:disappointed:</code></td>
+<td>:confounded: <code>:confounded:</code></td>
+<td>:fearful: <code>:fearful:</code></td>
+</tr>
+<tr>
+<td>:cold_sweat: <code>:cold_sweat:</code></td>
+<td>:persevere: <code>:persevere:</code></td>
+<td>:cry: <code>:cry:</code></td>
+</tr>
+<tr>
+<td>:sob: <code>:sob:</code></td>
+<td>:joy: <code>:joy:</code></td>
+<td>:astonished: <code>:astonished:</code></td>
+</tr>
+<tr>
+<td>:scream: <code>:scream:</code></td>
+<td>:neckbeard: <code>:neckbeard:</code></td>
+<td>:tired_face: <code>:tired_face:</code></td>
+</tr>
+<tr>
+<td>:angry: <code>:angry:</code></td>
+<td>:rage: <code>:rage:</code></td>
+<td>:triumph: <code>:triumph:</code></td>
+</tr>
+<tr>
+<td>:sleepy: <code>:sleepy:</code></td>
+<td>:yum: <code>:yum:</code></td>
+<td>:mask: <code>:mask:</code></td>
+</tr>
+<tr>
+<td>:sunglasses: <code>:sunglasses:</code></td>
+<td>:dizzy_face: <code>:dizzy_face:</code></td>
+<td>:imp: <code>:imp:</code></td>
+</tr>
+<tr>
+<td>:smiling_imp: <code>:smiling_imp:</code></td>
+<td>:neutral_face: <code>:neutral_face:</code></td>
+<td>:no_mouth: <code>:no_mouth:</code></td>
+</tr>
+<tr>
+<td>:innocent: <code>:innocent:</code></td>
+<td>:alien: <code>:alien:</code></td>
+<td>:yellow_heart: <code>:yellow_heart:</code></td>
+</tr>
+<tr>
+<td>:blue_heart: <code>:blue_heart:</code></td>
+<td>:purple_heart: <code>:purple_heart:</code></td>
+<td>:heart: <code>:heart:</code></td>
+</tr>
+<tr>
+<td>:green_heart: <code>:green_heart:</code></td>
+<td>:broken_heart: <code>:broken_heart:</code></td>
+<td>:heartbeat: <code>:heartbeat:</code></td>
+</tr>
+<tr>
+<td>:heartpulse: <code>:heartpulse:</code></td>
+<td>:two_hearts: <code>:two_hearts:</code></td>
+<td>:revolving_hearts: <code>:revolving_hearts:</code></td>
+</tr>
+<tr>
+<td>:cupid: <code>:cupid:</code></td>
+<td>:sparkling_heart: <code>:sparkling_heart:</code></td>
+<td>:sparkles: <code>:sparkles:</code></td>
+</tr>
+<tr>
+<td>:star: <code>:star:</code></td>
+<td>:star2: <code>:star2:</code></td>
+<td>:dizzy: <code>:dizzy:</code></td>
+</tr>
+<tr>
+<td>:boom: <code>:boom:</code></td>
+<td>:collision: <code>:collision:</code></td>
+<td>:anger: <code>:anger:</code></td>
+</tr>
+<tr>
+<td>:exclamation: <code>:exclamation:</code></td>
+<td>:question: <code>:question:</code></td>
+<td>:grey_exclamation: <code>:grey_exclamation:</code></td>
+</tr>
+<tr>
+<td>:grey_question: <code>:grey_question:</code></td>
+<td>:zzz: <code>:zzz:</code></td>
+<td>:dash: <code>:dash:</code></td>
+</tr>
+<tr>
+<td>:sweat_drops: <code>:sweat_drops:</code></td>
+<td>:notes: <code>:notes:</code></td>
+<td>:musical_note: <code>:musical_note:</code></td>
+</tr>
+<tr>
+<td>:fire: <code>:fire:</code></td>
+<td>:hankey: <code>:hankey:</code></td>
+<td>:poop: <code>:poop:</code></td>
+</tr>
+<tr>
+<td>:shit: <code>:shit:</code></td>
+<td>:+1: <code>:+1:</code></td>
+<td>:thumbsup: <code>:thumbsup:</code></td>
+</tr>
+<tr>
+<td>:-1: <code>:-1:</code></td>
+<td>:thumbsdown: <code>:thumbsdown:</code></td>
+<td>:ok_hand: <code>:ok_hand:</code></td>
+</tr>
+<tr>
+<td>:punch: <code>:punch:</code></td>
+<td>:facepunch: <code>:facepunch:</code></td>
+<td>:fist: <code>:fist:</code></td>
+</tr>
+<tr>
+<td>:v: <code>:v:</code></td>
+<td>:wave: <code>:wave:</code></td>
+<td>:hand: <code>:hand:</code></td>
+</tr>
+<tr>
+<td>:raised_hand: <code>:raised_hand:</code></td>
+<td>:open_hands: <code>:open_hands:</code></td>
+<td>:point_up: <code>:point_up:</code></td>
+</tr>
+<tr>
+<td>:point_down: <code>:point_down:</code></td>
+<td>:point_left: <code>:point_left:</code></td>
+<td>:point_right: <code>:point_right:</code></td>
+</tr>
+<tr>
+<td>:raised_hands: <code>:raised_hands:</code></td>
+<td>:pray: <code>:pray:</code></td>
+<td>:point_up_2: <code>:point_up_2:</code></td>
+</tr>
+<tr>
+<td>:clap: <code>:clap:</code></td>
+<td>:muscle: <code>:muscle:</code></td>
+<td>:metal: <code>:metal:</code></td>
+</tr>
+<tr>
+<td>:fu: <code>:fu:</code></td>
+<td>:walking: <code>:walking:</code></td>
+<td>:runner: <code>:runner:</code></td>
+</tr>
+<tr>
+<td>:running: <code>:running:</code></td>
+<td>:couple: <code>:couple:</code></td>
+<td>:family: <code>:family:</code></td>
+</tr>
+<tr>
+<td>:two_men_holding_hands: <code>:two_men_holding_hands:</code></td>
+<td>:two_women_holding_hands: <code>:two_women_holding_hands:</code></td>
+<td>:dancer: <code>:dancer:</code></td>
+</tr>
+<tr>
+<td>:dancers: <code>:dancers:</code></td>
+<td>:ok_woman: <code>:ok_woman:</code></td>
+<td>:no_good: <code>:no_good:</code></td>
+</tr>
+<tr>
+<td>:information_desk_person: <code>:information_desk_person:</code></td>
+<td>:raising_hand: <code>:raising_hand:</code></td>
+<td>:bride_with_veil: <code>:bride_with_veil:</code></td>
+</tr>
+<tr>
+<td>:person_with_pouting_face: <code>:person_with_pouting_face:</code></td>
+<td>:person_frowning: <code>:person_frowning:</code></td>
+<td>:bow: <code>:bow:</code></td>
+</tr>
+<tr>
+<td>:couplekiss: <code>:couplekiss:</code></td>
+<td>:couple_with_heart: <code>:couple_with_heart:</code></td>
+<td>:massage: <code>:massage:</code></td>
+</tr>
+<tr>
+<td>:haircut: <code>:haircut:</code></td>
+<td>:nail_care: <code>:nail_care:</code></td>
+<td>:boy: <code>:boy:</code></td>
+</tr>
+<tr>
+<td>:girl: <code>:girl:</code></td>
+<td>:woman: <code>:woman:</code></td>
+<td>:man: <code>:man:</code></td>
+</tr>
+<tr>
+<td>:baby: <code>:baby:</code></td>
+<td>:older_woman: <code>:older_woman:</code></td>
+<td>:older_man: <code>:older_man:</code></td>
+</tr>
+<tr>
+<td>:person_with_blond_hair: <code>:person_with_blond_hair:</code></td>
+<td>:man_with_gua_pi_mao: <code>:man_with_gua_pi_mao:</code></td>
+<td>:man_with_turban: <code>:man_with_turban:</code></td>
+</tr>
+<tr>
+<td>:construction_worker: <code>:construction_worker:</code></td>
+<td>:cop: <code>:cop:</code></td>
+<td>:angel: <code>:angel:</code></td>
+</tr>
+<tr>
+<td>:princess: <code>:princess:</code></td>
+<td>:smiley_cat: <code>:smiley_cat:</code></td>
+<td>:smile_cat: <code>:smile_cat:</code></td>
+</tr>
+<tr>
+<td>:heart_eyes_cat: <code>:heart_eyes_cat:</code></td>
+<td>:kissing_cat: <code>:kissing_cat:</code></td>
+<td>:smirk_cat: <code>:smirk_cat:</code></td>
+</tr>
+<tr>
+<td>:scream_cat: <code>:scream_cat:</code></td>
+<td>:crying_cat_face: <code>:crying_cat_face:</code></td>
+<td>:joy_cat: <code>:joy_cat:</code></td>
+</tr>
+<tr>
+<td>:pouting_cat: <code>:pouting_cat:</code></td>
+<td>:japanese_ogre: <code>:japanese_ogre:</code></td>
+<td>:japanese_goblin: <code>:japanese_goblin:</code></td>
+</tr>
+<tr>
+<td>:see_no_evil: <code>:see_no_evil:</code></td>
+<td>:hear_no_evil: <code>:hear_no_evil:</code></td>
+<td>:speak_no_evil: <code>:speak_no_evil:</code></td>
+</tr>
+<tr>
+<td>:guardsman: <code>:guardsman:</code></td>
+<td>:skull: <code>:skull:</code></td>
+<td>:feet: <code>:feet:</code></td>
+</tr>
+<tr>
+<td>:lips: <code>:lips:</code></td>
+<td>:kiss: <code>:kiss:</code></td>
+<td>:droplet: <code>:droplet:</code></td>
+</tr>
+<tr>
+<td>:ear: <code>:ear:</code></td>
+<td>:eyes: <code>:eyes:</code></td>
+<td>:nose: <code>:nose:</code></td>
+</tr>
+<tr>
+<td>:tongue: <code>:tongue:</code></td>
+<td>:love_letter: <code>:love_letter:</code></td>
+<td>:bust_in_silhouette: <code>:bust_in_silhouette:</code></td>
+</tr>
+<tr>
+<td>:busts_in_silhouette: <code>:busts_in_silhouette:</code></td>
+<td>:speech_balloon: <code>:speech_balloon:</code></td>
+<td>:thought_balloon: <code>:thought_balloon:</code></td>
+</tr>
+<tr>
+<td>:feelsgood: <code>:feelsgood:</code></td>
+<td>:finnadie: <code>:finnadie:</code></td>
+<td>:goberserk: <code>:goberserk:</code></td>
+</tr>
+<tr>
+<td>:godmode: <code>:godmode:</code></td>
+<td>:hurtrealbad: <code>:hurtrealbad:</code></td>
+<td>:rage1: <code>:rage1:</code></td>
+</tr>
+<tr>
+<td>:rage2: <code>:rage2:</code></td>
+<td>:rage3: <code>:rage3:</code></td>
+<td>:rage4: <code>:rage4:</code></td>
+</tr>
+<tr>
+<td>:suspect: <code>:suspect:</code></td>
+<td>:trollface: <code>:trollface:</code></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Nature</p>
+<table>
+<thead>
+<tr>
+<th>:sunny: <code>:sunny:</code></th>
+<th>:umbrella: <code>:umbrella:</code></th>
+<th>:cloud: <code>:cloud:</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>:snowflake: <code>:snowflake:</code></td>
+<td>:snowman: <code>:snowman:</code></td>
+<td>:zap: <code>:zap:</code></td>
+</tr>
+<tr>
+<td>:cyclone: <code>:cyclone:</code></td>
+<td>:foggy: <code>:foggy:</code></td>
+<td>:ocean: <code>:ocean:</code></td>
+</tr>
+<tr>
+<td>:cat: <code>:cat:</code></td>
+<td>:dog: <code>:dog:</code></td>
+<td>:mouse: <code>:mouse:</code></td>
+</tr>
+<tr>
+<td>:hamster: <code>:hamster:</code></td>
+<td>:rabbit: <code>:rabbit:</code></td>
+<td>:wolf: <code>:wolf:</code></td>
+</tr>
+<tr>
+<td>:frog: <code>:frog:</code></td>
+<td>:tiger: <code>:tiger:</code></td>
+<td>:koala: <code>:koala:</code></td>
+</tr>
+<tr>
+<td>:bear: <code>:bear:</code></td>
+<td>:pig: <code>:pig:</code></td>
+<td>:pig_nose: <code>:pig_nose:</code></td>
+</tr>
+<tr>
+<td>:cow: <code>:cow:</code></td>
+<td>:boar: <code>:boar:</code></td>
+<td>:monkey_face: <code>:monkey_face:</code></td>
+</tr>
+<tr>
+<td>:monkey: <code>:monkey:</code></td>
+<td>:horse: <code>:horse:</code></td>
+<td>:racehorse: <code>:racehorse:</code></td>
+</tr>
+<tr>
+<td>:camel: <code>:camel:</code></td>
+<td>:sheep: <code>:sheep:</code></td>
+<td>:elephant: <code>:elephant:</code></td>
+</tr>
+<tr>
+<td>:panda_face: <code>:panda_face:</code></td>
+<td>:snake: <code>:snake:</code></td>
+<td>:bird: <code>:bird:</code></td>
+</tr>
+<tr>
+<td>:baby_chick: <code>:baby_chick:</code></td>
+<td>:hatched_chick: <code>:hatched_chick:</code></td>
+<td>:hatching_chick: <code>:hatching_chick:</code></td>
+</tr>
+<tr>
+<td>:chicken: <code>:chicken:</code></td>
+<td>:penguin: <code>:penguin:</code></td>
+<td>:turtle: <code>:turtle:</code></td>
+</tr>
+<tr>
+<td>:bug: <code>:bug:</code></td>
+<td>:honeybee: <code>:honeybee:</code></td>
+<td>:ant: <code>:ant:</code></td>
+</tr>
+<tr>
+<td>:beetle: <code>:beetle:</code></td>
+<td>:snail: <code>:snail:</code></td>
+<td>:octopus: <code>:octopus:</code></td>
+</tr>
+<tr>
+<td>:tropical_fish: <code>:tropical_fish:</code></td>
+<td>:fish: <code>:fish:</code></td>
+<td>:whale: <code>:whale:</code></td>
+</tr>
+<tr>
+<td>:whale2: <code>:whale2:</code></td>
+<td>:dolphin: <code>:dolphin:</code></td>
+<td>:cow2: <code>:cow2:</code></td>
+</tr>
+<tr>
+<td>:ram: <code>:ram:</code></td>
+<td>:rat: <code>:rat:</code></td>
+<td>:water_buffalo: <code>:water_buffalo:</code></td>
+</tr>
+<tr>
+<td>:tiger2: <code>:tiger2:</code></td>
+<td>:rabbit2: <code>:rabbit2:</code></td>
+<td>:dragon: <code>:dragon:</code></td>
+</tr>
+<tr>
+<td>:goat: <code>:goat:</code></td>
+<td>:rooster: <code>:rooster:</code></td>
+<td>:dog2: <code>:dog2:</code></td>
+</tr>
+<tr>
+<td>:pig2: <code>:pig2:</code></td>
+<td>:mouse2: <code>:mouse2:</code></td>
+<td>:ox: <code>:ox:</code></td>
+</tr>
+<tr>
+<td>:dragon_face: <code>:dragon_face:</code></td>
+<td>:blowfish: <code>:blowfish:</code></td>
+<td>:crocodile: <code>:crocodile:</code></td>
+</tr>
+<tr>
+<td>:dromedary_camel: <code>:dromedary_camel:</code></td>
+<td>:leopard: <code>:leopard:</code></td>
+<td>:cat2: <code>:cat2:</code></td>
+</tr>
+<tr>
+<td>:poodle: <code>:poodle:</code></td>
+<td>:paw_prints: <code>:paw_prints:</code></td>
+<td>:bouquet: <code>:bouquet:</code></td>
+</tr>
+<tr>
+<td>:cherry_blossom: <code>:cherry_blossom:</code></td>
+<td>:tulip: <code>:tulip:</code></td>
+<td>:four_leaf_clover: <code>:four_leaf_clover:</code></td>
+</tr>
+<tr>
+<td>:rose: <code>:rose:</code></td>
+<td>:sunflower: <code>:sunflower:</code></td>
+<td>:hibiscus: <code>:hibiscus:</code></td>
+</tr>
+<tr>
+<td>:maple_leaf: <code>:maple_leaf:</code></td>
+<td>:leaves: <code>:leaves:</code></td>
+<td>:fallen_leaf: <code>:fallen_leaf:</code></td>
+</tr>
+<tr>
+<td>:herb: <code>:herb:</code></td>
+<td>:mushroom: <code>:mushroom:</code></td>
+<td>:cactus: <code>:cactus:</code></td>
+</tr>
+<tr>
+<td>:palm_tree: <code>:palm_tree:</code></td>
+<td>:evergreen_tree: <code>:evergreen_tree:</code></td>
+<td>:deciduous_tree: <code>:deciduous_tree:</code></td>
+</tr>
+<tr>
+<td>:chestnut: <code>:chestnut:</code></td>
+<td>:seedling: <code>:seedling:</code></td>
+<td>:blossom: <code>:blossom:</code></td>
+</tr>
+<tr>
+<td>:ear_of_rice: <code>:ear_of_rice:</code></td>
+<td>:shell: <code>:shell:</code></td>
+<td>:globe_with_meridians: <code>:globe_with_meridians:</code></td>
+</tr>
+<tr>
+<td>:sun_with_face: <code>:sun_with_face:</code></td>
+<td>:full_moon_with_face: <code>:full_moon_with_face:</code></td>
+<td>:new_moon_with_face: <code>:new_moon_with_face:</code></td>
+</tr>
+<tr>
+<td>:new_moon: <code>:new_moon:</code></td>
+<td>:waxing_crescent_moon: <code>:waxing_crescent_moon:</code></td>
+<td>:first_quarter_moon: <code>:first_quarter_moon:</code></td>
+</tr>
+<tr>
+<td>:waxing_gibbous_moon: <code>:waxing_gibbous_moon:</code></td>
+<td>:full_moon: <code>:full_moon:</code></td>
+<td>:waning_gibbous_moon: <code>:waning_gibbous_moon:</code></td>
+</tr>
+<tr>
+<td>:last_quarter_moon: <code>:last_quarter_moon:</code></td>
+<td>:waning_crescent_moon: <code>:waning_crescent_moon:</code></td>
+<td>:last_quarter_moon_with_face: <code>:last_quarter_moon_with_face:</code></td>
+</tr>
+<tr>
+<td>:first_quarter_moon_with_face: <code>:first_quarter_moon_with_face:</code></td>
+<td>:moon: <code>:moon:</code></td>
+<td>:earth_africa: <code>:earth_africa:</code></td>
+</tr>
+<tr>
+<td>:earth_americas: <code>:earth_americas:</code></td>
+<td>:earth_asia: <code>:earth_asia:</code></td>
+<td>:volcano: <code>:volcano:</code></td>
+</tr>
+<tr>
+<td>:milky_way: <code>:milky_way:</code></td>
+<td>:partly_sunny: <code>:partly_sunny:</code></td>
+<td>:octocat: <code>:octocat:</code></td>
+</tr>
+<tr>
+<td>:squirrel: <code>:squirrel:</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Objects</p>
+<table>
+<thead>
+<tr>
+<th>:bamboo: <code>:bamboo:</code></th>
+<th>:gift_heart: <code>:gift_heart:</code></th>
+<th>:dolls: <code>:dolls:</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>:school_satchel: <code>:school_satchel:</code></td>
+<td>:mortar_board: <code>:mortar_board:</code></td>
+<td>:flags: <code>:flags:</code></td>
+</tr>
+<tr>
+<td>:fireworks: <code>:fireworks:</code></td>
+<td>:sparkler: <code>:sparkler:</code></td>
+<td>:wind_chime: <code>:wind_chime:</code></td>
+</tr>
+<tr>
+<td>:rice_scene: <code>:rice_scene:</code></td>
+<td>:jack_o_lantern: <code>:jack_o_lantern:</code></td>
+<td>:ghost: <code>:ghost:</code></td>
+</tr>
+<tr>
+<td>:santa: <code>:santa:</code></td>
+<td>:christmas_tree: <code>:christmas_tree:</code></td>
+<td>:gift: <code>:gift:</code></td>
+</tr>
+<tr>
+<td>:bell: <code>:bell:</code></td>
+<td>:no_bell: <code>:no_bell:</code></td>
+<td>:tanabata_tree: <code>:tanabata_tree:</code></td>
+</tr>
+<tr>
+<td>:tada: <code>:tada:</code></td>
+<td>:confetti_ball: <code>:confetti_ball:</code></td>
+<td>:balloon: <code>:balloon:</code></td>
+</tr>
+<tr>
+<td>:crystal_ball: <code>:crystal_ball:</code></td>
+<td>:cd: <code>:cd:</code></td>
+<td>:dvd: <code>:dvd:</code></td>
+</tr>
+<tr>
+<td>:floppy_disk: <code>:floppy_disk:</code></td>
+<td>:camera: <code>:camera:</code></td>
+<td>:video_camera: <code>:video_camera:</code></td>
+</tr>
+<tr>
+<td>:movie_camera: <code>:movie_camera:</code></td>
+<td>:computer: <code>:computer:</code></td>
+<td>:tv: <code>:tv:</code></td>
+</tr>
+<tr>
+<td>:iphone: <code>:iphone:</code></td>
+<td>:phone: <code>:phone:</code></td>
+<td>:telephone: <code>:telephone:</code></td>
+</tr>
+<tr>
+<td>:telephone_receiver: <code>:telephone_receiver:</code></td>
+<td>:pager: <code>:pager:</code></td>
+<td>:fax: <code>:fax:</code></td>
+</tr>
+<tr>
+<td>:minidisc: <code>:minidisc:</code></td>
+<td>:vhs: <code>:vhs:</code></td>
+<td>:sound: <code>:sound:</code></td>
+</tr>
+<tr>
+<td>:speaker: <code>:speaker:</code></td>
+<td>:mute: <code>:mute:</code></td>
+<td>:loudspeaker: <code>:loudspeaker:</code></td>
+</tr>
+<tr>
+<td>:mega: <code>:mega:</code></td>
+<td>:hourglass: <code>:hourglass:</code></td>
+<td>:hourglass_flowing_sand: <code>:hourglass_flowing_sand:</code></td>
+</tr>
+<tr>
+<td>:alarm_clock: <code>:alarm_clock:</code></td>
+<td>:watch: <code>:watch:</code></td>
+<td>:radio: <code>:radio:</code></td>
+</tr>
+<tr>
+<td>:satellite: <code>:satellite:</code></td>
+<td>:loop: <code>:loop:</code></td>
+<td>:mag: <code>:mag:</code></td>
+</tr>
+<tr>
+<td>:mag_right: <code>:mag_right:</code></td>
+<td>:unlock: <code>:unlock:</code></td>
+<td>:lock: <code>:lock:</code></td>
+</tr>
+<tr>
+<td>:lock_with_ink_pen: <code>:lock_with_ink_pen:</code></td>
+<td>:closed_lock_with_key: <code>:closed_lock_with_key:</code></td>
+<td>:key: <code>:key:</code></td>
+</tr>
+<tr>
+<td>:bulb: <code>:bulb:</code></td>
+<td>:flashlight: <code>:flashlight:</code></td>
+<td>:high_brightness: <code>:high_brightness:</code></td>
+</tr>
+<tr>
+<td>:low_brightness: <code>:low_brightness:</code></td>
+<td>:electric_plug: <code>:electric_plug:</code></td>
+<td>:battery: <code>:battery:</code></td>
+</tr>
+<tr>
+<td>:calling: <code>:calling:</code></td>
+<td>:email: <code>:email:</code></td>
+<td>:mailbox: <code>:mailbox:</code></td>
+</tr>
+<tr>
+<td>:postbox: <code>:postbox:</code></td>
+<td>:bath: <code>:bath:</code></td>
+<td>:bathtub: <code>:bathtub:</code></td>
+</tr>
+<tr>
+<td>:shower: <code>:shower:</code></td>
+<td>:toilet: <code>:toilet:</code></td>
+<td>:wrench: <code>:wrench:</code></td>
+</tr>
+<tr>
+<td>:nut_and_bolt: <code>:nut_and_bolt:</code></td>
+<td>:hammer: <code>:hammer:</code></td>
+<td>:seat: <code>:seat:</code></td>
+</tr>
+<tr>
+<td>:moneybag: <code>:moneybag:</code></td>
+<td>:yen: <code>:yen:</code></td>
+<td>:dollar: <code>:dollar:</code></td>
+</tr>
+<tr>
+<td>:pound: <code>:pound:</code></td>
+<td>:euro: <code>:euro:</code></td>
+<td>:credit_card: <code>:credit_card:</code></td>
+</tr>
+<tr>
+<td>:money_with_wings: <code>:money_with_wings:</code></td>
+<td>:e-mail: <code>:e-mail:</code></td>
+<td>:inbox_tray: <code>:inbox_tray:</code></td>
+</tr>
+<tr>
+<td>:outbox_tray: <code>:outbox_tray:</code></td>
+<td>:envelope: <code>:envelope:</code></td>
+<td>:incoming_envelope: <code>:incoming_envelope:</code></td>
+</tr>
+<tr>
+<td>:postal_horn: <code>:postal_horn:</code></td>
+<td>:mailbox_closed: <code>:mailbox_closed:</code></td>
+<td>:mailbox_with_mail: <code>:mailbox_with_mail:</code></td>
+</tr>
+<tr>
+<td>:mailbox_with_no_mail: <code>:mailbox_with_no_mail:</code></td>
+<td>:door: <code>:door:</code></td>
+<td>:smoking: <code>:smoking:</code></td>
+</tr>
+<tr>
+<td>:bomb: <code>:bomb:</code></td>
+<td>:gun: <code>:gun:</code></td>
+<td>:hocho: <code>:hocho:</code></td>
+</tr>
+<tr>
+<td>:pill: <code>:pill:</code></td>
+<td>:syringe: <code>:syringe:</code></td>
+<td>:page_facing_up: <code>:page_facing_up:</code></td>
+</tr>
+<tr>
+<td>:page_with_curl: <code>:page_with_curl:</code></td>
+<td>:bookmark_tabs: <code>:bookmark_tabs:</code></td>
+<td>:bar_chart: <code>:bar_chart:</code></td>
+</tr>
+<tr>
+<td>:chart_with_upwards_trend: <code>:chart_with_upwards_trend:</code></td>
+<td>:chart_with_downwards_trend: <code>:chart_with_downwards_trend:</code></td>
+<td>:scroll: <code>:scroll:</code></td>
+</tr>
+<tr>
+<td>:clipboard: <code>:clipboard:</code></td>
+<td>:calendar: <code>:calendar:</code></td>
+<td>:date: <code>:date:</code></td>
+</tr>
+<tr>
+<td>:card_index: <code>:card_index:</code></td>
+<td>:file_folder: <code>:file_folder:</code></td>
+<td>:open_file_folder: <code>:open_file_folder:</code></td>
+</tr>
+<tr>
+<td>:scissors: <code>:scissors:</code></td>
+<td>:pushpin: <code>:pushpin:</code></td>
+<td>:paperclip: <code>:paperclip:</code></td>
+</tr>
+<tr>
+<td>:black_nib: <code>:black_nib:</code></td>
+<td>:pencil2: <code>:pencil2:</code></td>
+<td>:straight_ruler: <code>:straight_ruler:</code></td>
+</tr>
+<tr>
+<td>:triangular_ruler: <code>:triangular_ruler:</code></td>
+<td>:closed_book: <code>:closed_book:</code></td>
+<td>:green_book: <code>:green_book:</code></td>
+</tr>
+<tr>
+<td>:blue_book: <code>:blue_book:</code></td>
+<td>:orange_book: <code>:orange_book:</code></td>
+<td>:notebook: <code>:notebook:</code></td>
+</tr>
+<tr>
+<td>:notebook_with_decorative_cover: <code>:notebook_with_decorative_cover:</code></td>
+<td>:ledger: <code>:ledger:</code></td>
+<td>:books: <code>:books:</code></td>
+</tr>
+<tr>
+<td>:bookmark: <code>:bookmark:</code></td>
+<td>:name_badge: <code>:name_badge:</code></td>
+<td>:microscope: <code>:microscope:</code></td>
+</tr>
+<tr>
+<td>:telescope: <code>:telescope:</code></td>
+<td>:newspaper: <code>:newspaper:</code></td>
+<td>:football: <code>:football:</code></td>
+</tr>
+<tr>
+<td>:basketball: <code>:basketball:</code></td>
+<td>:soccer: <code>:soccer:</code></td>
+<td>:baseball: <code>:baseball:</code></td>
+</tr>
+<tr>
+<td>:tennis: <code>:tennis:</code></td>
+<td>:8ball: <code>:8ball:</code></td>
+<td>:rugby_football: <code>:rugby_football:</code></td>
+</tr>
+<tr>
+<td>:bowling: <code>:bowling:</code></td>
+<td>:golf: <code>:golf:</code></td>
+<td>:mountain_bicyclist: <code>:mountain_bicyclist:</code></td>
+</tr>
+<tr>
+<td>:bicyclist: <code>:bicyclist:</code></td>
+<td>:horse_racing: <code>:horse_racing:</code></td>
+<td>:snowboarder: <code>:snowboarder:</code></td>
+</tr>
+<tr>
+<td>:swimmer: <code>:swimmer:</code></td>
+<td>:surfer: <code>:surfer:</code></td>
+<td>:ski: <code>:ski:</code></td>
+</tr>
+<tr>
+<td>:spades: <code>:spades:</code></td>
+<td>:hearts: <code>:hearts:</code></td>
+<td>:clubs: <code>:clubs:</code></td>
+</tr>
+<tr>
+<td>:diamonds: <code>:diamonds:</code></td>
+<td>:gem: <code>:gem:</code></td>
+<td>:ring: <code>:ring:</code></td>
+</tr>
+<tr>
+<td>:trophy: <code>:trophy:</code></td>
+<td>:musical_score: <code>:musical_score:</code></td>
+<td>:musical_keyboard: <code>:musical_keyboard:</code></td>
+</tr>
+<tr>
+<td>:violin: <code>:violin:</code></td>
+<td>:space_invader: <code>:space_invader:</code></td>
+<td>:video_game: <code>:video_game:</code></td>
+</tr>
+<tr>
+<td>:black_joker: <code>:black_joker:</code></td>
+<td>:flower_playing_cards: <code>:flower_playing_cards:</code></td>
+<td>:game_die: <code>:game_die:</code></td>
+</tr>
+<tr>
+<td>:dart: <code>:dart:</code></td>
+<td>:mahjong: <code>:mahjong:</code></td>
+<td>:clapper: <code>:clapper:</code></td>
+</tr>
+<tr>
+<td>:memo: <code>:memo:</code></td>
+<td>:pencil: <code>:pencil:</code></td>
+<td>:book: <code>:book:</code></td>
+</tr>
+<tr>
+<td>:art: <code>:art:</code></td>
+<td>:microphone: <code>:microphone:</code></td>
+<td>:headphones: <code>:headphones:</code></td>
+</tr>
+<tr>
+<td>:trumpet: <code>:trumpet:</code></td>
+<td>:saxophone: <code>:saxophone:</code></td>
+<td>:guitar: <code>:guitar:</code></td>
+</tr>
+<tr>
+<td>:shoe: <code>:shoe:</code></td>
+<td>:sandal: <code>:sandal:</code></td>
+<td>:high_heel: <code>:high_heel:</code></td>
+</tr>
+<tr>
+<td>:lipstick: <code>:lipstick:</code></td>
+<td>:boot: <code>:boot:</code></td>
+<td>:shirt: <code>:shirt:</code></td>
+</tr>
+<tr>
+<td>:tshirt: <code>:tshirt:</code></td>
+<td>:necktie: <code>:necktie:</code></td>
+<td>:womans_clothes: <code>:womans_clothes:</code></td>
+</tr>
+<tr>
+<td>:dress: <code>:dress:</code></td>
+<td>:running_shirt_with_sash: <code>:running_shirt_with_sash:</code></td>
+<td>:jeans: <code>:jeans:</code></td>
+</tr>
+<tr>
+<td>:kimono: <code>:kimono:</code></td>
+<td>:bikini: <code>:bikini:</code></td>
+<td>:ribbon: <code>:ribbon:</code></td>
+</tr>
+<tr>
+<td>:tophat: <code>:tophat:</code></td>
+<td>:crown: <code>:crown:</code></td>
+<td>:womans_hat: <code>:womans_hat:</code></td>
+</tr>
+<tr>
+<td>:mans_shoe: <code>:mans_shoe:</code></td>
+<td>:closed_umbrella: <code>:closed_umbrella:</code></td>
+<td>:briefcase: <code>:briefcase:</code></td>
+</tr>
+<tr>
+<td>:handbag: <code>:handbag:</code></td>
+<td>:pouch: <code>:pouch:</code></td>
+<td>:purse: <code>:purse:</code></td>
+</tr>
+<tr>
+<td>:eyeglasses: <code>:eyeglasses:</code></td>
+<td>:fishing_pole_and_fish: <code>:fishing_pole_and_fish:</code></td>
+<td>:coffee: <code>:coffee:</code></td>
+</tr>
+<tr>
+<td>:tea: <code>:tea:</code></td>
+<td>:sake: <code>:sake:</code></td>
+<td>:baby_bottle: <code>:baby_bottle:</code></td>
+</tr>
+<tr>
+<td>:beer: <code>:beer:</code></td>
+<td>:beers: <code>:beers:</code></td>
+<td>:cocktail: <code>:cocktail:</code></td>
+</tr>
+<tr>
+<td>:tropical_drink: <code>:tropical_drink:</code></td>
+<td>:wine_glass: <code>:wine_glass:</code></td>
+<td>:fork_and_knife: <code>:fork_and_knife:</code></td>
+</tr>
+<tr>
+<td>:pizza: <code>:pizza:</code></td>
+<td>:hamburger: <code>:hamburger:</code></td>
+<td>:fries: <code>:fries:</code></td>
+</tr>
+<tr>
+<td>:poultry_leg: <code>:poultry_leg:</code></td>
+<td>:meat_on_bone: <code>:meat_on_bone:</code></td>
+<td>:spaghetti: <code>:spaghetti:</code></td>
+</tr>
+<tr>
+<td>:curry: <code>:curry:</code></td>
+<td>:fried_shrimp: <code>:fried_shrimp:</code></td>
+<td>:bento: <code>:bento:</code></td>
+</tr>
+<tr>
+<td>:sushi: <code>:sushi:</code></td>
+<td>:fish_cake: <code>:fish_cake:</code></td>
+<td>:rice_ball: <code>:rice_ball:</code></td>
+</tr>
+<tr>
+<td>:rice_cracker: <code>:rice_cracker:</code></td>
+<td>:rice: <code>:rice:</code></td>
+<td>:ramen: <code>:ramen:</code></td>
+</tr>
+<tr>
+<td>:stew: <code>:stew:</code></td>
+<td>:oden: <code>:oden:</code></td>
+<td>:dango: <code>:dango:</code></td>
+</tr>
+<tr>
+<td>:egg: <code>:egg:</code></td>
+<td>:bread: <code>:bread:</code></td>
+<td>:doughnut: <code>:doughnut:</code></td>
+</tr>
+<tr>
+<td>:custard: <code>:custard:</code></td>
+<td>:icecream: <code>:icecream:</code></td>
+<td>:ice_cream: <code>:ice_cream:</code></td>
+</tr>
+<tr>
+<td>:shaved_ice: <code>:shaved_ice:</code></td>
+<td>:birthday: <code>:birthday:</code></td>
+<td>:cake: <code>:cake:</code></td>
+</tr>
+<tr>
+<td>:cookie: <code>:cookie:</code></td>
+<td>:chocolate_bar: <code>:chocolate_bar:</code></td>
+<td>:candy: <code>:candy:</code></td>
+</tr>
+<tr>
+<td>:lollipop: <code>:lollipop:</code></td>
+<td>:honey_pot: <code>:honey_pot:</code></td>
+<td>:apple: <code>:apple:</code></td>
+</tr>
+<tr>
+<td>:green_apple: <code>:green_apple:</code></td>
+<td>:tangerine: <code>:tangerine:</code></td>
+<td>:lemon: <code>:lemon:</code></td>
+</tr>
+<tr>
+<td>:cherries: <code>:cherries:</code></td>
+<td>:grapes: <code>:grapes:</code></td>
+<td>:watermelon: <code>:watermelon:</code></td>
+</tr>
+<tr>
+<td>:strawberry: <code>:strawberry:</code></td>
+<td>:peach: <code>:peach:</code></td>
+<td>:melon: <code>:melon:</code></td>
+</tr>
+<tr>
+<td>:banana: <code>:banana:</code></td>
+<td>:pear: <code>:pear:</code></td>
+<td>:pineapple: <code>:pineapple:</code></td>
+</tr>
+<tr>
+<td>:sweet_potato: <code>:sweet_potato:</code></td>
+<td>:eggplant: <code>:eggplant:</code></td>
+<td>:tomato: <code>:tomato:</code></td>
+</tr>
+<tr>
+<td>:corn: <code>:corn:</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Places</p>
+<table>
+<thead>
+<tr>
+<th>:house: <code>:house:</code></th>
+<th>:house_with_garden: <code>:house_with_garden:</code></th>
+<th>:school: <code>:school:</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>:office: <code>:office:</code></td>
+<td>:post_office: <code>:post_office:</code></td>
+<td>:hospital: <code>:hospital:</code></td>
+</tr>
+<tr>
+<td>:bank: <code>:bank:</code></td>
+<td>:convenience_store: <code>:convenience_store:</code></td>
+<td>:love_hotel: <code>:love_hotel:</code></td>
+</tr>
+<tr>
+<td>:hotel: <code>:hotel:</code></td>
+<td>:wedding: <code>:wedding:</code></td>
+<td>:church: <code>:church:</code></td>
+</tr>
+<tr>
+<td>:department_store: <code>:department_store:</code></td>
+<td>:european_post_office: <code>:european_post_office:</code></td>
+<td>:city_sunrise: <code>:city_sunrise:</code></td>
+</tr>
+<tr>
+<td>:city_sunset: <code>:city_sunset:</code></td>
+<td>:japanese_castle: <code>:japanese_castle:</code></td>
+<td>:european_castle: <code>:european_castle:</code></td>
+</tr>
+<tr>
+<td>:tent: <code>:tent:</code></td>
+<td>:factory: <code>:factory:</code></td>
+<td>:tokyo_tower: <code>:tokyo_tower:</code></td>
+</tr>
+<tr>
+<td>:japan: <code>:japan:</code></td>
+<td>:mount_fuji: <code>:mount_fuji:</code></td>
+<td>:sunrise_over_mountains: <code>:sunrise_over_mountains:</code></td>
+</tr>
+<tr>
+<td>:sunrise: <code>:sunrise:</code></td>
+<td>:stars: <code>:stars:</code></td>
+<td>:statue_of_liberty: <code>:statue_of_liberty:</code></td>
+</tr>
+<tr>
+<td>:bridge_at_night: <code>:bridge_at_night:</code></td>
+<td>:carousel_horse: <code>:carousel_horse:</code></td>
+<td>:rainbow: <code>:rainbow:</code></td>
+</tr>
+<tr>
+<td>:ferris_wheel: <code>:ferris_wheel:</code></td>
+<td>:fountain: <code>:fountain:</code></td>
+<td>:roller_coaster: <code>:roller_coaster:</code></td>
+</tr>
+<tr>
+<td>:ship: <code>:ship:</code></td>
+<td>:speedboat: <code>:speedboat:</code></td>
+<td>:boat: <code>:boat:</code></td>
+</tr>
+<tr>
+<td>:sailboat: <code>:sailboat:</code></td>
+<td>:rowboat: <code>:rowboat:</code></td>
+<td>:anchor: <code>:anchor:</code></td>
+</tr>
+<tr>
+<td>:rocket: <code>:rocket:</code></td>
+<td>:airplane: <code>:airplane:</code></td>
+<td>:helicopter: <code>:helicopter:</code></td>
+</tr>
+<tr>
+<td>:steam_locomotive: <code>:steam_locomotive:</code></td>
+<td>:tram: <code>:tram:</code></td>
+<td>:mountain_railway: <code>:mountain_railway:</code></td>
+</tr>
+<tr>
+<td>:bike: <code>:bike:</code></td>
+<td>:aerial_tramway: <code>:aerial_tramway:</code></td>
+<td>:suspension_railway: <code>:suspension_railway:</code></td>
+</tr>
+<tr>
+<td>:mountain_cableway: <code>:mountain_cableway:</code></td>
+<td>:tractor: <code>:tractor:</code></td>
+<td>:blue_car: <code>:blue_car:</code></td>
+</tr>
+<tr>
+<td>:oncoming_automobile: <code>:oncoming_automobile:</code></td>
+<td>:car: <code>:car:</code></td>
+<td>:red_car: <code>:red_car:</code></td>
+</tr>
+<tr>
+<td>:taxi: <code>:taxi:</code></td>
+<td>:oncoming_taxi: <code>:oncoming_taxi:</code></td>
+<td>:articulated_lorry: <code>:articulated_lorry:</code></td>
+</tr>
+<tr>
+<td>:bus: <code>:bus:</code></td>
+<td>:oncoming_bus: <code>:oncoming_bus:</code></td>
+<td>:rotating_light: <code>:rotating_light:</code></td>
+</tr>
+<tr>
+<td>:police_car: <code>:police_car:</code></td>
+<td>:oncoming_police_car: <code>:oncoming_police_car:</code></td>
+<td>:fire_engine: <code>:fire_engine:</code></td>
+</tr>
+<tr>
+<td>:ambulance: <code>:ambulance:</code></td>
+<td>:minibus: <code>:minibus:</code></td>
+<td>:truck: <code>:truck:</code></td>
+</tr>
+<tr>
+<td>:train: <code>:train:</code></td>
+<td>:station: <code>:station:</code></td>
+<td>:train2: <code>:train2:</code></td>
+</tr>
+<tr>
+<td>:bullettrain_front: <code>:bullettrain_front:</code></td>
+<td>:bullettrain_side: <code>:bullettrain_side:</code></td>
+<td>:light_rail: <code>:light_rail:</code></td>
+</tr>
+<tr>
+<td>:monorail: <code>:monorail:</code></td>
+<td>:railway_car: <code>:railway_car:</code></td>
+<td>:trolleybus: <code>:trolleybus:</code></td>
+</tr>
+<tr>
+<td>:ticket: <code>:ticket:</code></td>
+<td>:fuelpump: <code>:fuelpump:</code></td>
+<td>:vertical_traffic_light: <code>:vertical_traffic_light:</code></td>
+</tr>
+<tr>
+<td>:traffic_light: <code>:traffic_light:</code></td>
+<td>:warning: <code>:warning:</code></td>
+<td>:construction: <code>:construction:</code></td>
+</tr>
+<tr>
+<td>:beginner: <code>:beginner:</code></td>
+<td>:atm: <code>:atm:</code></td>
+<td>:slot_machine: <code>:slot_machine:</code></td>
+</tr>
+<tr>
+<td>:busstop: <code>:busstop:</code></td>
+<td>:barber: <code>:barber:</code></td>
+<td>:hotsprings: <code>:hotsprings:</code></td>
+</tr>
+<tr>
+<td>:checkered_flag: <code>:checkered_flag:</code></td>
+<td>:crossed_flags: <code>:crossed_flags:</code></td>
+<td>:izakaya_lantern: <code>:izakaya_lantern:</code></td>
+</tr>
+<tr>
+<td>:moyai: <code>:moyai:</code></td>
+<td>:circus_tent: <code>:circus_tent:</code></td>
+<td>:performing_arts: <code>:performing_arts:</code></td>
+</tr>
+<tr>
+<td>:round_pushpin: <code>:round_pushpin:</code></td>
+<td>:triangular_flag_on_post: <code>:triangular_flag_on_post:</code></td>
+<td>:jp: <code>:jp:</code></td>
+</tr>
+<tr>
+<td>:kr: <code>:kr:</code></td>
+<td>:cn: <code>:cn:</code></td>
+<td>:us: <code>:us:</code></td>
+</tr>
+<tr>
+<td>:fr: <code>:fr:</code></td>
+<td>:es: <code>:es:</code></td>
+<td>:it: <code>:it:</code></td>
+</tr>
+<tr>
+<td>:ru: <code>:ru:</code></td>
+<td>:gb: <code>:gb:</code></td>
+<td>:uk: <code>:uk:</code></td>
+</tr>
+<tr>
+<td>:de: <code>:de:</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Symbols</p>
+<table>
+<thead>
+<tr>
+<th>:one: <code>:one:</code></th>
+<th>:two: <code>:two:</code></th>
+<th>:three: <code>:three:</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>:four: <code>:four:</code></td>
+<td>:five: <code>:five:</code></td>
+<td>:six: <code>:six:</code></td>
+</tr>
+<tr>
+<td>:seven: <code>:seven:</code></td>
+<td>:eight: <code>:eight:</code></td>
+<td>:nine: <code>:nine:</code></td>
+</tr>
+<tr>
+<td>:keycap_ten: <code>:keycap_ten:</code></td>
+<td>:1234: <code>:1234:</code></td>
+<td>:zero: <code>:zero:</code></td>
+</tr>
+<tr>
+<td>:hash: <code>:hash:</code></td>
+<td>:symbols: <code>:symbols:</code></td>
+<td>:arrow_backward: <code>:arrow_backward:</code></td>
+</tr>
+<tr>
+<td>:arrow_down: <code>:arrow_down:</code></td>
+<td>:arrow_forward: <code>:arrow_forward:</code></td>
+<td>:arrow_left: <code>:arrow_left:</code></td>
+</tr>
+<tr>
+<td>:capital_abcd: <code>:capital_abcd:</code></td>
+<td>:abcd: <code>:abcd:</code></td>
+<td>:abc: <code>:abc:</code></td>
+</tr>
+<tr>
+<td>:arrow_lower_left: <code>:arrow_lower_left:</code></td>
+<td>:arrow_lower_right: <code>:arrow_lower_right:</code></td>
+<td>:arrow_right: <code>:arrow_right:</code></td>
+</tr>
+<tr>
+<td>:arrow_up: <code>:arrow_up:</code></td>
+<td>:arrow_upper_left: <code>:arrow_upper_left:</code></td>
+<td>:arrow_upper_right: <code>:arrow_upper_right:</code></td>
+</tr>
+<tr>
+<td>:arrow_double_down: <code>:arrow_double_down:</code></td>
+<td>:arrow_double_up: <code>:arrow_double_up:</code></td>
+<td>:arrow_down_small: <code>:arrow_down_small:</code></td>
+</tr>
+<tr>
+<td>:arrow_heading_down: <code>:arrow_heading_down:</code></td>
+<td>:arrow_heading_up: <code>:arrow_heading_up:</code></td>
+<td>:leftwards_arrow_with_hook: <code>:leftwards_arrow_with_hook:</code></td>
+</tr>
+<tr>
+<td>:arrow_right_hook: <code>:arrow_right_hook:</code></td>
+<td>:left_right_arrow: <code>:left_right_arrow:</code></td>
+<td>:arrow_up_down: <code>:arrow_up_down:</code></td>
+</tr>
+<tr>
+<td>:arrow_up_small: <code>:arrow_up_small:</code></td>
+<td>:arrows_clockwise: <code>:arrows_clockwise:</code></td>
+<td>:arrows_counterclockwise: <code>:arrows_counterclockwise:</code></td>
+</tr>
+<tr>
+<td>:rewind: <code>:rewind:</code></td>
+<td>:fast_forward: <code>:fast_forward:</code></td>
+<td>:information_source: <code>:information_source:</code></td>
+</tr>
+<tr>
+<td>:ok: <code>:ok:</code></td>
+<td>:twisted_rightwards_arrows: <code>:twisted_rightwards_arrows:</code></td>
+<td>:repeat: <code>:repeat:</code></td>
+</tr>
+<tr>
+<td>:repeat_one: <code>:repeat_one:</code></td>
+<td>:new: <code>:new:</code></td>
+<td>:top: <code>:top:</code></td>
+</tr>
+<tr>
+<td>:up: <code>:up:</code></td>
+<td>:cool: <code>:cool:</code></td>
+<td>:free: <code>:free:</code></td>
+</tr>
+<tr>
+<td>:ng: <code>:ng:</code></td>
+<td>:cinema: <code>:cinema:</code></td>
+<td>:koko: <code>:koko:</code></td>
+</tr>
+<tr>
+<td>:signal_strength: <code>:signal_strength:</code></td>
+<td>:u5272: <code>:u5272:</code></td>
+<td>:u5408: <code>:u5408:</code></td>
+</tr>
+<tr>
+<td>:u55b6: <code>:u55b6:</code></td>
+<td>:u6307: <code>:u6307:</code></td>
+<td>:u6708: <code>:u6708:</code></td>
+</tr>
+<tr>
+<td>:u6709: <code>:u6709:</code></td>
+<td>:u6e80: <code>:u6e80:</code></td>
+<td>:u7121: <code>:u7121:</code></td>
+</tr>
+<tr>
+<td>:u7533: <code>:u7533:</code></td>
+<td>:u7a7a: <code>:u7a7a:</code></td>
+<td>:u7981: <code>:u7981:</code></td>
+</tr>
+<tr>
+<td>:sa: <code>:sa:</code></td>
+<td>:restroom: <code>:restroom:</code></td>
+<td>:mens: <code>:mens:</code></td>
+</tr>
+<tr>
+<td>:womens: <code>:womens:</code></td>
+<td>:baby_symbol: <code>:baby_symbol:</code></td>
+<td>:no_smoking: <code>:no_smoking:</code></td>
+</tr>
+<tr>
+<td>:parking: <code>:parking:</code></td>
+<td>:wheelchair: <code>:wheelchair:</code></td>
+<td>:metro: <code>:metro:</code></td>
+</tr>
+<tr>
+<td>:baggage_claim: <code>:baggage_claim:</code></td>
+<td>:accept: <code>:accept:</code></td>
+<td>:wc: <code>:wc:</code></td>
+</tr>
+<tr>
+<td>:potable_water: <code>:potable_water:</code></td>
+<td>:put_litter_in_its_place: <code>:put_litter_in_its_place:</code></td>
+<td>:secret: <code>:secret:</code></td>
+</tr>
+<tr>
+<td>:congratulations: <code>:congratulations:</code></td>
+<td>:m: <code>:m:</code></td>
+<td>:passport_control: <code>:passport_control:</code></td>
+</tr>
+<tr>
+<td>:left_luggage: <code>:left_luggage:</code></td>
+<td>:customs: <code>:customs:</code></td>
+<td>:ideograph_advantage: <code>:ideograph_advantage:</code></td>
+</tr>
+<tr>
+<td>:cl: <code>:cl:</code></td>
+<td>:sos: <code>:sos:</code></td>
+<td>:id: <code>:id:</code></td>
+</tr>
+<tr>
+<td>:no_entry_sign: <code>:no_entry_sign:</code></td>
+<td>:underage: <code>:underage:</code></td>
+<td>:no_mobile_phones: <code>:no_mobile_phones:</code></td>
+</tr>
+<tr>
+<td>:do_not_litter: <code>:do_not_litter:</code></td>
+<td>:non-potable_water: <code>:non-potable_water:</code></td>
+<td>:no_bicycles: <code>:no_bicycles:</code></td>
+</tr>
+<tr>
+<td>:no_pedestrians: <code>:no_pedestrians:</code></td>
+<td>:children_crossing: <code>:children_crossing:</code></td>
+<td>:no_entry: <code>:no_entry:</code></td>
+</tr>
+<tr>
+<td>:eight_spoked_asterisk: <code>:eight_spoked_asterisk:</code></td>
+<td>:eight_pointed_black_star: <code>:eight_pointed_black_star:</code></td>
+<td>:heart_decoration: <code>:heart_decoration:</code></td>
+</tr>
+<tr>
+<td>:vs: <code>:vs:</code></td>
+<td>:vibration_mode: <code>:vibration_mode:</code></td>
+<td>:mobile_phone_off: <code>:mobile_phone_off:</code></td>
+</tr>
+<tr>
+<td>:chart: <code>:chart:</code></td>
+<td>:currency_exchange: <code>:currency_exchange:</code></td>
+<td>:aries: <code>:aries:</code></td>
+</tr>
+<tr>
+<td>:taurus: <code>:taurus:</code></td>
+<td>:gemini: <code>:gemini:</code></td>
+<td>:cancer: <code>:cancer:</code></td>
+</tr>
+<tr>
+<td>:leo: <code>:leo:</code></td>
+<td>:virgo: <code>:virgo:</code></td>
+<td>:libra: <code>:libra:</code></td>
+</tr>
+<tr>
+<td>:scorpius: <code>:scorpius:</code></td>
+<td>:sagittarius: <code>:sagittarius:</code></td>
+<td>:capricorn: <code>:capricorn:</code></td>
+</tr>
+<tr>
+<td>:aquarius: <code>:aquarius:</code></td>
+<td>:pisces: <code>:pisces:</code></td>
+<td>:ophiuchus: <code>:ophiuchus:</code></td>
+</tr>
+<tr>
+<td>:six_pointed_star: <code>:six_pointed_star:</code></td>
+<td>:negative_squared_cross_mark: <code>:negative_squared_cross_mark:</code></td>
+<td>:a: <code>:a:</code></td>
+</tr>
+<tr>
+<td>:b: <code>:b:</code></td>
+<td>:ab: <code>:ab:</code></td>
+<td>:o2: <code>:o2:</code></td>
+</tr>
+<tr>
+<td>:diamond_shape_with_a_dot_inside: <code>:diamond_shape_with_a_dot_inside:</code></td>
+<td>:recycle: <code>:recycle:</code></td>
+<td>:end: <code>:end:</code></td>
+</tr>
+<tr>
+<td>:on: <code>:on:</code></td>
+<td>:soon: <code>:soon:</code></td>
+<td>:clock1: <code>:clock1:</code></td>
+</tr>
+<tr>
+<td>:clock130: <code>:clock130:</code></td>
+<td>:clock10: <code>:clock10:</code></td>
+<td>:clock1030: <code>:clock1030:</code></td>
+</tr>
+<tr>
+<td>:clock11: <code>:clock11:</code></td>
+<td>:clock1130: <code>:clock1130:</code></td>
+<td>:clock12: <code>:clock12:</code></td>
+</tr>
+<tr>
+<td>:clock1230: <code>:clock1230:</code></td>
+<td>:clock2: <code>:clock2:</code></td>
+<td>:clock230: <code>:clock230:</code></td>
+</tr>
+<tr>
+<td>:clock3: <code>:clock3:</code></td>
+<td>:clock330: <code>:clock330:</code></td>
+<td>:clock4: <code>:clock4:</code></td>
+</tr>
+<tr>
+<td>:clock430: <code>:clock430:</code></td>
+<td>:clock5: <code>:clock5:</code></td>
+<td>:clock530: <code>:clock530:</code></td>
+</tr>
+<tr>
+<td>:clock6: <code>:clock6:</code></td>
+<td>:clock630: <code>:clock630:</code></td>
+<td>:clock7: <code>:clock7:</code></td>
+</tr>
+<tr>
+<td>:clock730: <code>:clock730:</code></td>
+<td>:clock8: <code>:clock8:</code></td>
+<td>:clock830: <code>:clock830:</code></td>
+</tr>
+<tr>
+<td>:clock9: <code>:clock9:</code></td>
+<td>:clock930: <code>:clock930:</code></td>
+<td>:heavy_dollar_sign: <code>:heavy_dollar_sign:</code></td>
+</tr>
+<tr>
+<td>:copyright: <code>:copyright:</code></td>
+<td>:registered: <code>:registered:</code></td>
+<td>:tm: <code>:tm:</code></td>
+</tr>
+<tr>
+<td>:x: <code>:x:</code></td>
+<td>:heavy_exclamation_mark: <code>:heavy_exclamation_mark:</code></td>
+<td>:bangbang: <code>:bangbang:</code></td>
+</tr>
+<tr>
+<td>:interrobang: <code>:interrobang:</code></td>
+<td>:o: <code>:o:</code></td>
+<td>:heavy_multiplication_x: <code>:heavy_multiplication_x:</code></td>
+</tr>
+<tr>
+<td>:heavy_plus_sign: <code>:heavy_plus_sign:</code></td>
+<td>:heavy_minus_sign: <code>:heavy_minus_sign:</code></td>
+<td>:heavy_division_sign: <code>:heavy_division_sign:</code></td>
+</tr>
+<tr>
+<td>:white_flower: <code>:white_flower:</code></td>
+<td>:100: <code>:100:</code></td>
+<td>:heavy_check_mark: <code>:heavy_check_mark:</code></td>
+</tr>
+<tr>
+<td>:ballot_box_with_check: <code>:ballot_box_with_check:</code></td>
+<td>:radio_button: <code>:radio_button:</code></td>
+<td>:link: <code>:link:</code></td>
+</tr>
+<tr>
+<td>:curly_loop: <code>:curly_loop:</code></td>
+<td>:wavy_dash: <code>:wavy_dash:</code></td>
+<td>:part_alternation_mark: <code>:part_alternation_mark:</code></td>
+</tr>
+<tr>
+<td>:trident: <code>:trident:</code></td>
+<td>:black_square: <code>:black_square:</code></td>
+<td>:white_square: <code>:white_square:</code></td>
+</tr>
+<tr>
+<td>:white_check_mark: <code>:white_check_mark:</code></td>
+<td>:black_square_button: <code>:black_square_button:</code></td>
+<td>:white_square_button: <code>:white_square_button:</code></td>
+</tr>
+<tr>
+<td>:black_circle: <code>:black_circle:</code></td>
+<td>:white_circle: <code>:white_circle:</code></td>
+<td>:red_circle: <code>:red_circle:</code></td>
+</tr>
+<tr>
+<td>:large_blue_circle: <code>:large_blue_circle:</code></td>
+<td>:large_blue_diamond: <code>:large_blue_diamond:</code></td>
+<td>:large_orange_diamond: <code>:large_orange_diamond:</code></td>
+</tr>
+<tr>
+<td>:small_blue_diamond: <code>:small_blue_diamond:</code></td>
+<td>:small_orange_diamond: <code>:small_orange_diamond:</code></td>
+<td>:small_red_triangle: <code>:small_red_triangle:</code></td>
+</tr>
+<tr>
+<td>:small_red_triangle_down: <code>:small_red_triangle_down:</code></td>
+<td>:shipit: <code>:shipit:</code></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+]]></content>
+    <author>
+      <name>Sekiro</name>
+    </author>
+    <category term="cookbook"></category>
+  </entry>
+  <entry>
+    <title>【Windows】延长Windows更新时间</title>
+    <link href="https://lysj.work/posts/cookbook/windows%E5%BB%B6%E9%95%BFwindows%E6%9B%B4%E6%96%B0%E6%97%B6%E9%97%B4/" rel="alternate" type="text/html"/>
+    <id>https://lysj.work/posts/cookbook/windows%E5%BB%B6%E9%95%BFwindows%E6%9B%B4%E6%96%B0%E6%97%B6%E9%97%B4/</id>
+    <published>2026-04-02T00:00:00.000Z</published>
+    <updated>2026-04-02T00:00:00.000Z</updated>
+    <summary>修改注册表延长可暂停的时间</summary>
+    <content type="html"><![CDATA[<h2>通过注册表延长暂停 Windows 更新</h2>
+<ol>
+<li><code>win+R</code>，输入<code>regedit</code>进入注册表</li>
+<li>进入以下路径</li>
+</ol>
+<pre><code>HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\WindowsUpdate\UX\Settings
+</code></pre>
+<ol>
+<li>新建DWORD（32 位）值，名称为<code>FlightSettingsMaxPauseDays</code>,修改值为十进制10000（30年）</li>
+<li>到设置更新中，选择暂停时间时长</li>
+</ol>
+]]></content>
+    <author>
+      <name>Sekiro</name>
+    </author>
+    <category term="cookbook"></category>
+  </entry>
+  <entry>
+    <title>Markdown Extended Features</title>
+    <link href="https://lysj.work/posts/markdown-extended/" rel="alternate" type="text/html"/>
+    <id>https://lysj.work/posts/markdown-extended/</id>
+    <published>2024-05-01T00:00:00.000Z</published>
+    <updated>2024-11-29T00:00:00.000Z</updated>
+    <summary>Read more about Markdown features in Mizuki</summary>
+    <content type="html"><![CDATA[<h2>GitHub Repository Cards</h2>
+<p>You can add dynamic cards that link to GitHub repositories, on page load, the repository information is pulled from the GitHub API.</p>
+<p>::github{repo="matsuzaka-yuki/Mizuki"}</p>
+<p>Create a GitHub repository card with the code <code>::github{repo="matsuzaka-yuki/Mizuki"}</code>.</p>
+<pre><code>::github{repo="matsuzaka-yuki/Mizuki"}
+</code></pre>
+<h2>Admonitions</h2>
+<p>Following types of admonitions are supported: <code>note</code> <code>tip</code> <code>important</code> <code>warning</code> <code>caution</code></p>
+<p>:::note
+Highlights information that users should take into account, even when skimming.
+:::</p>
+<p>:::tip
+Optional information to help a user be more successful.
+:::</p>
+<p>:::important
+Crucial information necessary for users to succeed.
+:::</p>
+<p>:::warning
+Critical content demanding immediate user attention due to potential risks.
+:::</p>
+<p>:::caution
+Negative potential consequences of an action.
+:::</p>
+<h3>Basic Syntax</h3>
+<pre><code>:::note
+Highlights information that users should take into account, even when skimming.
+:::
+
+:::tip
+Optional information to help a user be more successful.
+:::
+</code></pre>
+<h3>Custom Titles</h3>
+<p>The title of the admonition can be customized.</p>
+<p>:::note[MY CUSTOM TITLE]
+This is a note with a custom title.
+:::</p>
+<pre><code>:::note[MY CUSTOM TITLE]
+This is a note with a custom title.
+:::
+</code></pre>
+<h3>GitHub Syntax</h3>
+<blockquote>
+<p>[!TIP]
+<a href="https://github.com/orgs/community/discussions/16925">The GitHub syntax</a> is also supported.</p>
+</blockquote>
+<pre><code>&gt; [!NOTE]
+&gt; The GitHub syntax is also supported.
+
+&gt; [!TIP]
+&gt; The GitHub syntax is also supported.
+</code></pre>
+<h3>Spoiler</h3>
+<p>You can add spoilers to your text. The text also supports <strong>Markdown</strong> syntax.</p>
+<p>The content :spoiler[is hidden <strong>ayyy</strong>]!</p>
+<pre><code>The content :spoiler[is hidden **ayyy**]!</code></pre>
+]]></content>
+    <author>
+      <name>Sekiro</name>
+    </author>
+    <category term="Examples"></category>
+  </entry>
+  <entry>
+    <title>Simple Guides for Mizuki</title>
+    <link href="https://lysj.work/posts/guide/" rel="alternate" type="text/html"/>
+    <id>https://lysj.work/posts/guide/</id>
+    <published>2024-04-01T00:00:00.000Z</published>
+    <updated>2024-04-01T00:00:00.000Z</updated>
+    <summary>How to use this blog template.</summary>
+    <content type="html"><![CDATA[<p>This blog template is built with <a href="https://astro.build/">Astro</a>. For the things that are not mentioned in this guide, you may find the answers in the <a href="https://docs.astro.build/">Astro Docs</a>.</p>
+<h2>Front-matter of Posts</h2>
+<pre><code>---
+title: My First Blog Post
+published: 2023-09-09
+description: This is the first post of my new Astro blog.
+image: ./cover.jpg
+tags: [Foo, Bar]
+category: Front-end
+draft: false
+---
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Attribute</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>title</code></td>
+<td>The title of the post.</td>
+</tr>
+<tr>
+<td><code>published</code></td>
+<td>The date the post was published.</td>
+</tr>
+<tr>
+<td><code>pinned</code></td>
+<td>Whether this post is pinned to the top of the post list.</td>
+</tr>
+<tr>
+<td><code>description</code></td>
+<td>A short description of the post. Displayed on index page.</td>
+</tr>
+<tr>
+<td><code>image</code></td>
+<td>The cover image path of the post.&lt;br/&gt;1. Start with <code>http://</code> or <code>https://</code>: Use web image&lt;br/&gt;2. Start with <code>/</code>: For image in <code>public</code> dir&lt;br/&gt;3. With none of the prefixes: Relative to the markdown file</td>
+</tr>
+<tr>
+<td><code>tags</code></td>
+<td>The tags of the post.</td>
+</tr>
+<tr>
+<td><code>category</code></td>
+<td>The category of the post.</td>
+</tr>
+<tr>
+<td><code>licenseName</code></td>
+<td>The license name for the post content.</td>
+</tr>
+<tr>
+<td><code>author</code></td>
+<td>The author of the post.</td>
+</tr>
+<tr>
+<td><code>sourceLink</code></td>
+<td>The source link or reference for the post content.</td>
+</tr>
+<tr>
+<td><code>draft</code></td>
+<td>If this post is still a draft, which won't be displayed.</td>
+</tr>
+</tbody>
+</table>
+<h2>Where to Place the Post Files</h2>
+<p>Your post files should be placed in <code>src/content/posts/</code> directory. You can also create sub-directories to better organize your posts and assets.</p>
+<pre><code>src/content/posts/
+├── post-1.md
+└── post-2/
+    ├── cover.png
+    └── index.md
+</code></pre>
+]]></content>
+    <author>
+      <name>Sekiro</name>
+    </author>
+    <category term="Guides"></category>
+  </entry>
+  <entry>
+    <title>test</title>
+    <link href="https://lysj.work/posts/test/" rel="alternate" type="text/html"/>
+    <id>https://lysj.work/posts/test/</id>
+    <published>2024-01-01T00:00:00.000Z</published>
+    <updated>2024-01-01T00:00:00.000Z</updated>
+    <summary>文章描述</summary>
+    <content type="html"><![CDATA[<h2>test</h2>
+]]></content>
+    <author>
+      <name>Sekiro</name>
+    </author>
+    <category term="分类"></category>
+  </entry>
+  <entry>
+    <title>Markdown Mermaid</title>
+    <link href="https://lysj.work/posts/markdown-mermaid/" rel="alternate" type="text/html"/>
+    <id>https://lysj.work/posts/markdown-mermaid/</id>
+    <published>2023-10-01T00:00:00.000Z</published>
+    <updated>2023-10-01T00:00:00.000Z</updated>
+    <summary>A simple example of a Markdown blog post with Mermaid.</summary>
+    <content type="html"><![CDATA[<h1>Complete Guide to Markdown with Mermaid Diagrams</h1>
+<p>This article demonstrates how to create various complex diagrams using Mermaid in Markdown documents, including flowcharts, sequence diagrams, Gantt charts, class diagrams, and state diagrams.</p>
+<h2>Flowchart Example</h2>
+<p>Flowcharts are excellent for representing processes or algorithm steps.</p>
+<pre><code>graph TD
+    A[Start] --&gt; B{Condition Check}
+    B --&gt;|Yes| C[Process Step 1]
+    B --&gt;|No| D[Process Step 2]
+    C --&gt; E[Subprocess]
+    D --&gt; E
+    subgraph E [Subprocess Details]
+        E1[Substep 1] --&gt; E2[Substep 2]
+        E2 --&gt; E3[Substep 3]
+    end
+    E --&gt; F{Another Decision}
+    F --&gt;|Option 1| G[Result 1]
+    F --&gt;|Option 2| H[Result 2]
+    F --&gt;|Option 3| I[Result 3]
+    G --&gt; J[End]
+    H --&gt; J
+    I --&gt; J
+</code></pre>
+<h2>Sequence Diagram Example</h2>
+<p>Sequence diagrams show interactions between objects over time.</p>
+<pre><code>sequenceDiagram
+    participant User
+    participant WebApp
+    participant Server
+    participant Database
+
+    User-&gt;&gt;WebApp: Submit Login Request
+    WebApp-&gt;&gt;Server: Send Auth Request
+    Server-&gt;&gt;Database: Query User Credentials
+    Database--&gt;&gt;Server: Return User Data
+    Server--&gt;&gt;WebApp: Return Auth Result
+    
+    alt Auth Successful
+        WebApp-&gt;&gt;User: Show Welcome Page
+        WebApp-&gt;&gt;Server: Request User Data
+        Server-&gt;&gt;Database: Get User Preferences
+        Database--&gt;&gt;Server: Return Preferences
+        Server--&gt;&gt;WebApp: Return User Data
+        WebApp-&gt;&gt;User: Load Personalized Interface
+    else Auth Failed
+        WebApp-&gt;&gt;User: Show Error Message
+        WebApp-&gt;&gt;User: Prompt Re-entry
+    end
+</code></pre>
+<h2>Gantt Chart Example</h2>
+<p>Gantt charts are perfect for displaying project schedules and timelines.</p>
+<pre><code>gantt
+    title Website Development Project Timeline
+    dateFormat  YYYY-MM-DD
+    axisFormat  %m/%d
+    
+    section Design Phase
+    Requirements Analysis      :a1, 2023-10-01, 7d
+    UI Design                 :a2, after a1, 10d
+    Prototype Creation        :a3, after a2, 5d
+    
+    section Development Phase
+    Frontend Development      :b1, 2023-10-20, 15d
+    Backend Development       :b2, after a2, 18d
+    Database Design           :b3, after a1, 12d
+    
+    section Testing Phase
+    Unit Testing              :c1, after b1, 8d
+    Integration Testing       :c2, after b2, 10d
+    User Acceptance Testing   :c3, after c2, 7d
+    
+    section Deployment
+    Production Deployment     :d1, after c3, 3d
+    Launch                    :milestone, after d1, 0d
+</code></pre>
+<h2>Class Diagram Example</h2>
+<p>Class diagrams show the static structure of a system, including classes, attributes, methods, and their relationships.</p>
+<pre><code>classDiagram
+    class User {
+        +String username
+        +String password
+        +String email
+        +Boolean active
+        +login()
+        +logout()
+        +updateProfile()
+    }
+    
+    class Article {
+        +String title
+        +String content
+        +Date publishDate
+        +Boolean published
+        +publish()
+        +edit()
+        +delete()
+    }
+    
+    class Comment {
+        +String content
+        +Date commentDate
+        +addComment()
+        +deleteComment()
+    }
+    
+    class Category {
+        +String name
+        +String description
+        +addArticle()
+        +removeArticle()
+    }
+    
+    User "1" -- "*" Article : writes
+    User "1" -- "*" Comment : posts
+    Article "1" -- "*" Comment : has
+    Article "1" -- "*" Category : belongs to
+</code></pre>
+<h2>State Diagram Example</h2>
+<p>State diagrams show the sequence of states an object goes through during its life cycle.</p>
+<pre><code>stateDiagram-v2
+    [*] --&gt; Draft
+    
+    Draft --&gt; UnderReview : submit
+    UnderReview --&gt; Draft : reject
+    UnderReview --&gt; Approved : approve
+    Approved --&gt; Published : publish
+    Published --&gt; Archived : archive
+    Published --&gt; Draft : retract
+    
+    state Published {
+        [*] --&gt; Active
+        Active --&gt; Hidden : temporarily hide
+        Hidden --&gt; Active : restore
+        Active --&gt; [*]
+        Hidden --&gt; [*]
+    }
+    
+    Archived --&gt; [*]
+</code></pre>
+<h2>Pie Chart Example</h2>
+<p>Pie charts are ideal for displaying proportions and percentage data.</p>
+<pre><code>pie title Website Traffic Sources Analysis
+    "Search Engines" : 45.6
+    "Direct Access" : 30.1
+    "Social Media" : 15.3
+    "Referral Links" : 6.4
+    "Other Sources" : 2.6
+</code></pre>
+<h2>Conclusion</h2>
+<p>Mermaid is a powerful tool for creating various types of diagrams in Markdown documents. This article demonstrated how to use flowcharts, sequence diagrams, Gantt charts, class diagrams, state diagrams, and pie charts. These diagrams can help you express complex concepts, processes, and data structures more clearly.</p>
+<p>To use Mermaid, simply specify the mermaid language in a code block and describe the diagram using concise text syntax. Mermaid will automatically convert these descriptions into beautiful visual diagrams.</p>
+<p>Try using Mermaid diagrams in your next technical blog post or project documentation - they will make your content more professional and easier to understand!</p>
+]]></content>
+    <author>
+      <name>Sekiro</name>
+    </author>
+    <category term="Examples"></category>
+  </entry>
+  <entry>
+    <title>Include Video in the Posts</title>
+    <link href="https://lysj.work/posts/video/" rel="alternate" type="text/html"/>
+    <id>https://lysj.work/posts/video/</id>
+    <published>2022-08-01T00:00:00.000Z</published>
+    <updated>2022-08-01T00:00:00.000Z</updated>
+    <summary>This post demonstrates how to include embedded video in a blog post.</summary>
+    <content type="html"><![CDATA[<p>Just copy the embed code from YouTube or other platforms, and paste it in the markdown file.</p>
+<pre><code>---
+title: Include Video in the Post
+published: 2023-10-19
+// ...
+---
+
+&lt;iframe width="100%" height="468" src="https://www.youtube.com/embed/5gIf0_xpFPI?si=N1WTorLKL0uwLsU_" title="YouTube video player" frameborder="0" allowfullscreen&gt;&lt;/iframe&gt;
+</code></pre>
+<h2>YouTube</h2>
+<p>&lt;iframe width="100%" height="468" src="https://www.youtube.com/embed/5gIf0_xpFPI?si=N1WTorLKL0uwLsU_" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen&gt;&lt;/iframe&gt;</p>
+<h2>Bilibili</h2>
+<p>&lt;iframe width="100%" height="468" src="//player.bilibili.com/player.html?bvid=BV1fK4y1s7Qf&amp;p=1&amp;autoplay=0" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" &amp;autoplay=0&gt; &lt;/iframe&gt;</p>
+]]></content>
+    <author>
+      <name>Sekiro</name>
+    </author>
+    <category term="Examples"></category>
+  </entry>
+</feed>
