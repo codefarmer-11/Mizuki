@@ -22,7 +22,12 @@
 		"format": "prettier --write ./src",
 		"lint": "eslint ./src --fix",
 		"preinstall": "npx only-allow pnpm",
-		"compress-fonts": "node scripts/compress-fonts.js"
+		"compress-fonts": "node scripts/compress-fonts.js",
+		"test-font-compression": "node scripts/test-font-compression.js",
+		"lhci": "lhci",
+		"lighthouse": "lighthouse",
+		"performance:baseline": "node scripts/performance-baseline.js",
+		"performance:check": "node scripts/performance-check.js"
 	},
 	"dependencies": {
 		"@astrojs/check": "^0.9.9",
@@ -44,6 +49,7 @@
 		"astro-expressive-code": "^0.41.7",
 		"astro-icon": "^1.1.5",
 		"axios": "^1.16.0",
+		"cheerio": "^1.2.0",
 		"crypto-js": "^4.2.0",
 		"dayjs": "^1.11.20",
 		"hastscript": "^9.0.1",
@@ -63,6 +69,7 @@
 		"rehype-slug": "^6.0.0",
 		"remark-directive": "^3.0.1",
 		"remark-directive-rehype": "^0.4.2",
+		"remark-gemoji": "^8.0.0",
 		"remark-math": "^6.0.0",
 		"remark-sectionize": "^2.1.0",
 		"sanitize-html": "^2.17.3",
@@ -83,6 +90,7 @@
 		"@iconify-json/material-symbols": "^1.2.70",
 		"@iconify-json/mdi": "^1.2.3",
 		"@iconify-json/simple-icons": "^1.2.81",
+		"@lhci/cli": "^0.15.1",
 		"@rollup/plugin-yaml": "^4.1.2",
 		"@types/hast": "^3.0.4",
 		"@types/markdown-it": "^14.1.2",
@@ -106,5 +114,10 @@
 		"svelte-eslint-parser": "^1.6.1",
 		"typescript-eslint": "^8.59.2"
 	},
-	"packageManager": "pnpm@10.33.0"
+	"packageManager": "pnpm@10.33.0",
+	"pnpm": {
+		"overrides": {
+			"@emmetio/css-parser": "https://codeload.github.com/ramya-rao-a/css-parser/tar.gz/370c480ac103bd17c7bcfb34bf5d577dc40d3660"
+		}
+	}
 }
