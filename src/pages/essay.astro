@@ -11,10 +11,8 @@ import { i18n } from "../i18n/translation";
 export const prerender = true;
 
 const entry = await getEntry("spec", "essay");
-if (!entry) {
-	throw new Error("essay spec content not found");
-}
-const { Content } = await render(entry);
+const specRendered = entry ? await render(entry) : null;
+const SpecMarkdown = specRendered?.Content;
 const title = i18n(I18nKey.essay);
 ---
 
@@ -28,7 +26,16 @@ const title = i18n(I18nKey.essay);
 		<div class="card-base z-10 px-9 py-6 relative w-full">
 			<PageHeader title={title} />
 			<Markdown class="mt-2 prose dark:prose-invert max-w-none">
-				<Content />
+				{
+					SpecMarkdown ? (
+						<SpecMarkdown />
+					) : (
+						<p>
+							在内容仓库的 <code>spec/</code> 下添加{" "}
+							<code>essay.md</code> 后即可显示正文。
+						</p>
+					)
+				}
 			</Markdown>
 		</div>
 	</div>

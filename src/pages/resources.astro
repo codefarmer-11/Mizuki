@@ -18,12 +18,8 @@ if (!siteConfig.featurePages.resources) {
 }
 
 const resourcesPost = await getEntry("spec", "resources");
-
-if (!resourcesPost) {
-	throw new Error("resources page content not found");
-}
-
-const { Content } = await render(resourcesPost);
+const resourcesRendered = resourcesPost ? await render(resourcesPost) : null;
+const ResourcesMarkdown = resourcesRendered?.Content;
 const linksList = getShuffledLinksList();
 const allTags = Array.from(new Set(linksList.flatMap((item) => item.tags)));
 ---
@@ -123,9 +119,13 @@ const allTags = Array.from(new Set(linksList.flatMap((item) => item.tags)));
 			</div>
 
 			<!-- 说明文档 -->
-			<Markdown class="mt-8 prose dark:prose-invert max-w-none">
-				<Content />
-			</Markdown>
+			{
+				ResourcesMarkdown && (
+					<Markdown class="mt-8 prose dark:prose-invert max-w-none">
+						<ResourcesMarkdown />
+					</Markdown>
+				)
+			}
 
 			<!-- 隐藏元素用于传递 i18n 文本到全局脚本 -->
 			<div id="links-copy-success-text" style="display: none;">
