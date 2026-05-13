@@ -29,6 +29,28 @@ export const zh_TW: Translation = {
 	[Key.studyNotesEmptyFolders]:
 		"尚未在 posts/studyNotes/ 下建立子資料夾。請在內容倉庫建立分類目錄（如 c、qt）後再試。",
 	[Key.extensionComponent]: "擴充工具",
+	[Key.extensionToolsIntro]:
+		"收錄可在瀏覽器中直接使用的線上小工具，後續會持續補充。",
+	[Key.extensionToolsListTitle]: "可用工具",
+	[Key.extensionToolQrTitle]: "QR Code 產生與解析",
+	[Key.extensionToolQrDesc]:
+		"將文字或連結產生 QR Code；從本機上傳或圖片 URL 解析內容（遠端 URL 需允許跨來源）。",
+	[Key.extensionToolOpen]: "開啟",
+	[Key.extensionQrGenerate]: "產生",
+	[Key.extensionQrDecode]: "解析",
+	[Key.extensionQrPlaceholder]: "輸入要寫入 QR Code 的文字或連結…",
+	[Key.extensionQrGenButton]: "產生 QR Code",
+	[Key.extensionQrDownload]: "下載 PNG",
+	[Key.extensionQrPickFile]: "選擇含 QR Code 的圖片",
+	[Key.extensionQrImageUrl]: "圖片網址",
+	[Key.extensionQrLoadUrl]: "載入並解析",
+	[Key.extensionQrDecoded]: "解析結果",
+	[Key.extensionQrNoResult]:
+		"未辨識到 QR Code。請換一張更清晰的圖片，或改以上傳本機檔案。",
+	[Key.extensionQrError]: "處理失敗",
+	[Key.extensionQrCorsHint]:
+		"無法讀取跨來源圖片的像素資料。請改以上傳檔案，或使用已設定 CORS 的圖片網址。",
+	[Key.extensionQrStartHint]: "請上傳圖片或載入圖片網址後，解析結果將顯示於此。",
 	[Key.navSiteMenu]: "本站",
 
 	// 公告欄

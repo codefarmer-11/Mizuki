@@ -30,6 +30,29 @@ export const en: Translation = {
 	[Key.studyNotesEmptyFolders]:
 		"No subfolders under posts/studyNotes/ yet. Add category folders (e.g. c, qt) in your content repo.",
 	[Key.extensionComponent]: "Extensions",
+	[Key.extensionToolsIntro]:
+		"Small browser-based utilities. More tools may be added over time.",
+	[Key.extensionToolsListTitle]: "Available tools",
+	[Key.extensionToolQrTitle]: "QR code generator & reader",
+	[Key.extensionToolQrDesc]:
+		"Create a QR from text or links; decode from an uploaded image or image URL (remote URLs must allow CORS).",
+	[Key.extensionToolOpen]: "Open",
+	[Key.extensionQrGenerate]: "Generate",
+	[Key.extensionQrDecode]: "Decode",
+	[Key.extensionQrPlaceholder]: "Text or URL to encode…",
+	[Key.extensionQrGenButton]: "Generate QR",
+	[Key.extensionQrDownload]: "Download PNG",
+	[Key.extensionQrPickFile]: "Choose image with a QR code",
+	[Key.extensionQrImageUrl]: "Image URL",
+	[Key.extensionQrLoadUrl]: "Load & decode",
+	[Key.extensionQrDecoded]: "Decoded content",
+	[Key.extensionQrNoResult]:
+		"No QR code found. Try a sharper image or upload a file instead.",
+	[Key.extensionQrError]: "Something went wrong",
+	[Key.extensionQrCorsHint]:
+		"Cannot read pixels from a cross-origin image. Upload a file or use an image URL with proper CORS headers.",
+	[Key.extensionQrStartHint]:
+		"Upload an image or load an image URL to see decoded content here.",
 	[Key.navSiteMenu]: "Explore",
 
 	// Announcement

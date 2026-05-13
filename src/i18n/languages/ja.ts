@@ -30,6 +30,29 @@ export const ja: Translation = {
 	[Key.studyNotesEmptyFolders]:
 		"posts/studyNotes/ にサブフォルダがありません。コンテンツリポジトリで分類フォルダ（例: c、qt）を作成してください。",
 	[Key.extensionComponent]: "拡張ツール",
+	[Key.extensionToolsIntro]:
+		"ブラウザだけで使えるオンラインツールをまとめています。今後も追加予定です。",
+	[Key.extensionToolsListTitle]: "利用可能なツール",
+	[Key.extensionToolQrTitle]: "QRコードの生成と読み取り",
+	[Key.extensionToolQrDesc]:
+		"テキストやURLからQRを生成。画像ファイルまたは画像URLから内容を読み取ります（URLはCORS許可が必要な場合があります）。",
+	[Key.extensionToolOpen]: "開く",
+	[Key.extensionQrGenerate]: "生成",
+	[Key.extensionQrDecode]: "読み取り",
+	[Key.extensionQrPlaceholder]: "QRに埋め込むテキストやURLを入力…",
+	[Key.extensionQrGenButton]: "QRを生成",
+	[Key.extensionQrDownload]: "PNGをダウンロード",
+	[Key.extensionQrPickFile]: "QR入り画像を選択",
+	[Key.extensionQrImageUrl]: "画像URL",
+	[Key.extensionQrLoadUrl]: "読み込んで解析",
+	[Key.extensionQrDecoded]: "読み取り結果",
+	[Key.extensionQrNoResult]:
+		"QRを検出できませんでした。別の画像を試すか、ファイルをアップロードしてください。",
+	[Key.extensionQrError]: "処理に失敗しました",
+	[Key.extensionQrCorsHint]:
+		"クロスオリジンの画像はピクセルを読めません。ファイルをアップロードするか、CORS対応のURLを使ってください。",
+	[Key.extensionQrStartHint]:
+		"画像をアップロードするか画像URLを読み込むと、ここに結果が表示されます。",
 	[Key.navSiteMenu]: "サイト",
 
 	// お知らせ

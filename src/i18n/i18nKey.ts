@@ -28,6 +28,26 @@ enum I18nKey {
 	/** 顶栏中指向站务/内容聚合的父级菜单（原与「关于」页同名的分组） */
 	navSiteMenu = "navSiteMenu",
 
+	/** 扩展工具页：工具列表说明 */
+	extensionToolsIntro = "extensionToolsIntro",
+	extensionToolsListTitle = "extensionToolsListTitle",
+	extensionToolQrTitle = "extensionToolQrTitle",
+	extensionToolQrDesc = "extensionToolQrDesc",
+	extensionToolOpen = "extensionToolOpen",
+	extensionQrGenerate = "extensionQrGenerate",
+	extensionQrDecode = "extensionQrDecode",
+	extensionQrPlaceholder = "extensionQrPlaceholder",
+	extensionQrGenButton = "extensionQrGenButton",
+	extensionQrDownload = "extensionQrDownload",
+	extensionQrPickFile = "extensionQrPickFile",
+	extensionQrImageUrl = "extensionQrImageUrl",
+	extensionQrLoadUrl = "extensionQrLoadUrl",
+	extensionQrDecoded = "extensionQrDecoded",
+	extensionQrNoResult = "extensionQrNoResult",
+	extensionQrError = "extensionQrError",
+	extensionQrCorsHint = "extensionQrCorsHint",
+	extensionQrStartHint = "extensionQrStartHint",
+
 	/** 学习笔记首页：分类入口说明 */
 	studyNotesCategoriesSubtitle = "studyNotesCategoriesSubtitle",
 	/** 学习笔记首页：尚无子文件夹时的提示 */

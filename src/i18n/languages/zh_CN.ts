@@ -29,6 +29,28 @@ export const zh_CN: Translation = {
 	[Key.studyNotesEmptyFolders]:
 		"尚未在 posts/studyNotes/ 下创建子文件夹。请在内容仓库中建立分类目录（如 c、qt）后再试。",
 	[Key.extensionComponent]: "扩展工具",
+	[Key.extensionToolsIntro]:
+		"收录可在浏览器中直接使用的在线小工具，后续会持续补充。",
+	[Key.extensionToolsListTitle]: "可用工具",
+	[Key.extensionToolQrTitle]: "二维码生成与解析",
+	[Key.extensionToolQrDesc]:
+		"将文本或链接生成二维码；从本地上传或图片 URL 解析二维码内容（远程 URL 需允许跨域）。",
+	[Key.extensionToolOpen]: "打开",
+	[Key.extensionQrGenerate]: "生成",
+	[Key.extensionQrDecode]: "解析",
+	[Key.extensionQrPlaceholder]: "输入要写入二维码的文本或链接…",
+	[Key.extensionQrGenButton]: "生成二维码",
+	[Key.extensionQrDownload]: "下载 PNG",
+	[Key.extensionQrPickFile]: "选择含二维码的图片",
+	[Key.extensionQrImageUrl]: "图片地址",
+	[Key.extensionQrLoadUrl]: "加载并解析",
+	[Key.extensionQrDecoded]: "解析结果",
+	[Key.extensionQrNoResult]:
+		"未识别到二维码。请换一张更清晰的图片，或尝试上传本地文件。",
+	[Key.extensionQrError]: "处理失败",
+	[Key.extensionQrCorsHint]:
+		"无法读取跨域图片的像素数据。请改用「选择文件」上传，或使用已配置 CORS 的图片地址。",
+	[Key.extensionQrStartHint]: "请上传图片或加载图片 URL 后，解析结果将显示在此处。",
 	[Key.navSiteMenu]: "本站",
 
 	// 公告栏
