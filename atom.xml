@@ -5,7 +5,7 @@
   <link href="https://lysj.work/" rel="alternate" type="text/html"/>
   <link href="https://lysj.work/atom.xml" rel="self" type="application/atom+xml"/>
   <id>https://lysj.work/</id>
-  <updated>2026-05-13T11:56:37.102Z</updated>
+  <updated>2026-05-13T12:02:25.947Z</updated>
   <language>zh_CN</language>
   <entry>
     <title>Markdown Tutorial</title>
@@ -729,6 +729,19 @@ This is another regular paragraph.
       <name>Sekiro</name>
     </author>
     <category term="Examples"></category>
+  </entry>
+  <entry>
+    <title>【C++】test</title>
+    <link href="https://lysj.work/posts/studynotes/c/ctest/" rel="alternate" type="text/html"/>
+    <id>https://lysj.work/posts/studynotes/c/ctest/</id>
+    <published>2026-05-13T00:00:00.000Z</published>
+    <updated>2026-05-13T00:00:00.000Z</updated>
+    <summary>一句话说明</summary>
+    <content type="html"><![CDATA[]]></content>
+    <author>
+      <name>Sekiro</name>
+    </author>
+    <category term="StudyNote"></category>
   </entry>
   <entry>
     <title>【LinuxC】线程</title>
