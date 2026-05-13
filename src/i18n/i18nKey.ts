@@ -28,6 +28,11 @@ enum I18nKey {
 	/** 顶栏中指向站务/内容聚合的父级菜单（原与「关于」页同名的分组） */
 	navSiteMenu = "navSiteMenu",
 
+	/** 学习笔记首页：分类入口说明 */
+	studyNotesCategoriesSubtitle = "studyNotesCategoriesSubtitle",
+	/** 学习笔记首页：尚无子文件夹时的提示 */
+	studyNotesEmptyFolders = "studyNotesEmptyFolders",
+
 	// 公告栏
 	announcement = "announcement",
 	announcementClose = "announcementClose",

@@ -24,7 +24,10 @@ export const zh_CN: Translation = {
 	[Key.essay]: "随笔",
 	[Key.journal]: "手记",
 	[Key.toolbox]: "工具箱",
-	[Key.cookbook]: "菜谱",
+	[Key.cookbook]: "Cookbook",
+	[Key.studyNotesCategoriesSubtitle]: "选择分类查看该主题下的文章（布局与归档页相同）",
+	[Key.studyNotesEmptyFolders]:
+		"尚未在 posts/studyNotes/ 下创建子文件夹。请在内容仓库中建立分类目录（如 c、qt）后再试。",
 	[Key.extensionComponent]: "扩展工具",
 	[Key.navSiteMenu]: "本站",
 

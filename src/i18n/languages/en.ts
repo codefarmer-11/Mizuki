@@ -25,6 +25,10 @@ export const en: Translation = {
 	[Key.journal]: "Journal",
 	[Key.toolbox]: "Toolbox",
 	[Key.cookbook]: "Cookbook",
+	[Key.studyNotesCategoriesSubtitle]:
+		"Pick a category to browse posts in that topic (same layout as Archive).",
+	[Key.studyNotesEmptyFolders]:
+		"No subfolders under posts/studyNotes/ yet. Add category folders (e.g. c, qt) in your content repo.",
 	[Key.extensionComponent]: "Extensions",
 	[Key.navSiteMenu]: "Explore",
 

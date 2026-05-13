@@ -42,6 +42,27 @@ async function getRawSortedPosts() {
 	return sorted;
 }
 
+/** 文章 id 是否属于某一级目录（如 cookbook、essay）或嵌套前缀（如 studyNotes/c） */
+export function postIdMatchesSection(id: string, section: string): boolean {
+	return id === section || id.startsWith(`${section}/`);
+}
+
+/** 与全站排序规则一致，但只保留 id 以 `section/`（或等于 `section`）开头的文章，并预计算 URL */
+export async function getSortedPostsListByIdPrefix(
+	section: string,
+): Promise<PostForList[]> {
+	const sortedFullPosts = await getRawSortedPosts();
+	initPostIdMap(sortedFullPosts);
+	const filtered = sortedFullPosts.filter((p) =>
+		postIdMatchesSection(p.id, section),
+	);
+	return filtered.map((post) => ({
+		id: post.id,
+		data: post.data,
+		url: getPostUrl(post),
+	}));
+}
+
 export async function getSortedPosts() {
 	const sorted = await getRawSortedPosts();
 

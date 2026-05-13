@@ -24,7 +24,10 @@ export const zh_TW: Translation = {
 	[Key.essay]: "隨筆",
 	[Key.journal]: "手記",
 	[Key.toolbox]: "工具箱",
-	[Key.cookbook]: "食譜",
+	[Key.cookbook]: "Cookbook",
+	[Key.studyNotesCategoriesSubtitle]: "選擇分類檢視該主題下的文章（版面與歸檔頁相同）",
+	[Key.studyNotesEmptyFolders]:
+		"尚未在 posts/studyNotes/ 下建立子資料夾。請在內容倉庫建立分類目錄（如 c、qt）後再試。",
 	[Key.extensionComponent]: "擴充工具",
 	[Key.navSiteMenu]: "本站",
 

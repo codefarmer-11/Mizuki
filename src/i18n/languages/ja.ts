@@ -24,7 +24,11 @@ export const ja: Translation = {
 	[Key.essay]: "随筆",
 	[Key.journal]: "手記",
 	[Key.toolbox]: "ツールボックス",
-	[Key.cookbook]: "レシピ",
+	[Key.cookbook]: "Cookbook",
+	[Key.studyNotesCategoriesSubtitle]:
+		"分類を選ぶと、そのテーマの記事が一覧表示されます（アーカイブと同じレイアウト）",
+	[Key.studyNotesEmptyFolders]:
+		"posts/studyNotes/ にサブフォルダがありません。コンテンツリポジトリで分類フォルダ（例: c、qt）を作成してください。",
 	[Key.extensionComponent]: "拡張ツール",
 	[Key.navSiteMenu]: "サイト",
 

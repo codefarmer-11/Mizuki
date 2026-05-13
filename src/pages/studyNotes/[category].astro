@@ -2,15 +2,30 @@
 import ArchivePanel from "@components/features/archive/ArchivePanel.svelte";
 import CategoryBar from "@components/features/posts/CategoryBar.astro";
 import Comment from "@components/comment/index.astro";
+import { PageHeader } from "@components/features/page-header";
 import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
 import { getSortedPostsListByIdPrefix } from "@utils/content-utils";
-import { siteConfig } from "../config";
+import { getStudyNotesCategorySlugs } from "@utils/study-notes-utils";
+import { url } from "@utils/url-utils";
+import { siteConfig } from "../../config";
 
 export const prerender = true;
 
-const SECTION = "cookbook";
+export async function getStaticPaths() {
+	const slugs = getStudyNotesCategorySlugs();
+	return slugs.map((category) => ({ params: { category } }));
+}
+
+const allowed = new Set(getStudyNotesCategorySlugs());
+const { category } = Astro.params;
+
+if (!category || !allowed.has(category)) {
+	return Astro.redirect("/404/");
+}
+
+const SECTION = `studyNotes/${category}`;
 const sortedPostsList = await getSortedPostsListByIdPrefix(SECTION);
 const showCategoryBar = siteConfig.postListLayout.categoryBar?.enable ?? false;
 
@@ -31,19 +46,30 @@ const categories = [
 	),
 ];
 
-const title = i18n(I18nKey.cookbook);
+const baseTitle = i18n(I18nKey.studyNotes);
+const title = `${baseTitle} · ${category}`;
 ---
 
 <MainGridLayout title={title} description={title}>
 	{showCategoryBar && <CategoryBar />}
 	<script>
-		import("../scripts/right-sidebar-layout.js");
+		import("../../scripts/right-sidebar-layout.js");
 	</script>
 
 	<div
 		class="flex w-full rounded-[var(--radius-large)] overflow-hidden relative min-h-32"
 	>
 		<div class="card-base z-10 px-6 sm:px-9 py-6 relative w-full">
+			<a
+				href={url("/studyNotes/")}
+				class="mb-4 inline-block text-sm text-50 transition hover:text-[var(--primary)]"
+			>
+				← {baseTitle}
+			</a>
+			<PageHeader
+				title={category}
+				subtitle={baseTitle}
+			/>
 			<ArchivePanel
 				sortedPosts={posts}
 				tags={tags}
@@ -53,6 +79,6 @@ const title = i18n(I18nKey.cookbook);
 		</div>
 	</div>
 	<div class="mt-4">
-		<Comment path="/cookbook/" />
+		<Comment path={`/studyNotes/${category}/`} />
 	</div>
 </MainGridLayout>

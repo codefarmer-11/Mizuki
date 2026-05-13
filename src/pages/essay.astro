@@ -1,42 +1,56 @@
 ---
+import ArchivePanel from "@components/features/archive/ArchivePanel.svelte";
+import CategoryBar from "@components/features/posts/CategoryBar.astro";
 import Comment from "@components/comment/index.astro";
-import { PageHeader } from "@components/features/page-header";
-import Markdown from "@components/misc/Markdown.astro";
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
-import { getEntry, render } from "astro:content";
-
-import I18nKey from "../i18n/i18nKey";
-import { i18n } from "../i18n/translation";
+import { getSortedPostsListByIdPrefix } from "@utils/content-utils";
+import { siteConfig } from "../config";
 
 export const prerender = true;
 
-const entry = await getEntry("spec", "essay");
-const specRendered = entry ? await render(entry) : null;
-const SpecMarkdown = specRendered?.Content;
+/** 与内容仓库 `posts/essay/` 目录对应（请勿使用 essey 等拼写错误的文件夹名） */
+const SECTION = "essay";
+const sortedPostsList = await getSortedPostsListByIdPrefix(SECTION);
+const showCategoryBar = siteConfig.postListLayout.categoryBar?.enable ?? false;
+
+const posts = sortedPostsList.map((post) => ({
+	...post,
+	data: {
+		...post.data,
+		category: post.data.category === null ? undefined : post.data.category,
+	},
+}));
+
+const tags = [...new Set(posts.flatMap((post) => post.data.tags))];
+const categories = [
+	...new Set(
+		posts
+			.map((post) => post.data.category)
+			.filter((c): c is string => typeof c === "string"),
+	),
+];
+
 const title = i18n(I18nKey.essay);
 ---
 
 <MainGridLayout title={title} description={title}>
+	{showCategoryBar && <CategoryBar />}
 	<script>
 		import("../scripts/right-sidebar-layout.js");
 	</script>
+
 	<div
 		class="flex w-full rounded-[var(--radius-large)] overflow-hidden relative min-h-32"
 	>
-		<div class="card-base z-10 px-9 py-6 relative w-full">
-			<PageHeader title={title} />
-			<Markdown class="mt-2 prose dark:prose-invert max-w-none">
-				{
-					SpecMarkdown ? (
-						<SpecMarkdown />
-					) : (
-						<p>
-							在内容仓库的 <code>spec/</code> 下添加{" "}
-							<code>essay.md</code> 后即可显示正文。
-						</p>
-					)
-				}
-			</Markdown>
+		<div class="card-base z-10 px-6 sm:px-9 py-6 relative w-full">
+			<ArchivePanel
+				sortedPosts={posts}
+				tags={tags}
+				categories={categories}
+				client:only="svelte"
+			/>
 		</div>
 	</div>
 	<div class="mt-4">
