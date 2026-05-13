@@ -5,7 +5,7 @@
   <link href="https://lysj.work/" rel="alternate" type="text/html"/>
   <link href="https://lysj.work/atom.xml" rel="self" type="application/atom+xml"/>
   <id>https://lysj.work/</id>
-  <updated>2026-05-13T10:19:53.841Z</updated>
+  <updated>2026-05-13T10:27:29.088Z</updated>
   <language>zh_CN</language>
   <entry>
     <title>Markdown Tutorial</title>
@@ -736,7 +736,7 @@ This is another regular paragraph.
     <id>https://lysj.work/posts/studynotes/linux/linuxc%E7%BA%BF%E7%A8%8B/</id>
     <published>2026-05-13T00:00:00.000Z</published>
     <updated>2026-05-13T00:00:00.000Z</updated>
-    <summary>文章描述</summary>
+    <summary>一句话说明</summary>
     <content type="html"><![CDATA[<h2>线程操作</h2>
 <h2>线程通信</h2>
 <h2>线程安全</h2>
@@ -746,7 +746,7 @@ This is another regular paragraph.
     <author>
       <name>Sekiro</name>
     </author>
-    <category term="studyNotes"></category>
+    <category term="StudyNote"></category>
   </entry>
   <entry>
     <title>【Git】ssh连接建立</title>
