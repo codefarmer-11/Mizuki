@@ -39,6 +39,10 @@ export default defineConfig({
 
 	output: "static",
 
+	redirects: {
+		"/friends/": "/resources/",
+	},
+
 	integrations: [
 		oddmisc({
 			umami: {
