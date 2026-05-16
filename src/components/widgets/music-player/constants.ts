@@ -7,36 +7,35 @@ export const DEFAULT_VOLUME = 0.7;
 export const LOCAL_PLAYLIST: Song[] = [
 	{
 		id: 1,
-		title: "口笛で愛は歌えない",
-		artist: "Dazbee",
-		cover: "assets/music/cover/dazbee.webp",
-		url: "assets/music/url/dazbee.mp3",
+		title: "Secret Betrayal",
+		artist: "北村友香,東京混声合唱団",
+		cover: "assets/music/cover/Secret Betrayal.jpg",
+		url: "assets/music/url/北村友香,東京混声合唱団 - Secret Betrayal.mp3",
 		duration: 0,
 	},
 	{
 		id: 2,
-		title: "ひとり上手",
-		artist: "Kaya",
-		cover: "assets/music/cover/hitori.webp",
-		url: "assets/music/url/hitori.mp3",
-		duration: 240,
+		title: "Delicate Weapon",
+		artist: "Grimes,Lizzy Wizzy",
+		cover: "assets/music/cover/Delicate Weapon.jpg",
+		url: "assets/music/url/Grimes,Lizzy Wizzy - Delicate Weapon.mp3",
+		duration: 0,
 	},
 	{
 		id: 3,
-		title: "眩耀夜行",
-		artist: "ス리즈ブーケ",
-		cover: "assets/music/cover/xryx.webp",
-		url: "assets/music/url/xryx.mp3",
-		duration: 180,
-	},
-	{
+		title: "Haunt Muskie",
+		artist: "C418",
+		cover: "assets/music/cover/Haunt Muskie.jpg",
+		url: "assets/music/url/C418 - Haunt Muskie.mp3",
+		duration: 0,
+	},{
 		id: 4,
-		title: "春雷の頃",
-		artist: "22/7",
-		cover: "assets/music/cover/cl.webp",
-		url: "assets/music/url/cl.mp3",
-		duration: 200,
-	},
+		title: "Taswell",
+		artist: "C418",
+		cover: "assets/music/cover/Taswell.jpg",
+		url: "assets/music/url/C418 - Taswell.mp3",
+		duration: 0,
+	}
 ];
 
 export const DEFAULT_SONG: Song = {
