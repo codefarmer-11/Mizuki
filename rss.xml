@@ -708,6 +708,1380 @@ This is another regular paragraph.
 &lt;strong&gt;No Work&lt;/strong&gt;
 &amp;lt;/div&amp;gt;&lt;/p&gt;
 &lt;hr /&gt;
+</content:encoded></item><item><title>【C】void与特殊数组类型</title><link>https://lysj.work/posts/studynotes/c/cvoid%E4%B8%8E%E7%89%B9%E6%AE%8A%E6%95%B0%E7%BB%84%E7%B1%BB%E5%9E%8B/</link><guid isPermaLink="true">https://lysj.work/posts/studynotes/c/cvoid%E4%B8%8E%E7%89%B9%E6%AE%8A%E6%95%B0%E7%BB%84%E7%B1%BB%E5%9E%8B/</guid><description>void 的三种用法、柔性数组成员、变长数组 VLA 与二维数组的存储与传参方式。</description><pubDate>Tue, 19 May 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;void 的用法&lt;/h2&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;用法&lt;/th&gt;
+&lt;th&gt;示例&lt;/th&gt;
+&lt;th&gt;含义&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;无返回值&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;void foo(void);&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;函数不返回值&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;无参数&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;int bar(void);&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;不接受参数（C 中推荐写 &lt;code&gt;void&lt;/code&gt;）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;通用指针&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;void *p = malloc(n);&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;可指向任意对象类型地址&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;code&gt;malloc&lt;/code&gt; 返回 &lt;code&gt;void*&lt;/code&gt;，在 C 中可直接赋给具体指针；使用后 &lt;code&gt;free&lt;/code&gt; 并置 &lt;code&gt;NULL&lt;/code&gt;。&lt;/p&gt;
+&lt;h2&gt;柔性数组成员（FAM）&lt;/h2&gt;
+&lt;p&gt;定义在结构体&lt;strong&gt;最后一个成员&lt;/strong&gt;，用于「头部固定 + 尾部变长数据」。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;struct packet {
+    int len;
+    char data[];       // C99 标准写法（柔性数组成员）
+    // char data[0];   // GNU 扩展，可移植性较差
+};
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;data[]&lt;/code&gt; &lt;strong&gt;不计入&lt;/strong&gt; &lt;code&gt;sizeof(struct packet)&lt;/code&gt;，仅表示紧跟其后的可变区域起点&lt;/li&gt;
+&lt;li&gt;须在&lt;strong&gt;堆&lt;/strong&gt;上一次性分配：&lt;code&gt;sizeof(结构体) + 额外字节&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;struct packet *p = malloc(sizeof(struct packet) + 100);
+if (p) {
+    p-&amp;gt;len = 100;
+    /* 使用 p-&amp;gt;data[0] .. p-&amp;gt;data[len-1] */
+    free(p);
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;不要对栈上局部结构体依赖柔性成员后的越界访问。&lt;/p&gt;
+&lt;h2&gt;变长数组（VLA）&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;void foo(int n) {
+    int vla[n];          // C99：n 为运行时值
+    for (int i = 0; i &amp;lt; n; i++)
+        vla[i] = i;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;长度在&lt;strong&gt;定义时&lt;/strong&gt;由变量决定，定义后不可改变&lt;/li&gt;
+&lt;li&gt;通常在&lt;strong&gt;栈&lt;/strong&gt;上分配，过大易栈溢出&lt;/li&gt;
+&lt;li&gt;C11 起 VLA 为&lt;strong&gt;可选&lt;/strong&gt;；MSVC 不支持；嵌入式与跨平台项目慎用&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;与「柔性数组成员 + &lt;code&gt;malloc&lt;/code&gt;」区别：VLA 是自动存储期；FAM 多用于堆上动态包。&lt;/p&gt;
+&lt;h2&gt;二维数组&lt;/h2&gt;
+&lt;p&gt;本质：&lt;strong&gt;一维数组的数组&lt;/strong&gt;，行优先（row-major）连续存储。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int mat[2][3] = {
+    {1, 2, 3},
+    {4, 5, 6}
+};
+// mat[i][j] 等价于 *(*(mat + i) + j)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;mat&lt;/code&gt; 在表达式中常退化为 &lt;code&gt;int (*)[3]&lt;/code&gt;（列数须为常量）&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;sizeof(mat)&lt;/code&gt; 为整个二维数组字节数&lt;/li&gt;
+&lt;li&gt;作函数参数时须已知列数：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;void print(int rows, int a[][3]) {
+    for (int i = 0; i &amp;lt; rows; i++)
+        for (int j = 0; j &amp;lt; 3; j++)
+            printf(&quot;%d &quot;, a[i][j]);
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;也可按一维连续内存传递：&lt;code&gt;int *p&lt;/code&gt;，自行用 &lt;code&gt;i * cols + j&lt;/code&gt; 计算下标。&lt;/p&gt;
+</content:encoded></item><item><title>【C】位域</title><link>https://lysj.work/posts/studynotes/c/c%E4%BD%8D%E5%9F%9F/</link><guid isPermaLink="true">https://lysj.work/posts/studynotes/c/c%E4%BD%8D%E5%9F%9F/</guid><description>结构体位域的语法与限制，以及在寄存器、协议标志位等场景下的典型用法。</description><pubDate>Tue, 19 May 2026 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;位域（bit-field）是结构体成员的一种特殊形式，用于按&lt;strong&gt;位&lt;/strong&gt;打包存储，节省空间。&lt;/p&gt;
+&lt;h2&gt;语法&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;struct Flags {
+    unsigned int a : 4;    // 占 4 位
+    unsigned int b : 3;    // 占 3 位
+    unsigned int c : 1;
+};
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;规则与限制&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;位域成员类型须为 &lt;strong&gt;&lt;code&gt;int&lt;/code&gt;、&lt;code&gt;unsigned int&lt;/code&gt;、&lt;code&gt;signed int&lt;/code&gt;&lt;/strong&gt;（或 C99 起 &lt;code&gt;_Bool&lt;/code&gt; 等实现允许的类型）&lt;/li&gt;
+&lt;li&gt;不能对位域成员取地址（&lt;code&gt;&amp;amp;&lt;/code&gt;）&lt;/li&gt;
+&lt;li&gt;不能单独对位域使用 &lt;code&gt;sizeof&lt;/code&gt; 成员；结构体整体 &lt;code&gt;sizeof&lt;/code&gt; 仍受对齐规则影响&lt;/li&gt;
+&lt;li&gt;指定位数不能超过该类型可表示的宽度（实现相关，通常不超过类型位宽）&lt;/li&gt;
+&lt;li&gt;具体布局（从低位还是高位填充）&lt;strong&gt;实现定义&lt;/strong&gt;，跨平台勿依赖位级布局&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;使用场景&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;硬件寄存器、协议报文头中的标志位&lt;/li&gt;
+&lt;li&gt;需要精确控制存储位数时&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;示例&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;struct Number {
+    int a : 4;     // 通常表示 -8~7 或有符号范围，依实现
+};
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;修改位域时只影响对应位段；读写仍通过结构体成员名访问。&lt;/p&gt;
+</content:encoded></item><item><title>【C】内存模型</title><link>https://lysj.work/posts/studynotes/c/c%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/</link><guid isPermaLink="true">https://lysj.work/posts/studynotes/c/c%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/</guid><description>说明进程地址空间中栈、堆、BSS、数据段与代码段的划分，以及变量与内存地址的关系。</description><pubDate>Tue, 19 May 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;进程地址空间（概念）&lt;/h2&gt;
+&lt;p&gt;&amp;lt;!-- 这是一张图片，ocr 内容为： --&amp;gt;
+&lt;img src=&quot;https://cdn.nlark.com/yuque/0/2026/png/23172677/1779155423705-8eee6caa-0991-4c68-9ff3-36aab980c985.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;典型划分（自高地址向低地址，具体布局依 OS 与 ABI 而定）：&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;区域&lt;/th&gt;
+&lt;th&gt;特点&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;栈（Stack）&lt;/td&gt;
+&lt;td&gt;自动变量、函数调用帧；向低地址增长；空间有限&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;堆（Heap）&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;malloc&lt;/code&gt; / &lt;code&gt;free&lt;/code&gt; 动态分配；向高地址增长&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;BSS&lt;/td&gt;
+&lt;td&gt;未初始化或零初始化的全局/静态变量&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;数据段（Data）&lt;/td&gt;
+&lt;td&gt;已初始化的全局/静态变量&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;代码段（Text）&lt;/td&gt;
+&lt;td&gt;机器指令，只读&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2&gt;内存与 CPU&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;内存可看作连续编址的字节数组，每个字节有地址&lt;/li&gt;
+&lt;li&gt;CPU 通过地址总线、数据总线、控制总线访问内存&lt;/li&gt;
+&lt;li&gt;变量名是某块内存的&lt;strong&gt;别名&lt;/strong&gt;；定义变量时编译器分配存储并绑定名字&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;与后续章节的关系&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;指针&lt;/strong&gt;：保存地址的变量（见 &lt;a href=&quot;4bfcccfaddcc0d4f482565b5936849c4&quot;&gt;08-指针基础&lt;/a&gt;）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;栈帧&lt;/strong&gt;：函数调用时在栈上分配的活动记录（见 &lt;a href=&quot;2b06ecd1c980ea22e1651b74e5707904&quot;&gt;09-函数&lt;/a&gt;）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;动态内存&lt;/strong&gt;：在堆上分配（见指针进阶与项目实践）&lt;/li&gt;
+&lt;/ul&gt;
+</content:encoded></item><item><title>【C】函数</title><link>https://lysj.work/posts/studynotes/c/c%E5%87%BD%E6%95%B0/</link><guid isPermaLink="true">https://lysj.work/posts/studynotes/c/c%E5%87%BD%E6%95%B0/</guid><description>函数声明与传值调用、栈帧概念、静态函数、递归、函数指针、回调、内联与可变参数。</description><pubDate>Tue, 19 May 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;函数基础&lt;/h2&gt;
+&lt;h3&gt;声明与定义&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;// 声明（原型）
+int add(int a, int b);
+
+// 定义
+int add(int a, int b) {
+    return a + b;
+}
+
+// 调用
+int sum = add(3, 5);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;函数须先&lt;strong&gt;声明&lt;/strong&gt;再调用（或定义写在调用之前）&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;void func(void)&lt;/code&gt; 表示&lt;strong&gt;无参数&lt;/strong&gt;；&lt;code&gt;void func()&lt;/code&gt; 在 C 中表示参数未声明（旧式，不推荐）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;参数传递&lt;/h3&gt;
+&lt;p&gt;C 语言&lt;strong&gt;只有传值调用&lt;/strong&gt;：形参是实参的副本。若需修改实参，须传&lt;strong&gt;指针&lt;/strong&gt;。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;void swap_wrong(int a, int b) { /* 无法交换调用者的变量 */ }
+
+void swap(int *a, int *b) {
+    int t = *a;
+    *a = *b;
+    *b = t;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;返回值&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;用 &lt;code&gt;return&lt;/code&gt; 返回；&lt;code&gt;void&lt;/code&gt; 函数无返回值&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;不要&lt;/strong&gt;返回指向局部非静态变量的指针（函数返回后栈帧销毁，成为悬空指针）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;栈帧的创建与销毁（概念）&lt;/h2&gt;
+&lt;p&gt;函数每次被调用时，通常在&lt;strong&gt;栈&lt;/strong&gt;上分配一帧（stack frame），存放：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;返回地址&lt;/li&gt;
+&lt;li&gt;保存的寄存器（如帧指针 &lt;strong&gt;EBP/RBP&lt;/strong&gt;、栈顶 &lt;strong&gt;ESP/RSP&lt;/strong&gt;，具体名称依架构而定）&lt;/li&gt;
+&lt;li&gt;局部变量、临时空间&lt;/li&gt;
+&lt;li&gt;参数（调用约定决定参数在栈上还是寄存器）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;调用过程（简化）：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;调用方把参数入栈（或放寄存器）&lt;/li&gt;
+&lt;li&gt;跳转到被调函数，保存旧帧指针，建立新帧指针&lt;/li&gt;
+&lt;li&gt;为局部变量分配栈空间&lt;/li&gt;
+&lt;li&gt;执行函数体&lt;/li&gt;
+&lt;li&gt;恢复寄存器与栈指针，返回到调用方&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;函数返回后，该帧内存可被下一次调用覆盖，故局部变量地址不可长期持有。&lt;/p&gt;
+&lt;h2&gt;静态函数&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;static int helper(void) { return 0; }
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;static&lt;/code&gt; 函数&lt;strong&gt;仅在当前翻译单元（.c 文件）内可见&lt;/strong&gt;，避免与其他文件的同名函数链接冲突。&lt;/p&gt;
+&lt;h2&gt;递归&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;函数直接或间接调用自身&lt;/li&gt;
+&lt;li&gt;必须有&lt;strong&gt;终止条件&lt;/strong&gt;，否则无限递归导致栈溢出&lt;/li&gt;
+&lt;li&gt;适合问题可分解为同结构子问题（如阶乘、遍历树）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;int factorial(int n) {
+    if (n &amp;lt;= 1) return 1;
+    return n * factorial(n - 1);
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;函数指针&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;int add(int a, int b) { return a + b; }
+
+int (*fp)(int, int);     // 声明：fp 是指向函数的指针
+fp = add;                // 或 fp = &amp;amp;add;
+int r = fp(3, 5);        // 通过指针调用
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;声明格式：*&lt;em&gt;返回类型 (&lt;em&gt;指针名)(参数类型列表)&lt;/em&gt;&lt;/em&gt;&lt;/p&gt;
+&lt;h2&gt;指针函数&lt;/h2&gt;
+&lt;p&gt;函数的返回值是指针类型：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int *make_array(int n);   // 返回 int*
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;返回值不能指向已销毁的局部变量；可返回静态存储、堆内存或调用者提供的缓冲区。&lt;/p&gt;
+&lt;h2&gt;回调函数&lt;/h2&gt;
+&lt;p&gt;将函数指针作为参数传入，在特定时机由被调方调用，实现「机制与策略」分离。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;typedef int (*callback_t)(int);
+
+int process(int x, callback_t cb) {
+    return cb(x);
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;常用于事件驱动、库扩展点；&lt;strong&gt;执行顺序&lt;/strong&gt;由事件触发决定，而非写死的调用顺序。&lt;/p&gt;
+&lt;h3&gt;相关概念&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;事件驱动&lt;/strong&gt;：程序等待事件（输入、定时器等）再响应，而非纯顺序执行&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;异步&lt;/strong&gt;：发起操作后不阻塞等待完成，完成后通过回调等通知（C 中常配合线程或 I/O 多路复用）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;内联函数 &lt;code&gt;inline&lt;/code&gt;&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;static inline int max(int a, int b) {
+    return a &amp;gt; b ? a : b;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;建议将 &lt;code&gt;inline&lt;/code&gt; 函数放在头文件中并配合 &lt;code&gt;static&lt;/code&gt;，避免多重定义。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;编译器可能把函数体&lt;strong&gt;展开&lt;/strong&gt;到调用处，减少调用开销&lt;/li&gt;
+&lt;li&gt;适合短小、频繁调用的函数；函数体过大、含复杂循环或&lt;strong&gt;递归&lt;/strong&gt;时不宜内联&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;inline&lt;/code&gt; 只是&lt;strong&gt;建议&lt;/strong&gt;，编译器可忽略&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;可变参数函数&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;#include &amp;lt;stdarg.h&amp;gt;
+
+int sum(int count, ...) {
+    va_list ap;
+    va_start(ap, count);
+    int total = 0;
+    for (int i = 0; i &amp;lt; count; i++)
+        total += va_arg(ap, int);
+    va_end(ap);
+    return total;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;至少有一个&lt;strong&gt;固定命名参数&lt;/strong&gt;，用于 &lt;code&gt;va_start&lt;/code&gt; 定位可变部分&lt;/li&gt;
+&lt;li&gt;典型例子：&lt;code&gt;printf&lt;/code&gt;；类型与个数须由固定参数或约定推断，否则未定义&lt;/li&gt;
+&lt;/ul&gt;
+</content:encoded></item><item><title>【C】变量常量与数据类型</title><link>https://lysj.work/posts/studynotes/c/c%E5%8F%98%E9%87%8F%E5%B8%B8%E9%87%8F%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/</link><guid isPermaLink="true">https://lysj.work/posts/studynotes/c/c%E5%8F%98%E9%87%8F%E5%B8%B8%E9%87%8F%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/</guid><description>数据类型</description><pubDate>Tue, 19 May 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;变量定义&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;int num = 1;   // 类型  变量名  初值（可选）
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;局部变量&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;定义在函数（或块）内部&lt;/li&gt;
+&lt;li&gt;若未初始化，其值&lt;strong&gt;不确定&lt;/strong&gt;（自动存储期），使用前必须赋值&lt;/li&gt;
+&lt;li&gt;离开作用域后失效&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;全局 / 静态变量&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;定义在函数外，或使用 &lt;code&gt;static&lt;/code&gt; 修饰的局部变量&lt;/li&gt;
+&lt;li&gt;未显式初始化时，数值类型默认为 &lt;strong&gt;0&lt;/strong&gt;，指针默认为 &lt;strong&gt;NULL&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;生命周期为整个程序运行期间&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;就近原则&lt;/h3&gt;
+&lt;p&gt;编译器解析同名标识符时，优先选用&lt;strong&gt;最近作用域&lt;/strong&gt;中的定义。局部变量与全局变量同名时，在局部作用域内局部变量会&lt;strong&gt;屏蔽&lt;/strong&gt;全局变量。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int x = 10;
+
+void foo(void) {
+    int x = 20;
+    printf(&quot;%d\n&quot;, x);   // 20
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;常量&lt;/h2&gt;
+&lt;h3&gt;字面量常量&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;整型：&lt;code&gt;42&lt;/code&gt;、&lt;code&gt;0xFF&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;实型：&lt;code&gt;3.14&lt;/code&gt;、&lt;code&gt;1.0e-2&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;字符：&lt;code&gt;&apos;A&apos;&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;字符串：&lt;code&gt;&quot;hello&quot;&lt;/code&gt;（类型为 &lt;code&gt;char[]&lt;/code&gt; 或 &lt;code&gt;char*&lt;/code&gt;）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;符号常量&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;#define MAX 100              // 预处理宏，文本替换
+
+const int MAX_VAL = 100;     // const 变量，有类型检查
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;#define&lt;/code&gt; 在预处理阶段替换，无类型检查&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;const&lt;/code&gt; 由编译器处理，更安全，推荐用于只读变量&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;进制转换&lt;/h2&gt;
+&lt;p&gt;二进制转八进制、十六进制时，从&lt;strong&gt;低位向高位&lt;/strong&gt;分组：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;每 &lt;strong&gt;3&lt;/strong&gt; 位二进制 → 1 位八进制&lt;/li&gt;
+&lt;li&gt;每 &lt;strong&gt;4&lt;/strong&gt; 位二进制 → 1 位十六进制&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;示例：&lt;code&gt;1101 1010&lt;/code&gt;₂ = &lt;code&gt;332&lt;/code&gt;₈ = &lt;code&gt;DA&lt;/code&gt;₁₆&lt;/p&gt;
+&lt;h2&gt;有符号整数与取值范围&lt;/h2&gt;
+&lt;h3&gt;补码示意（以 4 位为例）&lt;/h3&gt;
+&lt;p&gt;&amp;lt;!-- 这是一张图片，ocr 内容为： --&amp;gt;
+&lt;img src=&quot;https://cdn.nlark.com/yuque/0/2026/png/23172677/1779155304315-da193842-9167-4848-9bc3-33631af749eb.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;共 2⁴ 个编码；最高位为符号位，可表示负数&lt;/li&gt;
+&lt;li&gt;可表示范围约为 -2ⁿ⁻¹ ~ 2ⁿ⁻¹ - 1（n 为位数）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;无符号溢出&lt;/h3&gt;
+&lt;p&gt;&amp;lt;!-- 这是一张图片，ocr 内容为： --&amp;gt;
+&lt;img src=&quot;https://cdn.nlark.com/yuque/0/2026/png/23172677/1779155304476-1c2ee520-c36e-4dcc-8e9a-d27c7fffd25d.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;无符号数超出位数能表示的范围时，高位被丢弃，数值按模 2ⁿ &lt;strong&gt;回绕&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;例：4 位无符号 &lt;code&gt;1111&lt;/code&gt;(15) + 1 → &lt;code&gt;0000&lt;/code&gt;(0)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;基本数据类型与格式符&lt;/h2&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;类型&lt;/th&gt;
+&lt;th&gt;典型字节数（依平台而定）&lt;/th&gt;
+&lt;th&gt;&lt;code&gt;printf&lt;/code&gt; 格式符&lt;/th&gt;
+&lt;th&gt;说明&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;char&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;1&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;%d&lt;/code&gt; 或 &lt;code&gt;%c&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;字符；&lt;code&gt;%hhd&lt;/code&gt; 打印为整数时&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;unsigned char&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;1&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;%u&lt;/code&gt; / &lt;code&gt;%hhu&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;short&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;2&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;%hd&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;unsigned short&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;2&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;%hu&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;int&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;4&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;%d&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;unsigned int&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;4&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;%u&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;long&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;4 或 8&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;%ld&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;依平台&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;unsigned long&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;4 或 8&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;%lu&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;long long&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;8&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;%lld&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;C99&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;unsigned long long&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;8&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;%llu&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;float&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;4&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;%f&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;printf&lt;/code&gt; 中 &lt;code&gt;%f&lt;/code&gt; 可用于 &lt;code&gt;float&lt;/code&gt;（会提升）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;double&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;8&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;%f&lt;/code&gt; 或 &lt;code&gt;%lf&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;printf&lt;/code&gt; 推荐 &lt;code&gt;%f&lt;/code&gt;；&lt;code&gt;scanf&lt;/code&gt; 读 &lt;code&gt;double&lt;/code&gt; 用 &lt;code&gt;%lf&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;long double&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;8~16&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;%Lf&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;依平台&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;说明&lt;/strong&gt;：&lt;code&gt;long&lt;/code&gt;、&lt;code&gt;long double&lt;/code&gt; 的字节数依赖编译器与 ABI，移植时需用 &lt;code&gt;sizeof&lt;/code&gt; 确认。&lt;/p&gt;
+</content:encoded></item><item><title>【C】右左定则</title><link>https://lysj.work/posts/studynotes/c/c%E5%8F%B3%E5%B7%A6%E5%AE%9A%E5%88%99/</link><guid isPermaLink="true">https://lysj.work/posts/studynotes/c/c%E5%8F%B3%E5%B7%A6%E5%AE%9A%E5%88%99/</guid><description>用右左法则逐步解析函数指针、数组指针等复杂 C 声明的含义。</description><pubDate>Tue, 19 May 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;定义&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;右左法则&lt;/strong&gt;：从&lt;strong&gt;未定义的标识符&lt;/strong&gt;（要解析的名字）出发，先看它&lt;strong&gt;外面&lt;/strong&gt;的括号，再&lt;strong&gt;向右&lt;/strong&gt;看，再&lt;strong&gt;向左&lt;/strong&gt;看。每遇到一对括号，就&lt;strong&gt;调换&lt;/strong&gt;阅读方向；括号内全部解析完后，跳出该括号，重复直到整个声明读完。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;用于读懂函数指针、数组指针、多级指针等复杂声明。&lt;/p&gt;
+&lt;h2&gt;应用示例&lt;/h2&gt;
+&lt;h3&gt;1. 函数指针&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;int (*func)(int *p);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;找到 &lt;code&gt;func&lt;/code&gt;，外层有 &lt;code&gt;()&lt;/code&gt; 且左侧有 &lt;code&gt;*&lt;/code&gt;，故 &lt;code&gt;func&lt;/code&gt; 是&lt;strong&gt;指针&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;跳出括号，右侧是 &lt;code&gt;(int *p)&lt;/code&gt;，说明指向&lt;strong&gt;函数&lt;/strong&gt;，参数为 &lt;code&gt;int*&lt;/code&gt;，返回 &lt;code&gt;int&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;结论：&lt;code&gt;func&lt;/code&gt; 是「指向 &lt;code&gt;int func(int*)&lt;/code&gt; 这类函数的指针」&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;2. 嵌套函数指针参数&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;int (*func)(int *p, int (*f)(int *));
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;func&lt;/code&gt; 仍是函数指针；第二个参数 &lt;code&gt;f&lt;/code&gt; 也是 &lt;code&gt;int (*)(int*)&lt;/code&gt; 类型的函数指针&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;3. 指针数组 + 函数指针&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;int (*(*func)[5])(int *p);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;func&lt;/code&gt; 被 &lt;code&gt;()&lt;/code&gt; 和左侧 &lt;code&gt;*&lt;/code&gt; 包围 → &lt;strong&gt;指针&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;右侧 &lt;code&gt;[]&lt;/code&gt; → 指向&lt;strong&gt;数组&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;再向左 &lt;code&gt;*&lt;/code&gt; → 数组元素是&lt;strong&gt;指针&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;再向右 &lt;code&gt;()&lt;/code&gt; → 指向&lt;strong&gt;函数&lt;/strong&gt;，参数 &lt;code&gt;int*&lt;/code&gt;，返回 &lt;code&gt;int&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;结论：&lt;code&gt;func&lt;/code&gt; 是指向「长度为 5 的数组」的指针，数组每个元素是「&lt;code&gt;int (*)(int*)&lt;/code&gt;」类型的函数指针。&lt;/p&gt;
+&lt;h2&gt;与常见类型对照&lt;/h2&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;声明&lt;/th&gt;
+&lt;th&gt;读法&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;int *p&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;p 是指向 int 的指针&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;int *p[5]&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;p 是含 5 个元素的数组，元素类型为 int*&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;int (*p)[5]&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;p 是指向「含 5 个 int 的数组」的指针&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;int (*fp)(void)&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;fp 是指向「无参、返回 int 函数」的指针&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;int *f(void)&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;f 是函数，返回 int*（* 优先绑定函数名）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;更多指针种类见 &lt;a href=&quot;11-%E6%8C%87%E9%92%88%E8%BF%9B%E9%98%B6.md&quot;&gt;11-指针进阶&lt;/a&gt;。&lt;/p&gt;
+</content:encoded></item><item><title>【C】开发环境与调试</title><link>https://lysj.work/posts/studynotes/c/c%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E4%B8%8E%E8%B0%83%E8%AF%95/</link><guid isPermaLink="true">https://lysj.work/posts/studynotes/c/c%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E4%B8%8E%E8%B0%83%E8%AF%95/</guid><description>C语言概述，搭建开发环境</description><pubDate>Tue, 19 May 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;C 语言标准版本&lt;/h2&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;标准&lt;/th&gt;
+&lt;th&gt;说明&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;C89 / C90&lt;/td&gt;
+&lt;td&gt;最早的 ANSI/ISO 标准，许多教材以此为基础&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;C99&lt;/td&gt;
+&lt;td&gt;引入 &lt;code&gt;//&lt;/code&gt; 注释、变长数组、柔性数组成员、&lt;code&gt;inline&lt;/code&gt; 等&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;C11&lt;/td&gt;
+&lt;td&gt;增加 &lt;code&gt;_Generic&lt;/code&gt;、原子类型、可选 VLA 等&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;C17&lt;/td&gt;
+&lt;td&gt;对 C11 的缺陷修复，无重大新特性&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;C23&lt;/td&gt;
+&lt;td&gt;最新标准（编译器支持程度因工具链而异）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;实际开发中需确认编译器默认标准（如 &lt;code&gt;gcc -std=c11&lt;/code&gt;）。&lt;/p&gt;
+&lt;h2&gt;编译流程&lt;/h2&gt;
+&lt;p&gt;从源文件到可执行文件通常经历四个阶段：&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;步骤&lt;/th&gt;
+&lt;th&gt;命令示例&lt;/th&gt;
+&lt;th&gt;作用&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;预处理&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;gcc -E hello.c -o hello.i&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;展开头文件与宏，处理条件编译，删除注释，生成 &lt;code&gt;.i&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;编译&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;gcc -S hello.i -o hello.s&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;语法与语义分析，生成汇编 &lt;code&gt;.s&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;汇编&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;gcc -c hello.s -o hello.o&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;将汇编转为机器码目标文件 &lt;code&gt;.o&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;链接&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;gcc hello.o -o hello&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;合并目标文件与库，生成可执行文件&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;也可一步完成：&lt;code&gt;gcc hello.c -o hello&lt;/code&gt;。&lt;/p&gt;
+&lt;h2&gt;调试（GDB）&lt;/h2&gt;
+&lt;p&gt;编译时加 &lt;code&gt;-g&lt;/code&gt; 生成调试信息：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;gcc -g hello.c -o hello
+gdb ./hello
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;常用 GDB 命令：&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;命令&lt;/th&gt;
+&lt;th&gt;简写&lt;/th&gt;
+&lt;th&gt;说明&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;list&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;列出源码&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;break 行号&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;b&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;在指定行设断点&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;run&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;r&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;运行程序&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;next&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;n&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;单步，不进入函数&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;step&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;s&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;单步，进入函数&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;print 变量&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;p&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;打印变量值&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;continue&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;c&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;从断点继续执行&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;finish&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;执行完当前函数并返回&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;quit&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;退出 GDB&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;注意&lt;/strong&gt;：程序在断点处暂停时，&lt;strong&gt;尚未执行&lt;/strong&gt;断点所在那一行。&lt;/p&gt;
+&lt;h2&gt;注释&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;// 单行注释（C99 起）
+
+/*
+ * 多行注释
+ */
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;多写注释有助于可读性与协作；注释不参与编译，但应与代码同步维护。&lt;/p&gt;
+&lt;h2&gt;标识符命名规则&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;由字母、数字、下划线组成&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;不能&lt;/strong&gt;以数字开头&lt;/li&gt;
+&lt;li&gt;区分大小写&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;不能&lt;/strong&gt;使用关键字（如 &lt;code&gt;int&lt;/code&gt;、&lt;code&gt;return&lt;/code&gt;）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;合法示例：&lt;code&gt;count&lt;/code&gt;、&lt;code&gt;_temp&lt;/code&gt;、&lt;code&gt;value2&lt;/code&gt;。非法示例：&lt;code&gt;2value&lt;/code&gt;、&lt;code&gt;int&lt;/code&gt;。&lt;/p&gt;
+</content:encoded></item><item><title>【C】指针基础</title><link>https://lysj.work/posts/studynotes/c/c%E6%8C%87%E9%92%88%E5%9F%BA%E7%A1%80/</link><guid isPermaLink="true">https://lysj.work/posts/studynotes/c/c%E6%8C%87%E9%92%88%E5%9F%BA%E7%A1%80/</guid><description>指针的定义、取址与解引用、指针算术、空指针与野指针，以及数组名退化与指针数组。</description><pubDate>Tue, 19 May 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;什么是指针&lt;/h2&gt;
+&lt;p&gt;指针是&lt;strong&gt;存放地址&lt;/strong&gt;的变量，其值为另一个对象（或函数）的地址。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int num = 10;
+int *p = &amp;amp;num;     // p 的类型是 int*，存 num 的地址
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;int *p&lt;/code&gt; 读作：p 是指向 int 的指针&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;*p&lt;/code&gt; 是解引用，表示 p 所指向的 int 对象&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;指针长度&lt;/h2&gt;
+&lt;p&gt;指针本身大小取决于&lt;strong&gt;寻址位数&lt;/strong&gt;，与所指类型无关：&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;平台&lt;/th&gt;
+&lt;th&gt;指针典型大小&lt;/th&gt;
+&lt;th&gt;可寻址空间&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;32 位&lt;/td&gt;
+&lt;td&gt;4 字节&lt;/td&gt;
+&lt;td&gt;约 4 GB&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;64 位&lt;/td&gt;
+&lt;td&gt;8 字节&lt;/td&gt;
+&lt;td&gt;理论 2⁶⁴&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2&gt;基本操作&lt;/h2&gt;
+&lt;h3&gt;取地址 &lt;code&gt;&amp;amp;&lt;/code&gt;&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;int num = 10;
+int *p = &amp;amp;num;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;解引用 &lt;code&gt;*&lt;/code&gt;&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;printf(&quot;%d\n&quot;, *p);   // 10
+*p = 20;              // 修改 num
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;解引用前须保证指针已初始化且指向&lt;strong&gt;有效、有生命周期&lt;/strong&gt;的对象。&lt;/p&gt;
+&lt;h3&gt;指针算术&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;int arr[5] = {1, 2, 3, 4, 5};
+int *ptr = arr;       // 指向 arr[0]
+
+ptr++;                // 指向下一个 int，地址 + sizeof(int)
+ptr += 2;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;指针加减的单位是&lt;strong&gt;所指类型的大小&lt;/strong&gt;。&lt;/p&gt;
+&lt;h2&gt;空指针与野指针&lt;/h2&gt;
+&lt;h3&gt;空指针 &lt;code&gt;NULL&lt;/code&gt;&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;int *p = NULL;
+if (p != NULL) {
+    *p = 1;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;不指向任何对象；用于表示「无效」或「未赋值」，避免误用随机地址。&lt;/p&gt;
+&lt;h3&gt;野指针&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;未初始化的指针&lt;/li&gt;
+&lt;li&gt;指向已释放内存的指针（悬空指针）&lt;/li&gt;
+&lt;li&gt;指向已失效的局部变量&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;对野指针解引用可能导致&lt;strong&gt;段错误&lt;/strong&gt;或未定义行为。&lt;/p&gt;
+&lt;h2&gt;指针与数组&lt;/h2&gt;
+&lt;h3&gt;数组名退化&lt;/h3&gt;
+&lt;p&gt;在表达式中，数组名通常转为&lt;strong&gt;指向首元素&lt;/strong&gt;的指针：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int a[5];
+a == &amp;amp;a[0];           // 非 0（地址相同）
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;例外：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;sizeof(a)&lt;/code&gt;：整个数组大小&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;&amp;amp;a&lt;/code&gt;：类型为 &lt;code&gt;int (*)[5]&lt;/code&gt;，指向&lt;strong&gt;整个数组&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;数组指针&lt;/h3&gt;
+&lt;p&gt;指向整个数组的指针：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int a[5];
+int (*ap)[5] = &amp;amp;a;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;ap + 1&lt;/code&gt; 跳过整个数组（+20 字节，假设 int 为 4 字节）。&lt;/p&gt;
+&lt;h3&gt;指针数组&lt;/h3&gt;
+&lt;p&gt;元素是指针的数组：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int x = 10, y = 20, z = 30;
+int *parr[3] = {&amp;amp;x, &amp;amp;y, &amp;amp;z};
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;parr&lt;/code&gt; 是数组，&lt;code&gt;parr[i]&lt;/code&gt; 是 &lt;code&gt;int*&lt;/code&gt;；&lt;code&gt;*parr[1]&lt;/code&gt; 为 20。&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;声明&lt;/th&gt;
+&lt;th&gt;含义&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;int *p[5]&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;指针数组：5 个 &lt;code&gt;int*&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;int (*p)[5]&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;数组指针：指向含 5 个 int 的数组&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;复杂声明可用 &lt;a href=&quot;10-%E5%8F%B3%E5%B7%A6%E5%AE%9A%E5%88%99.md&quot;&gt;10-右左定则&lt;/a&gt; 解析。&lt;/p&gt;
+</content:encoded></item><item><title>【C】指针进阶</title><link>https://lysj.work/posts/studynotes/c/c%E6%8C%87%E9%92%88%E8%BF%9B%E9%98%B6/</link><guid isPermaLink="true">https://lysj.work/posts/studynotes/c/c%E6%8C%87%E9%92%88%E8%BF%9B%E9%98%B6/</guid><description>多级指针、const 与指针的组合、void 通用指针，并复习数组指针与函数指针。</description><pubDate>Tue, 19 May 2026 00:00:00 GMT</pubDate><content:encoded>&lt;blockquote&gt;
+&lt;p&gt;复杂声明建议配合 &lt;a href=&quot;10-%E5%8F%B3%E5%B7%A6%E5%AE%9A%E5%88%99.md&quot;&gt;10-右左定则&lt;/a&gt; 阅读。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2&gt;指针的种类&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;// 指向基本类型
+int num = 10;
+int *p_num = &amp;amp;num;
+
+// 指向函数
+int func1(void) { return 1; }
+int func2(int x) { return x; }
+int (*p_fun1)(void) = &amp;amp;func1;
+int (*p_fun2)(int) = func2;          // 函数名即入口地址，&amp;amp; 可省略
+
+// 指向数组元素 / 整个数组
+int array[5] = {1, 3, 5, 7, 9};
+int *p_elem = array;                 // 指向 array[0]
+int (*p_whole)[5] = &amp;amp;array;          // 指向整个 array
+
+// 指向结构体
+struct Student {
+    int id;
+    char name[20];
+};
+struct Student stu = {1, &quot;Tom&quot;};
+struct Student *p_stu = &amp;amp;stu;
+p_stu-&amp;gt;id = 2;                       // 等价于 (*p_stu).id
+
+// 多级指针
+int **pp = &amp;amp;p_num;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;多级指针&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;int num = 0;
+int *p1 = &amp;amp;num;
+int **p2 = &amp;amp;p1;
+int ***p3 = &amp;amp;p2;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;每多一级 &lt;code&gt;*&lt;/code&gt;，多解引用一次才得到最终的 &lt;code&gt;int&lt;/code&gt;。&lt;/p&gt;
+&lt;h2&gt;常量与指针&lt;/h2&gt;
+&lt;h3&gt;指向常量的指针&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;const int *p;    // 或 int const *p;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;不能&lt;/strong&gt;通过 &lt;code&gt;p&lt;/code&gt; 修改所指 int&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;可以&lt;/strong&gt;让 &lt;code&gt;p&lt;/code&gt; 指向别的 int&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;指针常量&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;int *const p = &amp;amp;num;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;不能&lt;/strong&gt;改变 &lt;code&gt;p&lt;/code&gt; 的指向&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;可以&lt;/strong&gt;通过 &lt;code&gt;p&lt;/code&gt; 修改所指 int&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;指向常量的指针常量&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;const int *const p = &amp;amp;num1;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;指向与所指对象都不可通过 &lt;code&gt;p&lt;/code&gt; 改变。&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;写法&lt;/th&gt;
+&lt;th&gt;俗称&lt;/th&gt;
+&lt;th&gt;改指向&lt;/th&gt;
+&lt;th&gt;改所指对象的值（通过指针）&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;const int *p&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;指向常量的指针&lt;/td&gt;
+&lt;td&gt;能&lt;/td&gt;
+&lt;td&gt;不能&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;int *const p&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;指针常量&lt;/td&gt;
+&lt;td&gt;不能&lt;/td&gt;
+&lt;td&gt;能&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;const int *const p&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;两者都是&lt;/td&gt;
+&lt;td&gt;不能&lt;/td&gt;
+&lt;td&gt;不能&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;记忆&lt;/strong&gt;：&lt;code&gt;const&lt;/code&gt; 默认修饰&lt;strong&gt;左边&lt;/strong&gt;；左边没有则修饰&lt;strong&gt;右边&lt;/strong&gt;（如 &lt;code&gt;const int *p&lt;/code&gt; 修饰 &lt;code&gt;*p&lt;/code&gt;）。&lt;/p&gt;
+&lt;h2&gt;数组指针与指针数组（复习）&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;int a[5] = {1, 2, 3, 4, 5};
+int (*ap)[5] = &amp;amp;a;                   // 数组指针
+
+int x = 10, y = 20;
+int *parr[2] = {&amp;amp;x, &amp;amp;y};             // 指针数组
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;详见 &lt;a href=&quot;08-%E6%8C%87%E9%92%88%E5%9F%BA%E7%A1%80.md&quot;&gt;08-指针基础&lt;/a&gt;。&lt;/p&gt;
+&lt;h2&gt;void 指针&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;void*&lt;/code&gt; 为&lt;strong&gt;通用对象指针&lt;/strong&gt;，可存放任意对象地址（函数指针除外，不能与对象指针互转规则见标准）。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;void *vp = malloc(sizeof(int));
+if (vp != NULL) {
+    int *ip = (int *)vp;
+    *ip = 42;
+    free(vp);
+    vp = NULL;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;C 中 &lt;code&gt;void*&lt;/code&gt; 可&lt;strong&gt;隐式&lt;/strong&gt;转为其它对象指针类型；&lt;strong&gt;解引用前&lt;/strong&gt;必须转为具体类型&lt;/li&gt;
+&lt;li&gt;C++ 中需显式转换&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;void&lt;/code&gt; 用于无返回值函数；&lt;code&gt;void func(void)&lt;/code&gt; 表示无参数&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;函数指针与回调（复习）&lt;/h2&gt;
+&lt;p&gt;见 &lt;a href=&quot;09-%E5%87%BD%E6%95%B0.md&quot;&gt;09-函数&lt;/a&gt;。&lt;/p&gt;
+</content:encoded></item><item><title>【C】数组与字符串</title><link>https://lysj.work/posts/studynotes/c/c%E6%95%B0%E7%BB%84%E4%B8%8E%E5%AD%97%E7%AC%A6%E4%B8%B2/</link><guid isPermaLink="true">https://lysj.work/posts/studynotes/c/c%E6%95%B0%E7%BB%84%E4%B8%8E%E5%AD%97%E7%AC%A6%E4%B8%B2/</guid><description>讲解一维数组初始化、C 字符串与 NUL 结尾约定，以及 string.h 常用函数与 sizeof。</description><pubDate>Tue, 19 May 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;一维数组&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;类型 数组名[元素个数];
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;元素个数&lt;/code&gt; 须为&lt;strong&gt;大于 0 的整型常量表达式&lt;/strong&gt;（C99 前）；VLA 见 &lt;a href=&quot;12-void%E4%B8%8E%E7%89%B9%E6%AE%8A%E6%95%B0%E7%BB%84%E7%B1%BB%E5%9E%8B.md&quot;&gt;12-void与特殊数组类型&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;下标从 &lt;strong&gt;0&lt;/strong&gt; 开始，有效范围 &lt;code&gt;0 ~ 长度-1&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;初始化&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;int a[3];
+a[0] = 1; a[1] = 2; a[2] = 3;           // 逐个赋值
+
+int b[3] = {0, 1, 2};                    // 完全初始化
+int c[5] = {0, 1, 2};                    // 其余元素为 0
+int d[] = {0, 1, 2, 3};                  // 长度由初值个数推断
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;未初始化元素的自动数组元素值&lt;strong&gt;不确定&lt;/strong&gt;；静态/全局数组未初始化部分为 0。&lt;/p&gt;
+&lt;h2&gt;字符与字符串&lt;/h2&gt;
+&lt;h3&gt;字符数组&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;char chs[] = {&apos;a&apos;, &apos;b&apos;, &apos;c&apos;};            // 无自动 &apos;\0&apos;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;字符串字面量&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;char str[] = &quot;abc&quot;;                        // 等价于 {&apos;a&apos;,&apos;b&apos;,&apos;c&apos;,&apos;\0&apos;}
+char *p = &quot;abc&quot;;                           // p 指向只读字符串，勿修改 *p
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;C 中字符串是以 &lt;strong&gt;&lt;code&gt;&apos;\0&apos;&lt;/code&gt;&lt;/strong&gt;（NUL）结尾的 &lt;code&gt;char&lt;/code&gt; 序列&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;&quot;abc&quot;&lt;/code&gt; 长度为 4 字节（含结尾符）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;不要&lt;/strong&gt;写 &lt;code&gt;char c = &quot;abc&quot;;&lt;/code&gt;（类型错误）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;常用字符串函数&lt;/h3&gt;
+&lt;p&gt;头文件 &lt;code&gt;#include &amp;lt;string.h&amp;gt;&lt;/code&gt;：&lt;code&gt;strlen&lt;/code&gt;、&lt;code&gt;strcpy&lt;/code&gt;、&lt;code&gt;strncpy&lt;/code&gt;、&lt;code&gt;strcmp&lt;/code&gt;、&lt;code&gt;strcat&lt;/code&gt; 等。使用 &lt;code&gt;strcpy&lt;/code&gt; 等须保证目标缓冲区足够大。&lt;/p&gt;
+&lt;h2&gt;数组与 sizeof&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;int a[10];
+sizeof(a);       // 整个数组字节数，如 40
+sizeof(a[0]);    // 单个元素
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;表达式中的数组名在多数情况下&lt;strong&gt;退化为&lt;/strong&gt;指向首元素的指针，但 &lt;code&gt;sizeof(数组名)&lt;/code&gt; 仍是整个数组大小。&lt;/p&gt;
+</content:encoded></item><item><title>【C】流程控制</title><link>https://lysj.work/posts/studynotes/c/c%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6/</link><guid isPermaLink="true">https://lysj.work/posts/studynotes/c/c%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6/</guid><description>涵盖 if、switch、while、do-while、for、goto 及 break、continue、return 等控制语句。</description><pubDate>Tue, 19 May 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;顺序结构&lt;/h2&gt;
+&lt;p&gt;按书写顺序依次执行语句。&lt;/p&gt;
+&lt;h2&gt;选择结构&lt;/h2&gt;
+&lt;h3&gt;if&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;if (条件) {
+    // 条件非 0 时执行
+}
+
+if (条件) {
+} else {
+}
+
+if (条件1) {
+} else if (条件2) {
+} else {
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;条件为&lt;strong&gt;整型表达式&lt;/strong&gt;，0 为假，非 0 为真&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;else&lt;/code&gt; 与&lt;strong&gt;最近的&lt;/strong&gt;未配对 &lt;code&gt;if&lt;/code&gt; 结合&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;switch&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;switch (表达式) {
+    case 常量1:
+        // ...
+        break;
+    case 常量2:
+        // ...
+        break;
+    default:
+        // 无匹配 case 时执行
+        break;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;表达式&lt;/code&gt; 与各 &lt;code&gt;case&lt;/code&gt; 标签类型须兼容（一般为整型）&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;case&lt;/code&gt; 顺序任意；&lt;code&gt;default&lt;/code&gt; 可不在末尾，但建议放最后&lt;/li&gt;
+&lt;li&gt;无 &lt;code&gt;break&lt;/code&gt; 时会&lt;strong&gt;贯穿&lt;/strong&gt;到下一个 case（有时故意利用，多数情况应写 &lt;code&gt;break&lt;/code&gt;）&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;default&lt;/code&gt; 与最后一个 &lt;code&gt;break&lt;/code&gt; 建议写上，逻辑更清晰&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;循环结构&lt;/h2&gt;
+&lt;h3&gt;while&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;while (条件) {
+    // 循环体
+}
+
+while (1) {   // 死循环，需 break 或 return 退出
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;先判断条件，再执行循环体。&lt;/p&gt;
+&lt;h3&gt;do...while&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;do {
+    // 循环体
+} while (条件);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;至少执行一次循环体，再判断条件。&lt;/p&gt;
+&lt;h3&gt;for&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;for (初始化; 条件; 更新) {
+    // 循环体
+}
+
+for (;;) {     // 死循环
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;三部分均可省略，但分号不能少。&lt;/p&gt;
+&lt;h3&gt;goto&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;loop_start:
+    if (i &amp;gt;= 5) goto loop_end;
+    printf(&quot;%d &quot;, i);
+    i++;
+    goto loop_start;
+loop_end:
+&lt;/code&gt;&lt;/pre&gt;
+&lt;blockquote&gt;
+&lt;p&gt;一般不推荐滥用 &lt;code&gt;goto&lt;/code&gt;，会使控制流难读；但在多层循环统一跳出等场景偶尔使用。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2&gt;循环控制&lt;/h2&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;语句&lt;/th&gt;
+&lt;th&gt;作用&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;break&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;跳出&lt;strong&gt;最内层&lt;/strong&gt;的 &lt;code&gt;switch&lt;/code&gt; 或循环&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;continue&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;跳过本次循环剩余语句，进入下一次迭代&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;return&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;结束&lt;strong&gt;当前函数&lt;/strong&gt;，可带返回值&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+</content:encoded></item><item><title>【C】结构体联合体与枚举</title><link>https://lysj.work/posts/studynotes/c/c%E7%BB%93%E6%9E%84%E4%BD%93%E8%81%94%E5%90%88%E4%BD%93%E4%B8%8E%E6%9E%9A%E4%B8%BE/</link><guid isPermaLink="true">https://lysj.work/posts/studynotes/c/c%E7%BB%93%E6%9E%84%E4%BD%93%E8%81%94%E5%90%88%E4%BD%93%E4%B8%8E%E6%9E%9A%E4%B8%BE/</guid><description>结构体内存对齐、联合体共享内存、枚举常量及 typedef 与</description><pubDate>Tue, 19 May 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;结构体&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;struct Point {
+    int x;
+    int y;
+};
+
+struct Point p = {1, 2};
+struct Point *pp = &amp;amp;p;
+pp-&amp;gt;x = 3;                    // 等价于 (*pp).x
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;内存对齐&lt;/h3&gt;
+&lt;p&gt;为提高访问效率，成员按&lt;strong&gt;对齐要求&lt;/strong&gt;排列，可能插入填充字节。&lt;/p&gt;
+&lt;p&gt;规则（简化）：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;结构体起始地址对齐到其&lt;strong&gt;最严格&lt;/strong&gt;成员的对齐要求&lt;/li&gt;
+&lt;li&gt;每个成员偏移量为其自身大小的整数倍（对齐倍数）&lt;/li&gt;
+&lt;li&gt;结构体&lt;strong&gt;总大小&lt;/strong&gt;为最大成员对齐值的整数倍（末尾可能填充）&lt;/li&gt;
+&lt;li&gt;嵌套结构体按自身最大对齐要求参与外层布局&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;可用 &lt;code&gt;offsetof&lt;/code&gt;、&lt;code&gt;sizeof&lt;/code&gt; 在目标平台上验证布局。&lt;/p&gt;
+&lt;h3&gt;位域&lt;/h3&gt;
+&lt;p&gt;见 &lt;a href=&quot;14-%E4%BD%8D%E5%9F%9F.md&quot;&gt;14-位域&lt;/a&gt;。&lt;/p&gt;
+&lt;h2&gt;联合体（union）&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;union Data {
+    int i;
+    float f;
+    char str[20];
+};
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;所有成员&lt;strong&gt;共享同一块内存&lt;/strong&gt;，同一时刻只应把其中一个成员当作「活跃」成员使用&lt;/li&gt;
+&lt;li&gt;大小一般为&lt;strong&gt;最大成员&lt;/strong&gt;的大小（含对齐填充）&lt;/li&gt;
+&lt;li&gt;给某一成员赋值后，再按&lt;strong&gt;另一成员类型&lt;/strong&gt;读取属于未定义行为（除非是无类型内存拷贝等特殊情况）&lt;/li&gt;
+&lt;li&gt;常用于节省内存、协议字段复用、类型双关（需注意严格别名规则）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;枚举（enum）&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;enum Color {
+    RED,      // 0
+    GREEN,    // 1
+    BLUE      // 2
+};
+
+enum State {
+    OFF = 0,
+    ON = 1,
+    ERROR = 100,
+    WARN          // 101，依次递增
+};
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;枚举常量在 C 中类型为 &lt;code&gt;int&lt;/code&gt;，可参与整数运算&lt;/li&gt;
+&lt;li&gt;默认从 0 递增；可显式指定某一常量的值，其后继续递增&lt;/li&gt;
+&lt;li&gt;提高可读性，比宏更易调试&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;typedef&lt;/h2&gt;
+&lt;p&gt;为已有类型创建别名：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;typedef unsigned int uint;
+typedef struct Node Node;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;对比项&lt;/th&gt;
+&lt;th&gt;&lt;code&gt;typedef&lt;/code&gt;&lt;/th&gt;
+&lt;th&gt;&lt;code&gt;#define&lt;/code&gt;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;处理阶段&lt;/td&gt;
+&lt;td&gt;编译器&lt;/td&gt;
+&lt;td&gt;预处理器&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;类型检查&lt;/td&gt;
+&lt;td&gt;有&lt;/td&gt;
+&lt;td&gt;无（文本替换）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;复杂类型&lt;/td&gt;
+&lt;td&gt;适合&lt;/td&gt;
+&lt;td&gt;不适合&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;头文件中常用 &lt;code&gt;typedef&lt;/code&gt; 简化 &lt;code&gt;struct&lt;/code&gt; 用法。&lt;/p&gt;
+</content:encoded></item><item><title>【C】输入输出与类型转换</title><link>https://lysj.work/posts/studynotes/c/c%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%E4%B8%8E%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/</link><guid isPermaLink="true">https://lysj.work/posts/studynotes/c/c%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%E4%B8%8E%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/</guid><description>介绍 printf、scanf 等标准 I/O 函数，以及赋值、算术隐式转换与强制类型转换的用法与注意点。</description><pubDate>Tue, 19 May 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;标准 I/O 函数&lt;/h2&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;函数&lt;/th&gt;
+&lt;th&gt;作用&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;printf&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;格式化输出到标准输出&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;scanf&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;格式化从标准输入读取&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;getchar&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;读入一个字符&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;putchar&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;输出一个字符&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;头文件：&lt;code&gt;#include &amp;lt;stdio.h&amp;gt;&lt;/code&gt;&lt;/p&gt;
+&lt;h3&gt;scanf 注意事项&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;吸收换行符问题&lt;/strong&gt;：用 &lt;code&gt;scanf&lt;/code&gt; 读单个字符时，若之前有输入并敲了回车，缓冲区可能残留 &lt;code&gt;\n&lt;/code&gt;，会被 &lt;code&gt;%c&lt;/code&gt; 读走。&lt;/p&gt;
+&lt;p&gt;解决办法：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;getchar();                    // 先吃掉多余换行
+// 或
+scanf(&quot; %c&quot;, &amp;amp;ch);            // %c 前加空格，跳过空白字符
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;多类型输入&lt;/strong&gt;：格式串与参数类型、顺序必须一致。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int a;
+float b;
+scanf(&quot;%d %f&quot;, &amp;amp;a, &amp;amp;b);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;安全&lt;/strong&gt;：始终检查 &lt;code&gt;scanf&lt;/code&gt; 返回值（成功赋值的项数），避免非法输入导致未定义行为。&lt;/p&gt;
+&lt;h2&gt;类型转换&lt;/h2&gt;
+&lt;h3&gt;自动转换（隐式）&lt;/h3&gt;
+&lt;h4&gt;赋值转换&lt;/h4&gt;
+&lt;p&gt;将右侧表达式类型转换为左侧变量类型，可能丢失精度。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;double a = 3.14;
+int i = a;        // i 为 3，小数部分截断
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;算术转换&lt;/h4&gt;
+&lt;p&gt;不同类型参与运算时，按「向更大类型提升」规则统一类型后再运算。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int a = 10;
+float b = 3.14f;
+double c = a + b;   // a 转为 float，再与 b 运算，结果常为 double
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;常见提升顺序（简化）：&lt;code&gt;char&lt;/code&gt; → &lt;code&gt;int&lt;/code&gt; → &lt;code&gt;long&lt;/code&gt; → &lt;code&gt;float&lt;/code&gt; → &lt;code&gt;double&lt;/code&gt; → &lt;code&gt;long double&lt;/code&gt;。&lt;/p&gt;
+&lt;h3&gt;强制转换（显式）&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;double d = 3.14159;
+int i = (int)d;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;强制转换只影响&lt;strong&gt;该表达式&lt;/strong&gt;，不改变原变量类型&lt;/li&gt;
+&lt;li&gt;能自动转换的情况通常也能强制转换；反之不一定（如指针类型间需谨慎）&lt;/li&gt;
+&lt;/ul&gt;
+</content:encoded></item><item><title>【C】运算符</title><link>https://lysj.work/posts/studynotes/c/c%E8%BF%90%E7%AE%97%E7%AC%A6/</link><guid isPermaLink="true">https://lysj.work/posts/studynotes/c/c%E8%BF%90%E7%AE%97%E7%AC%A6/</guid><description>梳理算术、关系、赋值、逻辑、位运算与三目运算符，并说明优先级与短路求值。</description><pubDate>Tue, 19 May 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;算术运算符&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;+&lt;/code&gt; &lt;code&gt;-&lt;/code&gt; &lt;code&gt;*&lt;/code&gt; &lt;code&gt;/&lt;/code&gt; &lt;code&gt;%&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;先乘除、后加减；可用括号改变顺序&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;整数相除&lt;/strong&gt;结果向零截断取整：&lt;code&gt;5 / 2 == 2&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;浮点运算&lt;/strong&gt;：只要有一侧为浮点类型，按浮点规则运算；两 &lt;code&gt;float&lt;/code&gt; 相除结果为 &lt;code&gt;float&lt;/code&gt;（不会自动变成 &lt;code&gt;double&lt;/code&gt;，除非发生提升）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;不能&lt;/strong&gt;对 0 做除法或取模&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;不能&lt;/strong&gt;对浮点数使用 &lt;code&gt;%&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;负数取模：结果符号由&lt;strong&gt;实现定义&lt;/strong&gt;（C99 前）；实践中常与被除数同号&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;关系运算符&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;&amp;lt;&lt;/code&gt; &lt;code&gt;&amp;lt;=&lt;/code&gt; &lt;code&gt;&amp;gt;&lt;/code&gt; &lt;code&gt;&amp;gt;=&lt;/code&gt; &lt;code&gt;==&lt;/code&gt; &lt;code&gt;!=&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;结果为 &lt;strong&gt;0（假）&lt;/strong&gt; 或 &lt;strong&gt;非 0（真）&lt;/strong&gt;；关系运算的结果通常是 0 或 1&lt;/li&gt;
+&lt;li&gt;不要写 &lt;code&gt;if (a = b)&lt;/code&gt; 当比较用，应写 &lt;code&gt;if (a == b)&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;赋值运算符&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;=&lt;/code&gt; &lt;code&gt;+=&lt;/code&gt; &lt;code&gt;-=&lt;/code&gt; &lt;code&gt;*=&lt;/code&gt; &lt;code&gt;/=&lt;/code&gt; &lt;code&gt;%=&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;只能作用于&lt;strong&gt;可修改的左值&lt;/strong&gt;（一般为变量）&lt;/li&gt;
+&lt;li&gt;结合性：从右向左，如 &lt;code&gt;a = b = 1&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;自增自减&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;++&lt;/code&gt; &lt;code&gt;--&lt;/code&gt;（前缀与后缀）&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int temp = 5;
+int a = temp++;   // a = 5，temp 变为 6
+int b = ++temp;   // temp 先变 7，b = 7
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;不能用于常量或纯表达式（如 &lt;code&gt;(a+b)++&lt;/code&gt;）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;不要&lt;/strong&gt;在同一表达式中对同一变量多次自增/自减，结果未定义&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;逻辑运算符&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;&amp;amp;&amp;amp;&lt;/code&gt; &lt;code&gt;||&lt;/code&gt; &lt;code&gt;!&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;C 语言&lt;strong&gt;没有&lt;/strong&gt; &lt;code&gt;a &amp;lt; b &amp;lt; c&lt;/code&gt; 这种链式比较，应写 &lt;code&gt;a &amp;lt; b &amp;amp;&amp;amp; b &amp;lt; c&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;短路求值&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;&amp;amp;&amp;amp;&lt;/code&gt;：左侧为假则不再计算右侧&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;||&lt;/code&gt;：左侧为真则不再计算右侧&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;常用于避免空指针解引用：&lt;code&gt;ptr != NULL &amp;amp;&amp;amp; *ptr &amp;gt; 0&lt;/code&gt;&lt;/p&gt;
+&lt;h2&gt;逗号运算符&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;,&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;从左到右依次求值各表达式，&lt;strong&gt;整个逗号表达式的值为最后一个表达式的值&lt;/strong&gt;。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int x = (1, 2, 3);   // x 为 3
+for (i = 0, j = 10; i &amp;lt; j; i++, j--) { }
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;条件运算符（三目）&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;表达式1 ? 表达式2 : 表达式3
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;表达式1 非 0 则求值表达式2，否则求值表达式3&lt;/li&gt;
+&lt;li&gt;嵌套时：&lt;code&gt;?&lt;/code&gt; 与&lt;strong&gt;右侧最近&lt;/strong&gt;的 &lt;code&gt;:&lt;/code&gt; 配对（结合方向自右向左）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;int max = (a &amp;gt; b) ? a : b;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;位运算符&lt;/h2&gt;
+&lt;p&gt;对整数类型的&lt;strong&gt;二进制位&lt;/strong&gt;操作：&lt;code&gt;&amp;amp;&lt;/code&gt; &lt;code&gt;|&lt;/code&gt; &lt;code&gt;^&lt;/code&gt; &lt;code&gt;~&lt;/code&gt; &lt;code&gt;&amp;lt;&amp;lt;&lt;/code&gt; &lt;code&gt;&amp;gt;&amp;gt;&lt;/code&gt;&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;运算符&lt;/th&gt;
+&lt;th&gt;含义&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;&amp;amp;&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;按位与，同为 1 才为 1&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;|&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;按位或，有 1 则为 1&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;^&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;按位异或，相同为 0&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;~&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;按位取反&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;&amp;lt;&amp;lt;&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;左移，右侧补 0&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;&amp;gt;&amp;gt;&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;右移；无符号补 0；&lt;strong&gt;有符号右移实现定义&lt;/strong&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;ul&gt;
+&lt;li&gt;移位位数须合法，过大或负数为未定义行为&lt;/li&gt;
+&lt;li&gt;常用于标志位、权限掩码等&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;运算符优先级（由高到低）&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;()&lt;/code&gt; &lt;code&gt;[]&lt;/code&gt; &lt;code&gt;-&amp;gt;&lt;/code&gt; &lt;code&gt;.&lt;/code&gt;、后缀 &lt;code&gt;++&lt;/code&gt; &lt;code&gt;--&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;前缀 &lt;code&gt;++&lt;/code&gt; &lt;code&gt;--&lt;/code&gt;、&lt;code&gt;+&lt;/code&gt; &lt;code&gt;-&lt;/code&gt;（正负）、&lt;code&gt;!&lt;/code&gt; &lt;code&gt;~&lt;/code&gt;、强制转换、解引用 &lt;code&gt;*&lt;/code&gt;、取址 &lt;code&gt;&amp;amp;&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;*&lt;/code&gt; &lt;code&gt;/&lt;/code&gt; &lt;code&gt;%&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;+&lt;/code&gt; &lt;code&gt;-&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;&amp;lt;&amp;lt;&lt;/code&gt; &lt;code&gt;&amp;gt;&amp;gt;&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;&amp;lt;&lt;/code&gt; &lt;code&gt;&amp;lt;=&lt;/code&gt; &lt;code&gt;&amp;gt;&lt;/code&gt; &lt;code&gt;&amp;gt;=&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;==&lt;/code&gt; &lt;code&gt;!=&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;&amp;amp;&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;^&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;|&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;&amp;amp;&amp;amp;&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;||&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;?:&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;赋值 &lt;code&gt;=&lt;/code&gt; &lt;code&gt;+=&lt;/code&gt; …&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;,&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;不确定时加括号，可读性优先。&lt;/p&gt;
+</content:encoded></item><item><title>【C】预处理编译与项目结构</title><link>https://lysj.work/posts/studynotes/c/c%E9%A2%84%E5%A4%84%E7%90%86%E7%BC%96%E8%AF%91%E4%B8%8E%E9%A1%B9%E7%9B%AE%E7%BB%93%E6%9E%84/</link><guid isPermaLink="true">https://lysj.work/posts/studynotes/c/c%E9%A2%84%E5%A4%84%E7%90%86%E7%BC%96%E8%AF%91%E4%B8%8E%E9%A1%B9%E7%9B%AE%E7%BB%93%E6%9E%84/</guid><description>从预处理到链接的编译流程、宏与条件编译，以及多文件 C 项目的目录与头文件规范。</description><pubDate>Tue, 19 May 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;编译流程总览&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;源代码(.c) → 预处理器 → 编译器 → 汇编器 → 链接器 → 可执行文件
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&amp;lt;!-- 这是一张图片，ocr 内容为： --&amp;gt;
+&lt;img src=&quot;https://cdn.nlark.com/yuque/0/2026/png/23172677/1779155994075-8af83dc4-d814-4ffc-86a1-536c25969c63.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;阶段&lt;/th&gt;
+&lt;th&gt;命令示例&lt;/th&gt;
+&lt;th&gt;输出&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;预处理&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;gcc -E source.c -o source.i&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;.i&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;编译&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;gcc -S source.i -o source.s&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;.s&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;汇编&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;gcc -c source.s -o source.o&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;.o&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;链接&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;gcc source.o -o program&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;可执行文件&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2&gt;预处理&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;-E&lt;/code&gt;：只运行预处理器，不编译、不汇编、不链接。&lt;/p&gt;
+&lt;p&gt;主要工作：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;处理以 &lt;code&gt;#&lt;/code&gt; 开头的指令&lt;/li&gt;
+&lt;li&gt;展开 &lt;code&gt;#include&lt;/code&gt;、替换 &lt;code&gt;#define&lt;/code&gt;、条件编译&lt;/li&gt;
+&lt;li&gt;删除注释&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;&lt;code&gt;#include&lt;/code&gt; — 文件包含&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;#include &amp;lt;stdio.h&amp;gt;      // 系统头文件路径
+#include &quot;myheader.h&quot;   // 当前目录或 -I 指定路径
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;&lt;code&gt;#define&lt;/code&gt; — 宏定义&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;#define PI 3.14159
+#define MAX_SIZE 100
+#define ADD(a, b) ((a) + (b))    // 带参宏，注意括号
+
+#define PRINT_HELLO \
+    printf(&quot;Hello\n&quot;); \
+    printf(&quot;World\n&quot;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;宏是&lt;strong&gt;文本替换&lt;/strong&gt;，无类型检查；复杂逻辑优先用 &lt;code&gt;inline&lt;/code&gt; 函数或普通函数&lt;/li&gt;
+&lt;li&gt;多行宏用 &lt;code&gt;\&lt;/code&gt; 续行；续行后不要缩进多余空格进宏体&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;&lt;code&gt;#undef&lt;/code&gt;&lt;/h3&gt;
+&lt;p&gt;取消已定义的宏。&lt;/p&gt;
+&lt;h3&gt;条件编译&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;#define VERSION 2
+
+#if VERSION == 1
+    /* ... */
+#elif VERSION == 2
+    /* ... */
+#else
+    /* ... */
+#endif
+
+#ifdef DEBUG
+    printf(&quot;debug\n&quot;);
+#endif
+
+#ifndef MYHEADER_H
+#define MYHEADER_H
+/* 头文件内容 */
+#endif
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;#ifndef&lt;/code&gt; / &lt;code&gt;#define&lt;/code&gt; / &lt;code&gt;#endif&lt;/code&gt; 为&lt;strong&gt;头文件保护&lt;/strong&gt;，防止重复包含。&lt;/p&gt;
+&lt;h2&gt;typedef 与 #define&lt;/h2&gt;
+&lt;p&gt;见 &lt;a href=&quot;a1da8c77a6b5598a8d0d42d738811a57&quot;&gt;13-结构体联合体与枚举&lt;/a&gt; 中的对比表。&lt;/p&gt;
+&lt;h2&gt;头文件规范&lt;/h2&gt;
+&lt;p&gt;头文件 (.h) 宜包含：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;头文件保护宏&lt;/li&gt;
+&lt;li&gt;函数&lt;strong&gt;声明&lt;/strong&gt;（原型）&lt;/li&gt;
+&lt;li&gt;宏、&lt;code&gt;typedef&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;结构体 / 联合体 / 枚举声明&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;extern&lt;/code&gt; 全局变量声明（非定义）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;不宜&lt;/strong&gt;在头文件中：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;定义普通函数（除非 &lt;code&gt;static inline&lt;/code&gt; 且明确需要）&lt;/li&gt;
+&lt;li&gt;定义全局变量（会导致多重定义）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;简易 C 项目结构&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;my_c_project/
+├── bin/                 # 可执行文件输出
+│   └── app.exe
+├── include/             # 公共头文件
+│   ├── module1.h
+│   └── module2.h
+├── src/                 # 源文件
+│   ├── main.c
+│   ├── module1.c
+│   └── module2.c
+└── lib/                 # 第三方库（可选）
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;在项目根目录编译示例：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;gcc ./src/*.c -I./include -o ./bin/app.exe
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;大型项目建议使用 Makefile 或 CMake 管理依赖与编译选项。&lt;/p&gt;
 </content:encoded></item><item><title>【Network】计算机网络概述</title><link>https://lysj.work/posts/studynotes/network/network%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E6%A6%82%E8%BF%B0/</link><guid isPermaLink="true">https://lysj.work/posts/studynotes/network/network%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E6%A6%82%E8%BF%B0/</guid><description>TCP/IP 四层模型、各层协议、常用端口</description><pubDate>Sat, 16 May 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;概述&lt;/h2&gt;
 &lt;p&gt;计算机网络按功能分层，上层依赖下层提供服务，下层对上层透明。&lt;/p&gt;
 &lt;h3&gt;OSI 7 层模型&lt;/h3&gt;
