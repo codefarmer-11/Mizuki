@@ -1,6 +1,7 @@
 <script lang="ts">
 	import I18nKey from "../../../i18n/i18nKey";
 	import { i18n } from "../../../i18n/translation";
+	import { loadDecodableImage } from "../../../utils/remote-image";
 
 	let genText = "";
 	let genDataUrl: string | null = null;
@@ -132,14 +133,7 @@
 		}
 		decodeBusy = true;
 		try {
-			const img = new Image();
-			img.crossOrigin = "anonymous";
-			img.decoding = "async";
-			img.src = raw;
-			await new Promise<void>((resolve, reject) => {
-				img.onload = () => resolve();
-				img.onerror = () => reject(new Error("load"));
-			});
+			const img = await loadDecodableImage(raw);
 			const data = await decodeFromImage(img);
 			decodeText = data ?? "";
 			if (!data) {

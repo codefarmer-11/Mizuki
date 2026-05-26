@@ -34,7 +34,7 @@ export const zh_CN: Translation = {
 	[Key.extensionToolsListTitle]: "可用工具",
 	[Key.extensionToolQrTitle]: "二维码生成与解析",
 	[Key.extensionToolQrDesc]:
-		"将文本或链接生成二维码；从本地上传或图片 URL 解析二维码内容（远程 URL 需允许跨域）。",
+		"将文本或链接生成二维码；从本地上传或图片 URL 解析二维码内容（跨域图片会自动尝试代理加载）。",
 	[Key.extensionToolOpen]: "打开",
 	[Key.extensionQrGenerate]: "生成",
 	[Key.extensionQrDecode]: "解析",
@@ -49,7 +49,7 @@ export const zh_CN: Translation = {
 		"未识别到二维码。请换一张更清晰的图片，或尝试上传本地文件。",
 	[Key.extensionQrError]: "处理失败",
 	[Key.extensionQrCorsHint]:
-		"无法读取跨域图片的像素数据。请改用「选择文件」上传，或使用已配置 CORS 的图片地址。",
+		"无法加载该图片地址。请检查链接是否有效，或改用「选择文件」上传本地图片。",
 	[Key.extensionQrStartHint]: "请上传图片或加载图片 URL 后，解析结果将显示在此处。",
 	[Key.navSiteMenu]: "本站",
 
