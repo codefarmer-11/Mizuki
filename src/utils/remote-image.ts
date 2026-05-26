@@ -1,6 +1,17 @@
-/** Load a remote image so canvas pixel reads (e.g. QR decode) are allowed. */
-export function proxyImageUrl(url: string): string {
-	return `https://images.weserv.nl/?url=${encodeURIComponent(url)}&output=png`;
+/** Same-origin image proxy (Vercel serverless: api/proxy-image.ts). */
+export function siteProxyImageUrl(url: string): string {
+	return `/api/proxy-image?url=${encodeURIComponent(url)}`;
+}
+
+/** Public CDN proxy; may be unreachable in some regions. */
+export function cdnProxyImageUrl(url: string): string {
+	try {
+		const parsed = new URL(url);
+		const hostPath = `${parsed.host}${parsed.pathname}${parsed.search}`;
+		return `https://images.weserv.nl/?url=${encodeURIComponent(hostPath)}&output=png`;
+	} catch {
+		return `https://images.weserv.nl/?url=${encodeURIComponent(url)}&output=png`;
+	}
 }
 
 function loadImageElement(
@@ -57,9 +68,24 @@ function canReadPixels(img: HTMLImageElement): boolean {
 	}
 }
 
+async function loadFromSrc(
+	src: string,
+	crossOrigin: boolean,
+): Promise<HTMLImageElement | null> {
+	try {
+		const img = await loadImageElement(src, crossOrigin);
+		if (canReadPixels(img)) {
+			return img;
+		}
+	} catch {
+		/* try next */
+	}
+	return null;
+}
+
 /**
  * Load an image from HTTP(S) URL for canvas use (QR decode, etc.).
- * Tries CORS fetch, then direct load, then a public image proxy.
+ * Prefers same-origin server proxy, then direct CORS, then CDN proxy.
  */
 export async function loadDecodableImage(url: string): Promise<HTMLImageElement> {
 	const trimmed = url.trim();
@@ -67,19 +93,29 @@ export async function loadDecodableImage(url: string): Promise<HTMLImageElement>
 		throw new Error("load");
 	}
 
-	const viaFetch = await loadViaFetch(trimmed);
-	if (viaFetch) {
-		return viaFetch;
+	const siteProxy = siteProxyImageUrl(trimmed);
+
+	// Same-origin proxy: fetch → blob (most reliable for CN sites)
+	const viaSiteProxy = await loadViaFetch(siteProxy);
+	if (viaSiteProxy) {
+		return viaSiteProxy;
 	}
 
-	for (const src of [trimmed, proxyImageUrl(trimmed)]) {
-		try {
-			const img = await loadImageElement(src, true);
-			if (canReadPixels(img)) {
-				return img;
-			}
-		} catch {
-			/* try next source */
+	const viaDirectFetch = await loadViaFetch(trimmed);
+	if (viaDirectFetch) {
+		return viaDirectFetch;
+	}
+
+	const sources: { src: string; crossOrigin: boolean }[] = [
+		{ src: siteProxy, crossOrigin: false },
+		{ src: trimmed, crossOrigin: true },
+		{ src: cdnProxyImageUrl(trimmed), crossOrigin: true },
+	];
+
+	for (const { src, crossOrigin } of sources) {
+		const img = await loadFromSrc(src, crossOrigin);
+		if (img) {
+			return img;
 		}
 	}
 

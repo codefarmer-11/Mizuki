@@ -54,31 +54,37 @@
 		if (!w0 || !h0) {
 			return null;
 		}
-		let w = w0;
-		let h = h0;
-		const scale = Math.min(1, maxDecodeSide / Math.max(w, h));
-		w = Math.max(1, Math.floor(w * scale));
-		h = Math.max(1, Math.floor(h * scale));
-
-		const canvas = document.createElement("canvas");
-		canvas.width = w;
-		canvas.height = h;
-		const ctx = canvas.getContext("2d");
-		if (!ctx) {
-			return null;
-		}
-		ctx.drawImage(img, 0, 0, w, h);
-		let imageData: ImageData;
-		try {
-			imageData = ctx.getImageData(0, 0, w, h);
-		} catch {
-			throw new Error("cors");
-		}
 		const jsQR = (await import("jsqr")).default;
-		const result = jsQR(imageData.data, imageData.width, imageData.height, {
-			inversionAttempts: "attemptBoth",
-		});
-		return result?.data ?? null;
+		const baseScale = Math.min(1, maxDecodeSide / Math.max(w0, h0));
+		const scales = [baseScale, baseScale * 2, baseScale * 0.5].filter(
+			(s) => s > 0 && Math.max(w0, h0) * s <= maxDecodeSide * 2,
+		);
+
+		for (const scale of scales) {
+			const w = Math.max(1, Math.floor(w0 * scale));
+			const h = Math.max(1, Math.floor(h0 * scale));
+			const canvas = document.createElement("canvas");
+			canvas.width = w;
+			canvas.height = h;
+			const ctx = canvas.getContext("2d");
+			if (!ctx) {
+				continue;
+			}
+			ctx.drawImage(img, 0, 0, w, h);
+			let imageData: ImageData;
+			try {
+				imageData = ctx.getImageData(0, 0, w, h);
+			} catch {
+				throw new Error("cors");
+			}
+			const result = jsQR(imageData.data, imageData.width, imageData.height, {
+				inversionAttempts: "attemptBoth",
+			});
+			if (result?.data) {
+				return result.data;
+			}
+		}
+		return null;
 	}
 
 	function resetDecodeState() {

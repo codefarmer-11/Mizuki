@@ -49,7 +49,7 @@ export const zh_CN: Translation = {
 		"未识别到二维码。请换一张更清晰的图片，或尝试上传本地文件。",
 	[Key.extensionQrError]: "处理失败",
 	[Key.extensionQrCorsHint]:
-		"无法加载该图片地址。请检查链接是否有效，或改用「选择文件」上传本地图片。",
+		"无法加载该图片地址。请确认链接可访问且为图片格式，或改用「选择文件」上传本地图片。",
 	[Key.extensionQrStartHint]: "请上传图片或加载图片 URL 后，解析结果将显示在此处。",
 	[Key.navSiteMenu]: "本站",
 
