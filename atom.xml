@@ -5,7 +5,7 @@
   <link href="https://lysj.work/" rel="alternate" type="text/html"/>
   <link href="https://lysj.work/atom.xml" rel="self" type="application/atom+xml"/>
   <id>https://lysj.work/</id>
-  <updated>2026-05-28T06:49:39.880Z</updated>
+  <updated>2026-06-02T11:23:49.404Z</updated>
   <language>zh_CN</language>
   <entry>
     <title>Markdown Tutorial</title>
@@ -729,6 +729,19 @@ This is another regular paragraph.
       <name>Sekiro</name>
     </author>
     <category term="Examples"></category>
+  </entry>
+  <entry>
+    <title>【LinuxC】进程</title>
+    <link href="https://lysj.work/posts/studynotes/linux_c/linuxc%E8%BF%9B%E7%A8%8B/" rel="alternate" type="text/html"/>
+    <id>https://lysj.work/posts/studynotes/linux_c/linuxc%E8%BF%9B%E7%A8%8B/</id>
+    <published>2026-05-29T00:00:00.000Z</published>
+    <updated>2026-05-29T00:00:00.000Z</updated>
+    <summary>文章描述</summary>
+    <content type="html"><![CDATA[]]></content>
+    <author>
+      <name>Sekiro</name>
+    </author>
+    <category term="StudyNote"></category>
   </entry>
   <entry>
     <title>【C】void与特殊数组类型</title>
@@ -3054,8 +3067,8 @@ IP 数据报（网络层）
   </entry>
   <entry>
     <title>【LinuxC】线程</title>
-    <link href="https://lysj.work/posts/studynotes/linux/linuxc%E7%BA%BF%E7%A8%8B/" rel="alternate" type="text/html"/>
-    <id>https://lysj.work/posts/studynotes/linux/linuxc%E7%BA%BF%E7%A8%8B/</id>
+    <link href="https://lysj.work/posts/studynotes/linux_c/linuxc%E7%BA%BF%E7%A8%8B/" rel="alternate" type="text/html"/>
+    <id>https://lysj.work/posts/studynotes/linux_c/linuxc%E7%BA%BF%E7%A8%8B/</id>
     <published>2026-05-13T00:00:00.000Z</published>
     <updated>2026-05-13T00:00:00.000Z</updated>
     <summary>一句话说明</summary>
