@@ -1,19 +1,17 @@
 const MAX_BYTES = 5 * 1024 * 1024;
 
-function isBlockedHostname(hostname: string): boolean {
+function isBlockedHostname(hostname) {
 	const host = hostname.toLowerCase().replace(/\.$/, "");
-	if (!host) {
-		return true;
-	}
+	if (!host) return true;
 	if (host === "localhost" || host.endsWith(".localhost") || host.endsWith(".local")) {
 		return true;
 	}
-	if (host === "0.0.0.0" || host === "[::1]" || host === "::1") {
-		return true;
-	}
+	if (host === "0.0.0.0" || host === "[::1]" || host === "::1") return true;
+
 	const ipv4 = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/.exec(host);
 	if (ipv4) {
-		const [, a, b] = ipv4.map(Number);
+		const a = Number(ipv4[1]);
+		const b = Number(ipv4[2]);
 		if (a === 10) return true;
 		if (a === 127) return true;
 		if (a === 0) return true;
@@ -27,14 +25,18 @@ function isBlockedHostname(hostname: string): boolean {
 	return false;
 }
 
-export async function handleProxyImage(request: Request): Promise<Response> {
+export const config = {
+	runtime: "edge",
+};
+
+export default async function handler(request) {
 	const { searchParams } = new URL(request.url);
 	const rawUrl = searchParams.get("url")?.trim();
 	if (!rawUrl) {
 		return new Response("Missing url", { status: 400 });
 	}
 
-	let target: URL;
+	let target;
 	try {
 		target = new URL(rawUrl);
 	} catch {
@@ -54,6 +56,7 @@ export async function handleProxyImage(request: Request): Promise<Response> {
 			headers: {
 				"User-Agent": "Mizuki-QR-Proxy/1.0",
 				Accept: "image/*,*/*;q=0.8",
+				Referer: `${target.origin}/`,
 			},
 			redirect: "follow",
 		});

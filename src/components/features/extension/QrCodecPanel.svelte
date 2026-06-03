@@ -1,6 +1,7 @@
 <script lang="ts">
 	import I18nKey from "../../../i18n/i18nKey";
 	import { i18n } from "../../../i18n/translation";
+	import { decodeQrFromImage } from "../../../utils/qr-decode";
 	import { loadDecodableImage } from "../../../utils/remote-image";
 
 	let genText = "";
@@ -13,8 +14,6 @@
 	let fileRevoke: string | null = null;
 	let decodeBusy = false;
 	let decodeAttempted = false;
-
-	const maxDecodeSide = 1600;
 
 	async function generateQr() {
 		genBusy = true;
@@ -48,45 +47,6 @@
 		a.click();
 	}
 
-	async function decodeFromImage(img: HTMLImageElement): Promise<string | null> {
-		const w0 = img.naturalWidth;
-		const h0 = img.naturalHeight;
-		if (!w0 || !h0) {
-			return null;
-		}
-		const jsQR = (await import("jsqr")).default;
-		const baseScale = Math.min(1, maxDecodeSide / Math.max(w0, h0));
-		const scales = [baseScale, baseScale * 2, baseScale * 0.5].filter(
-			(s) => s > 0 && Math.max(w0, h0) * s <= maxDecodeSide * 2,
-		);
-
-		for (const scale of scales) {
-			const w = Math.max(1, Math.floor(w0 * scale));
-			const h = Math.max(1, Math.floor(h0 * scale));
-			const canvas = document.createElement("canvas");
-			canvas.width = w;
-			canvas.height = h;
-			const ctx = canvas.getContext("2d");
-			if (!ctx) {
-				continue;
-			}
-			ctx.drawImage(img, 0, 0, w, h);
-			let imageData: ImageData;
-			try {
-				imageData = ctx.getImageData(0, 0, w, h);
-			} catch {
-				throw new Error("cors");
-			}
-			const result = jsQR(imageData.data, imageData.width, imageData.height, {
-				inversionAttempts: "attemptBoth",
-			});
-			if (result?.data) {
-				return result.data;
-			}
-		}
-		return null;
-	}
-
 	function resetDecodeState() {
 		decodeText = "";
 		decodeError = "";
@@ -114,7 +74,7 @@
 				img.onload = () => resolve();
 				img.onerror = () => reject(new Error("load"));
 			});
-			const data = await decodeFromImage(img);
+			const data = await decodeQrFromImage(img);
 			decodeText = data ?? "";
 			if (!data) {
 				decodeError = i18n(I18nKey.extensionQrNoResult);
@@ -138,9 +98,10 @@
 			return;
 		}
 		decodeBusy = true;
+		let loaded: Awaited<ReturnType<typeof loadDecodableImage>> | null = null;
 		try {
-			const img = await loadDecodableImage(raw);
-			const data = await decodeFromImage(img);
+			loaded = await loadDecodableImage(raw);
+			const data = await decodeQrFromImage(loaded.img);
 			decodeText = data ?? "";
 			if (!data) {
 				decodeError = i18n(I18nKey.extensionQrNoResult);
@@ -151,6 +112,7 @@
 					? i18n(I18nKey.extensionQrCorsHint)
 					: i18n(I18nKey.extensionQrError);
 		} finally {
+			loaded?.revoke?.();
 			decodeAttempted = true;
 			decodeBusy = false;
 		}

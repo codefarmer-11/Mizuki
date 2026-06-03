@@ -1,9 +1,14 @@
-/** Same-origin image proxy (Vercel serverless: api/proxy-image.ts). */
+export type LoadedImage = {
+	img: HTMLImageElement;
+	revoke?: () => void;
+};
+
+/** Same-origin image proxy (Vercel serverless: api/proxy-image.js). */
 export function siteProxyImageUrl(url: string): string {
 	return `/api/proxy-image?url=${encodeURIComponent(url)}`;
 }
 
-/** Public CDN proxy; may be unreachable in some regions. */
+/** Public CDN proxy fallback. */
 export function cdnProxyImageUrl(url: string): string {
 	try {
 		const parsed = new URL(url);
@@ -30,7 +35,7 @@ function loadImageElement(
 	});
 }
 
-async function loadViaFetch(url: string): Promise<HTMLImageElement | null> {
+async function loadViaFetch(url: string): Promise<LoadedImage | null> {
 	try {
 		const res = await fetch(url, { mode: "cors", credentials: "omit" });
 		if (!res.ok) {
@@ -39,9 +44,14 @@ async function loadViaFetch(url: string): Promise<HTMLImageElement | null> {
 		const blob = await res.blob();
 		const objectUrl = URL.createObjectURL(blob);
 		try {
-			return await loadImageElement(objectUrl);
-		} finally {
+			const img = await loadImageElement(objectUrl);
+			return {
+				img,
+				revoke: () => URL.revokeObjectURL(objectUrl),
+			};
+		} catch {
 			URL.revokeObjectURL(objectUrl);
+			return null;
 		}
 	} catch {
 		return null;
@@ -71,11 +81,11 @@ function canReadPixels(img: HTMLImageElement): boolean {
 async function loadFromSrc(
 	src: string,
 	crossOrigin: boolean,
-): Promise<HTMLImageElement | null> {
+): Promise<LoadedImage | null> {
 	try {
 		const img = await loadImageElement(src, crossOrigin);
 		if (canReadPixels(img)) {
-			return img;
+			return { img };
 		}
 	} catch {
 		/* try next */
@@ -87,7 +97,7 @@ async function loadFromSrc(
  * Load an image from HTTP(S) URL for canvas use (QR decode, etc.).
  * Prefers same-origin server proxy, then direct CORS, then CDN proxy.
  */
-export async function loadDecodableImage(url: string): Promise<HTMLImageElement> {
+export async function loadDecodableImage(url: string): Promise<LoadedImage> {
 	const trimmed = url.trim();
 	if (!trimmed) {
 		throw new Error("load");
@@ -95,7 +105,6 @@ export async function loadDecodableImage(url: string): Promise<HTMLImageElement>
 
 	const siteProxy = siteProxyImageUrl(trimmed);
 
-	// Same-origin proxy: fetch → blob (most reliable for CN sites)
 	const viaSiteProxy = await loadViaFetch(siteProxy);
 	if (viaSiteProxy) {
 		return viaSiteProxy;
@@ -113,9 +122,9 @@ export async function loadDecodableImage(url: string): Promise<HTMLImageElement>
 	];
 
 	for (const { src, crossOrigin } of sources) {
-		const img = await loadFromSrc(src, crossOrigin);
-		if (img) {
-			return img;
+		const loaded = await loadFromSrc(src, crossOrigin);
+		if (loaded) {
+			return loaded;
 		}
 	}
 
