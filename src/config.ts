@@ -444,9 +444,10 @@ export const shareConfig: ShareConfig = {
 };
 
 export const announcementConfig: AnnouncementConfig = {
+	// version: 1, // 递增此值可让已关闭公告的用户再次看到；不填则改 content/title 后自动重新显示
 	title: "公告", // 公告标题，填空使用i18n字符串Key.announcement
 	content: "暂无内容", // 公告内容
-	closable: true, // 允许用户关闭公告
+	closable: true, // 允许用户关闭公告；关闭状态按内容版本记忆，改 content 或 version 后会再显示
 	link: {
 		enable: true, // 启用链接
 		text: "Learn More", // 链接文本

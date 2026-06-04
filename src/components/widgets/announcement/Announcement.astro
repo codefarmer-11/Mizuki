@@ -8,6 +8,21 @@ import WidgetLayout from "../common/WidgetLayout.astro";
 
 const config = announcementConfig;
 
+/** 公告内容变更后 dismissId 会变，曾关闭的用户会再次看到新公告 */
+function getAnnouncementDismissId(): string {
+	if (config.version != null && config.version !== "") {
+		return String(config.version);
+	}
+	const payload = `${config.title ?? ""}\0${config.content}`;
+	let hash = 0;
+	for (let i = 0; i < payload.length; i++) {
+		hash = (Math.imul(31, hash) + payload.charCodeAt(i)) | 0;
+	}
+	return String(hash >>> 0);
+}
+
+const dismissId = getAnnouncementDismissId();
+
 interface Props {
 	class?: string;
 	style?: string;
@@ -67,38 +82,71 @@ const style = Astro.props.style;
 	</div>
 </WidgetLayout>
 
-<script>
-	function closeAnnouncement() {
-		// 通过data-id属性找到整个widget-layout元素
-		const widgetLayouts = document.querySelectorAll(
-			'widget-layout[data-id="announcement"]',
-		);
-		if (widgetLayouts.length > 0) {
-			widgetLayouts.forEach((widget) => {
-				// 隐藏整个widget-layout元素
-				(widget as HTMLElement).style.display = "none";
-			});
-			// 保存关闭状态到localStorage
-			localStorage.setItem("announcementClosed", "true");
+<script
+	is:inline
+	define:vars={{
+		dismissId,
+	}}
+>
+	(function () {
+		const STORAGE_KEY = "mizuki:announcement:dismissedId";
+		const LEGACY_KEY = "announcementClosed";
+
+		function getAnnouncementWidgets() {
+			return document.querySelectorAll(
+				'widget-layout[data-id="announcement"]',
+			);
 		}
-	}
 
-	// 页面加载时检查是否已关闭
-	document.addEventListener("DOMContentLoaded", function () {
-		const widgetLayouts = document.querySelectorAll(
-			'widget-layout[data-id="announcement"]',
-		);
+		function isDismissed() {
+			// 旧键 announcementClosed 会永久隐藏，升级后不再沿用
+			if (localStorage.getItem(LEGACY_KEY) === "true") {
+				localStorage.removeItem(LEGACY_KEY);
+			}
+			return localStorage.getItem(STORAGE_KEY) === dismissId;
+		}
 
-		if (
-			widgetLayouts.length > 0 &&
-			localStorage.getItem("announcementClosed") === "true"
-		) {
-			widgetLayouts.forEach((widget) => {
-				(widget as HTMLElement).style.display = "none";
+		function applyAnnouncementVisibility() {
+			const hidden = isDismissed();
+			getAnnouncementWidgets().forEach((widget) => {
+				widget.style.display = hidden ? "none" : "";
 			});
 		}
-	});
 
-	// 使公告栏函数全局可用
-	window.closeAnnouncement = closeAnnouncement;
+		function closeAnnouncement() {
+			if (getAnnouncementWidgets().length === 0) {
+				return;
+			}
+			localStorage.setItem(STORAGE_KEY, dismissId);
+			localStorage.removeItem(LEGACY_KEY);
+			applyAnnouncementVisibility();
+		}
+
+		function reopenAnnouncement() {
+			localStorage.removeItem(STORAGE_KEY);
+			localStorage.removeItem(LEGACY_KEY);
+			applyAnnouncementVisibility();
+		}
+
+		function initAnnouncementDismiss() {
+			applyAnnouncementVisibility();
+			window.closeAnnouncement = closeAnnouncement;
+			window.reopenAnnouncement = reopenAnnouncement;
+		}
+
+		if (document.readyState === "loading") {
+			document.addEventListener("DOMContentLoaded", initAnnouncementDismiss, {
+				once: true,
+			});
+		} else {
+			initAnnouncementDismiss();
+		}
+
+		// 侧栏在 Swup 外持久存在，但 DOM 可能晚于首屏脚本就绪
+		if (typeof window !== "undefined" && window.swup) {
+			window.swup.hooks.on("page:view", () => {
+				applyAnnouncementVisibility();
+			});
+		}
+	})();
 </script>

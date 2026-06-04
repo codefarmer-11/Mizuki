@@ -334,6 +334,8 @@ export interface ExpressiveCodeConfig {
 
 export interface AnnouncementConfig {
 	// enable属性已移除，现在通过sidebarLayoutConfig统一控制
+	/** 可选。修改后即使曾关闭也会再次显示；不填则根据 title+content 自动判断 */
+	version?: string | number;
 	title?: string; // 公告栏标题
 	content: string; // 公告栏内容
 	icon?: string; // 公告栏图标

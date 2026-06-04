@@ -44,6 +44,7 @@ declare global {
 	interface Window {
 		swup: Swup | undefined;
 		closeAnnouncement: () => void;
+		reopenAnnouncement: () => void;
 		pagefind: {
 			search: (query: string) => Promise<{
 				results: {
