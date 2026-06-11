@@ -708,6 +708,1489 @@ This is another regular paragraph.
 &lt;strong&gt;No Work&lt;/strong&gt;
 &amp;lt;/div&amp;gt;&lt;/p&gt;
 &lt;hr /&gt;
+</content:encoded></item><item><title>【QT】交叉编译与部署</title><link>https://lysj.work/posts/studynotes/qt/qt%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91%E4%B8%8E%E9%83%A8%E7%BD%B2/</link><guid isPermaLink="true">https://lysj.work/posts/studynotes/qt/qt%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91%E4%B8%8E%E9%83%A8%E7%BD%B2/</guid><description>以 NXP i.MX 为例说明交叉工具链配置、Qt Creator Kits 及嵌入式板端部署要点。</description><pubDate>Thu, 11 Jun 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;配置交叉编译工具链（以 NXP i.MX 为例）&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;将官方 SDK 拷贝到 &lt;code&gt;/opt&lt;/code&gt;，执行安装脚本：&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;./fsl-imx-x11-glibc-x86_64-meta-toolchain-qt5-cortexa7hf-neon-toolchain-4.1.15-2.1.0.sh
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ol&gt;
+&lt;li&gt;配置环境变量（&lt;code&gt;~/.bashrc&lt;/code&gt; 末尾）：&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;source /opt/fsl-imx-x11/4.1.15-2.1.0/environment-setup-cortexa7hf-neon-poky-linux-gnueabi
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;保存后执行 &lt;code&gt;source ~/.bashrc&lt;/code&gt; 生效。&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;验证：&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;arm-poky-linux-gnueabi-gcc -v
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;安装 Qt（主机端 Qt Creator + SDK）&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;wget http://download.qt.io/archive/qt/5.12/5.12.9/qt-opensource-linux-x64-5.12.9.run
+chmod u+x qt-opensource-linux-x64-5.12.9.run
+sudo ./qt-opensource-linux-x64-5.12.9.run
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;在图形界面中安装 Qt 与 Qt Creator（需图形环境）。&lt;/p&gt;
+&lt;h2&gt;Qt Creator Kits 配置 ARM 环境&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;编辑 Qt 安装目录下 &lt;code&gt;Tools/QtCreator/bin/qtcreator.sh&lt;/code&gt;，在&lt;strong&gt;首行&lt;/strong&gt;加入：&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;source /opt/fsl-imx-x11/4.1.15-2.1.0/environment-setup-cortexa7hf-neon-poky-linux-gnueabi
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ol&gt;
+&lt;li&gt;启动 Creator：&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;/path/to/qt/Tools/QtCreator/bin/qtcreator.sh &amp;amp;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Tools → Options&lt;/strong&gt;（工具 → 选项）&lt;br /&gt;
+&lt;img src=&quot;./qt_step1.png&quot; alt=&quot;步骤1&quot; /&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Kits → Qt Versions&lt;/strong&gt;：手动添加 SDK 中的 &lt;code&gt;qmake&lt;/code&gt;，自定义名称与版本，应用。&lt;br /&gt;
+&lt;img src=&quot;./qt_step2.png&quot; alt=&quot;步骤2&quot; /&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Kits → Compilers&lt;/strong&gt;：添加 Manual 的 GCC C++，编译器路径示例：&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;/opt/fsl-imx-x11/4.1.15-2.1.0/sysroots/x86_64-pokysdk-linux/usr/bin/arm-poky-linux-gnueabi/arm-poky-linux-gnueabi-g++
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&quot;./qt_step3.png&quot; alt=&quot;步骤3&quot; /&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Kits → Kits&lt;/strong&gt;：新建 Kit，选择上述 Qt 版本、交叉编译器、Sysroot（按向导填写）。&lt;br /&gt;
+&lt;img src=&quot;./qt_step4_1.png&quot; alt=&quot;步骤4_1&quot; /&gt;&lt;br /&gt;
+&lt;img src=&quot;./qt_step4_2.png&quot; alt=&quot;步骤4_2&quot; /&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;新建项目时选择该 Kit 进行交叉编译。&lt;br /&gt;
+&lt;img src=&quot;./qt_step5.png&quot; alt=&quot;步骤5&quot; /&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2&gt;部署到板子&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;将可执行文件与所需 Qt 库（或静态链接）拷贝到开发板。&lt;/li&gt;
+&lt;li&gt;动态链接时需设置 &lt;code&gt;LD_LIBRARY_PATH&lt;/code&gt; 或使用 &lt;code&gt;qt.conf&lt;/code&gt; 指定 &lt;code&gt;Plugins&lt;/code&gt; 与 &lt;code&gt;Libraries&lt;/code&gt; 路径。&lt;/li&gt;
+&lt;li&gt;无显示环境时注意 &lt;code&gt;QT_QPA_PLATFORM&lt;/code&gt;（如 &lt;code&gt;linuxfb&lt;/code&gt;、&lt;code&gt;eglfs&lt;/code&gt;、&lt;code&gt;offscreen&lt;/code&gt;）。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;与桌面开发的区别&lt;/h2&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;项目&lt;/th&gt;
+&lt;th&gt;桌面&lt;/th&gt;
+&lt;th&gt;交叉编译&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;编译器&lt;/td&gt;
+&lt;td&gt;本机 gcc/clang&lt;/td&gt;
+&lt;td&gt;arm-*-g++ 等&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Qt 库&lt;/td&gt;
+&lt;td&gt;主机 Qt&lt;/td&gt;
+&lt;td&gt;目标架构 Qt / sysroot 内 Qt&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;运行&lt;/td&gt;
+&lt;td&gt;本机直接运行&lt;/td&gt;
+&lt;td&gt;拷贝到板子或 qemu 运行&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Creator Kit&lt;/td&gt;
+&lt;td&gt;Desktop&lt;/td&gt;
+&lt;td&gt;自定义 Cross-compile Kit&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;路径与版本号请按实际 SDK 文档调整；上文以笔记中的 4.1.15-2.1.0 工具链为例。&lt;/p&gt;
+</content:encoded></item><item><title>【QT】信号槽与事件</title><link>https://lysj.work/posts/studynotes/qt/qt%E4%BF%A1%E5%8F%B7%E6%A7%BD%E4%B8%8E%E4%BA%8B%E4%BB%B6/</link><guid isPermaLink="true">https://lysj.work/posts/studynotes/qt/qt%E4%BF%A1%E5%8F%B7%E6%A7%BD%E4%B8%8E%E4%BA%8B%E4%BB%B6/</guid><description>讲解信号与槽的 connect 写法、连接类型、事件处理与 eventFilter 及 QTimer 定时器。</description><pubDate>Thu, 11 Jun 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;信号与槽&lt;/h2&gt;
+&lt;p&gt;Qt 的对象间通信机制：发送方&lt;strong&gt;信号&lt;/strong&gt;与接收方&lt;strong&gt;槽&lt;/strong&gt;关联后，信号发射时槽函数被调用（可跨线程，由连接类型决定）。&lt;/p&gt;
+&lt;h3&gt;概念&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;术语&lt;/th&gt;
+&lt;th&gt;说明&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;信号（signal）&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;在特定情况下发出的通知；在类声明的 &lt;code&gt;signals:&lt;/code&gt; 区声明，只需原型，无需实现&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;槽（slot）&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;对信号的响应函数；写在 &lt;code&gt;public slots:&lt;/code&gt;、&lt;code&gt;private slots:&lt;/code&gt; 等；可与普通成员函数一样带参数&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3&gt;connect 写法&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;Qt5/6 函数指针（推荐，编译期检查类型）&lt;/strong&gt;：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;connect(sender, &amp;amp;Sender::valueChanged,
+        receiver, &amp;amp;Receiver::onValueChanged);
+
+// 带参数自动匹配（参数类型须兼容）
+connect(spinBox, QOverload&amp;lt;int&amp;gt;::of(&amp;amp;QSpinBox::valueChanged),
+        this, &amp;amp;MainWindow::onSpinChanged);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;Lambda&lt;/strong&gt;：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;connect(button, &amp;amp;QPushButton::clicked, this, [this]() {
+    ui-&amp;gt;label-&amp;gt;setText(&quot;clicked&quot;);
+});
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;Qt4 字符串写法（不推荐，仅运行时检查）&lt;/strong&gt;：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;connect(sender, SIGNAL(valueChanged(int)),
+        receiver, SLOT(onValueChanged(int)));
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;连接类型 &lt;code&gt;Qt::ConnectionType&lt;/code&gt;&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;类型&lt;/th&gt;
+&lt;th&gt;行为&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;AutoConnection&lt;/code&gt;（默认）&lt;/td&gt;
+&lt;td&gt;同线程直接调用；跨线程则队列到接收方线程&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;DirectConnection&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;始终在发射线程同步调用槽&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QueuedConnection&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;事件入队，在接收方线程事件循环中异步执行&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;BlockingQueuedConnection&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;跨线程时阻塞发射方直到槽执行完（同线程不可用）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;跨线程更新 UI 时，槽应在主线程（&lt;code&gt;QObject&lt;/code&gt; 所在线程）中执行，通常用 &lt;code&gt;QueuedConnection&lt;/code&gt; 或 &lt;code&gt;AutoConnection&lt;/code&gt;。&lt;/p&gt;
+&lt;h3&gt;一对多、多对一、断开&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;connect(a, &amp;amp;A::sig, b, &amp;amp;B::slot1);
+connect(a, &amp;amp;A::sig, c, &amp;amp;C::slot2);   // 一对多
+
+disconnect(a, &amp;amp;A::sig, b, &amp;amp;B::slot1); // 精确断开
+disconnect(a, nullptr, nullptr, nullptr); // 断开 a 发出的所有连接
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;信号带参数、槽参数可更少&lt;/h3&gt;
+&lt;p&gt;信号参数类型须与槽兼容；槽可忽略多余参数。&lt;code&gt;connect&lt;/code&gt; 会根据函数指针推导签名。&lt;/p&gt;
+&lt;h2&gt;事件处理&lt;/h2&gt;
+&lt;p&gt;除信号槽外，Qt 还有**事件（QEvent）**体系：键盘、鼠标、绘制、定时器、自定义事件等。&lt;/p&gt;
+&lt;h3&gt;事件传播顺序（简要）&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;QApplication::notify()&lt;/code&gt; 分发&lt;/li&gt;
+&lt;li&gt;目标对象的 &lt;code&gt;event()&lt;/code&gt; — 可统一过滤或转发&lt;/li&gt;
+&lt;li&gt;具体处理函数如 &lt;code&gt;mousePressEvent()&lt;/code&gt;、&lt;code&gt;keyPressEvent()&lt;/code&gt;、&lt;code&gt;paintEvent()&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;未处理可调用基类实现或 &lt;code&gt;ignore()&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3&gt;重写事件处理函数&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;void MyWidget::mousePressEvent(QMouseEvent *event)
+{
+    if (event-&amp;gt;button() == Qt::LeftButton) {
+        // 处理
+        event-&amp;gt;accept();
+        return;
+    }
+    QWidget::mousePressEvent(event);  // 交给基类
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;eventFilter（事件过滤器）&lt;/h3&gt;
+&lt;p&gt;在一个对象上为&lt;strong&gt;另一个&lt;/strong&gt;对象安装过滤器，在事件到达目标前拦截：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;target-&amp;gt;installEventFilter(this);
+
+bool MainWindow::eventFilter(QObject *obj, QEvent *event)
+{
+    if (obj == target &amp;amp;&amp;amp; event-&amp;gt;type() == QEvent::KeyPress) {
+        // 处理或 return true 表示已消费
+    }
+    return QMainWindow::eventFilter(obj, event);
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;信号槽 vs 事件&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;信号槽&lt;/th&gt;
+&lt;th&gt;事件&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;方向&lt;/td&gt;
+&lt;td&gt;明确的发布-订阅&lt;/td&gt;
+&lt;td&gt;自顶向下分发&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;类型&lt;/td&gt;
+&lt;td&gt;用户定义的语义&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;QEvent&lt;/code&gt; 子类（类型枚举）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;典型用途&lt;/td&gt;
+&lt;td&gt;业务逻辑联动&lt;/td&gt;
+&lt;td&gt;底层输入、绘制、窗口系统消息&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3&gt;定时器&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;QTimer *timer = new QTimer(this);
+connect(timer, &amp;amp;QTimer::timeout, this, &amp;amp;MainWindow::onTimeout);
+timer-&amp;gt;start(1000);  // 毫秒
+
+// 单次
+QTimer::singleShot(500, this, &amp;amp;MainWindow::delayedAction);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;QObject::timerEvent()&lt;/code&gt; 配合 &lt;code&gt;startTimer()&lt;/code&gt; 为底层 C 风格 API，一般用 &lt;code&gt;QTimer&lt;/code&gt; 即可。&lt;/p&gt;
+</content:encoded></item><item><title>【QT】入门与构建</title><link>https://lysj.work/posts/studynotes/qt/qt%E5%85%A5%E9%97%A8%E4%B8%8E%E6%9E%84%E5%BB%BA/</link><guid isPermaLink="true">https://lysj.work/posts/studynotes/qt/qt%E5%85%A5%E9%97%A8%E4%B8%8E%E6%9E%84%E5%BB%BA/</guid><description>介绍 Qt 事件循环、链接库、qmake/CMake 构建及 MOC/UIC/RCC 编译流程与跨平台原理。</description><pubDate>Thu, 11 Jun 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;前置知识：事件循环&lt;/h2&gt;
+&lt;p&gt;事件循环是图形界面程序的核心机制。程序不断接收并分发各类事件（鼠标、键盘、定时器等）到对应对象处理。&lt;/p&gt;
+&lt;p&gt;Qt 通过 &lt;code&gt;QCoreApplication::exec()&lt;/code&gt; 或 &lt;code&gt;QApplication::exec()&lt;/code&gt; 启动事件循环。调用后程序进入等待状态，直到调用 &lt;code&gt;quit()&lt;/code&gt; 或关闭主窗口才退出。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;QApplication app(argc, argv);
+MainWindow w;
+w.show();
+return app.exec();  // 进入事件循环
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;链接库&lt;/h2&gt;
+&lt;p&gt;Qt 以动态库（&lt;code&gt;.dll&lt;/code&gt;、&lt;code&gt;.so&lt;/code&gt;、&lt;code&gt;.dylib&lt;/code&gt;）或静态库（&lt;code&gt;.lib&lt;/code&gt;、&lt;code&gt;.a&lt;/code&gt;）形式提供。&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;方式&lt;/th&gt;
+&lt;th&gt;优点&lt;/th&gt;
+&lt;th&gt;缺点&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;动态链接&lt;/td&gt;
+&lt;td&gt;可执行文件小，升级库方便&lt;/td&gt;
+&lt;td&gt;部署时需带上 Qt 运行时&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;静态链接&lt;/td&gt;
+&lt;td&gt;单文件部署，无外部依赖&lt;/td&gt;
+&lt;td&gt;体积大，许可需注意&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;常用模块（Qt5 命名示例）：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;Qt5Core&lt;/code&gt;：核心（信号槽、字符串、容器、事件循环）&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Qt5Gui&lt;/code&gt;：图形（窗口、图像、字体）&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Qt5Widgets&lt;/code&gt;：桌面控件&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;构建工具：qmake 与 CMake&lt;/h2&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;工具&lt;/th&gt;
+&lt;th&gt;说明&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;qmake&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Qt 传统构建工具，通过 &lt;code&gt;.pro&lt;/code&gt; 描述项目，生成 Makefile&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;CMake&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;跨平台推荐；Qt6 官方主推，与 IDE 集成更好&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;qmake 示例&lt;/strong&gt;（&lt;code&gt;.pro&lt;/code&gt;）：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;QT += core gui widgets
+SOURCES = main.cpp mainwindow.cpp
+HEADERS = mainwindow.h
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;CMake 示例&lt;/strong&gt;（&lt;code&gt;CMakeLists.txt&lt;/code&gt;）：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;cmake_minimum_required(VERSION 3.16)
+project(MyQtApp)
+
+find_package(Qt6 REQUIRED COMPONENTS Core Widgets)
+
+qt6_add_executable(MyQtApp main.cpp mainwindow.cpp)
+target_link_libraries(MyQtApp Qt6::Core Qt6::Widgets)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Qt6 项目常用 &lt;code&gt;qt6_standard_project_setup()&lt;/code&gt; 与 &lt;code&gt;qt6_add_executable()&lt;/code&gt;；旧版 Qt5 对应 &lt;code&gt;find_package(Qt5 ...)&lt;/code&gt; 与 &lt;code&gt;qt5_wrap_ui&lt;/code&gt; 等宏。&lt;/p&gt;
+&lt;h2&gt;Qt 概述&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;跨平台&lt;/strong&gt;：Windows、Linux、macOS、Android、iOS 等&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;模块化&lt;/strong&gt;：Core、Gui、Widgets、Network、Sql、Multimedia、Qml 等&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;信号与槽&lt;/strong&gt;：类型安全的对象间通信&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;工具链&lt;/strong&gt;：Qt Designer、Qt Creator、qmake/CMake、QML&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;跨平台原理&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;平台抽象层（QPA）&lt;/strong&gt;&lt;br /&gt;
+窗口系统、输入、OpenGL 等差异抽象为统一接口；各平台实现插件（如 &lt;code&gt;qwindows&lt;/code&gt;、&lt;code&gt;qxcb&lt;/code&gt;、&lt;code&gt;qcocoa&lt;/code&gt;），运行时自动加载。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;自绘机制&lt;/strong&gt;&lt;br /&gt;
+Qt Widgets 多用 &lt;code&gt;QPainter&lt;/code&gt; 自绘，外观一致且可用 QSS 定制；不依赖各系统原生控件 API。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;统一 API + 条件编译&lt;/strong&gt;&lt;br /&gt;
+底层按平台调用不同系统 API；平台相关代码用 &lt;code&gt;Q_OS_WIN&lt;/code&gt;、&lt;code&gt;Q_OS_LINUX&lt;/code&gt; 等宏隔离。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;跨平台工具链&lt;/strong&gt;&lt;br /&gt;
+qmake/CMake 按目标平台生成 Makefile、Visual Studio 工程等。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2&gt;构建流程（MOC / UIC / RCC）&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;main.cpp
+mainwindow.h  ──► moc ──► moc_mainwindow.cpp
+mainwindow.ui ──► uic ──► ui_mainwindow.h
+resources.qrc ──► rcc ──► qrc_resources.cpp
+             ├─────────────────────────────┐
+             └──► C++ 编译器 + 链接器 ──► 可执行文件
+&lt;/code&gt;&lt;/pre&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;工具&lt;/th&gt;
+&lt;th&gt;全称&lt;/th&gt;
+&lt;th&gt;作用&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;MOC&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Meta-Object Compiler&lt;/td&gt;
+&lt;td&gt;处理含 &lt;code&gt;Q_OBJECT&lt;/code&gt; 的头文件，生成 &lt;code&gt;moc_*.cpp&lt;/code&gt;（信号槽、元对象反射）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;UIC&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;UI Compiler&lt;/td&gt;
+&lt;td&gt;将 &lt;code&gt;.ui&lt;/code&gt; 转为 &lt;code&gt;ui_*.h&lt;/code&gt;，内含 &lt;code&gt;setupUi()&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;RCC&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Resource Compiler&lt;/td&gt;
+&lt;td&gt;将 &lt;code&gt;.qrc&lt;/code&gt; 转为 &lt;code&gt;qrc_*.cpp&lt;/code&gt;，把图片、翻译等嵌入二进制&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;含 &lt;code&gt;Q_OBJECT&lt;/code&gt; 的类必须经 MOC 处理，否则链接阶段会报 &lt;code&gt;vtable&lt;/code&gt; 或 &lt;code&gt;staticMetaObject&lt;/code&gt; 相关错误。&lt;/p&gt;
+</content:encoded></item><item><title>【QT】多媒体</title><link>https://lysj.work/posts/studynotes/qt/qt%E5%A4%9A%E5%AA%92%E4%BD%93/</link><guid isPermaLink="true">https://lysj.work/posts/studynotes/qt/qt%E5%A4%9A%E5%AA%92%E4%BD%93/</guid><description>介绍 Qt6 多媒体模块、QMediaPlayer 音视频播放、摄像头预览及 Qt5/Qt6 差异。</description><pubDate>Thu, 11 Jun 2026 00:00:00 GMT</pubDate><content:encoded>&lt;blockquote&gt;
+&lt;p&gt;Qt6 多媒体在 6.2 起正式发布。与 Qt5 相比架构变化较大：放弃基于插件的多后端结构，改为统一后端（对用户隐藏）。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2&gt;模块引入&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;qmake&lt;/strong&gt;：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;QT += multimedia multimediawidgets
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;CMake&lt;/strong&gt;：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;find_package(Qt6 REQUIRED COMPONENTS Multimedia MultimediaWidgets)
+target_link_libraries(MyApp Qt6::Multimedia Qt6::MultimediaWidgets)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;#include &amp;lt;QtMultimedia&amp;gt;
+#include &amp;lt;QtMultimediaWidgets&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;子模块&lt;/h2&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;模块&lt;/th&gt;
+&lt;th&gt;内容&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Qt Multimedia&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;播放、采集、设备、格式等核心类&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Qt Multimedia Widgets&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;QVideoWidget&lt;/code&gt; 等界面组件&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2&gt;主要类&lt;/h2&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;类名&lt;/th&gt;
+&lt;th&gt;功能&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QMediaPlayer&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;播放音频或视频（本地/网络）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QVideoWidget&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;显示视频画面&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QMediaCaptureSession&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;统一管理采集管线（Qt6）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QCamera&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;摄像头&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QAudioInput&lt;/code&gt; / &lt;code&gt;QAudioOutput&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;音频输入 / 输出设备&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QAudioSource&lt;/code&gt; / &lt;code&gt;QAudioSink&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;原始 PCM 采集 / 播放&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QImageCapture&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;静态拍照&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QMediaRecorder&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;录制音视频&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QMediaDevices&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;枚举系统音视频设备&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QMediaFormat&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;编码与容器格式&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QVideoSink&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;访问/处理视频帧&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2&gt;基于 QMediaPlayer 的音频播放（Qt6）&lt;/h2&gt;
+&lt;p&gt;典型步骤：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;创建 &lt;code&gt;QMediaPlayer&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;setAudioOutput()&lt;/code&gt; 绑定 &lt;code&gt;QAudioOutput&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;setSource()&lt;/code&gt; 设置 URL 或本地路径&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;play()&lt;/code&gt; / &lt;code&gt;pause()&lt;/code&gt; / &lt;code&gt;stop()&lt;/code&gt; 控制&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;QMediaPlayer *player = new QMediaPlayer(this);
+QAudioOutput *audioOutput = new QAudioOutput(this);
+player-&amp;gt;setAudioOutput(audioOutput);
+player-&amp;gt;setSource(QUrl::fromLocalFile(&quot;/path/to/music.mp3&quot;));
+
+connect(ui-&amp;gt;btnPlay, &amp;amp;QPushButton::clicked, player, &amp;amp;QMediaPlayer::play);
+connect(ui-&amp;gt;btnPause, &amp;amp;QPushButton::clicked, player, &amp;amp;QMediaPlayer::pause);
+connect(ui-&amp;gt;sliderVolume, &amp;amp;QSlider::valueChanged, audioOutput, [audioOutput](int v) {
+    audioOutput-&amp;gt;setVolume(v / 100.0);
+});
+
+player-&amp;gt;play();
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;常用信号：&lt;code&gt;positionChanged&lt;/code&gt;、&lt;code&gt;durationChanged&lt;/code&gt;、&lt;code&gt;playbackStateChanged&lt;/code&gt;、&lt;code&gt;errorOccurred&lt;/code&gt;。&lt;/p&gt;
+&lt;h2&gt;视频播放&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;QMediaPlayer *player = new QMediaPlayer(this);
+QAudioOutput *audioOutput = new QAudioOutput(this);
+QVideoWidget *videoWidget = new QVideoWidget(this);
+
+player-&amp;gt;setAudioOutput(audioOutput);
+player-&amp;gt;setVideoOutput(videoWidget);
+player-&amp;gt;setSource(QUrl(&quot;file:///path/to/video.mp4&quot;));
+
+videoWidget-&amp;gt;show();
+player-&amp;gt;play();
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;网络视频使用 &lt;code&gt;QUrl(&quot;https://...&quot;)&lt;/code&gt;；需平台解码器与格式支持。&lt;/p&gt;
+&lt;h2&gt;摄像头预览（Qt6 概念）&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;QMediaCaptureSession *session = new QMediaCaptureSession(this);
+QCamera *camera = new QCamera(QMediaDevices::defaultVideoInput(), this);
+QVideoWidget *viewfinder = new QVideoWidget(this);
+
+session-&amp;gt;setCamera(camera);
+session-&amp;gt;setVideoOutput(viewfinder);
+
+camera-&amp;gt;start();
+viewfinder-&amp;gt;show();
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;拍照、录像分别通过 &lt;code&gt;QImageCapture&lt;/code&gt;、&lt;code&gt;QMediaRecorder&lt;/code&gt; 挂到同一 &lt;code&gt;QMediaCaptureSession&lt;/code&gt;。&lt;/p&gt;
+&lt;h2&gt;Qt5 与 Qt6 差异（查阅旧代码时注意）&lt;/h2&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Qt5&lt;/th&gt;
+&lt;th&gt;Qt6&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QMediaPlayer&lt;/code&gt; + &lt;code&gt;QMediaPlaylist&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;播放列表需自行管理或第三方&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;setMedia(QUrl)&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;setSource(QUrl)&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;视频输出 &lt;code&gt;setVideoOutput(QVideoWidget*)&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;类似，但常与 &lt;code&gt;QMediaCaptureSession&lt;/code&gt; 配合采集&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;模块结构多插件&lt;/td&gt;
+&lt;td&gt;单一后端&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2&gt;部署注意&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Linux 需 GStreamer 等依赖（视发行版与 Qt 构建选项而定）。&lt;/li&gt;
+&lt;li&gt;Windows 常用系统 Media Foundation 或 FFmpeg 后端。&lt;/li&gt;
+&lt;li&gt;嵌入式需确认目标板编解码器与 Qt Multimedia 插件是否可用。&lt;/li&gt;
+&lt;/ul&gt;
+</content:encoded></item><item><title>【QT】多线程</title><link>https://lysj.work/posts/studynotes/qt/qt%E5%A4%9A%E7%BA%BF%E7%A8%8B/</link><guid isPermaLink="true">https://lysj.work/posts/studynotes/qt/qt%E5%A4%9A%E7%BA%BF%E7%A8%8B/</guid><description>介绍 QThread 两种用法、QtConcurrent、线程同步及跨线程更新 UI 的注意事项。</description><pubDate>Thu, 11 Jun 2026 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;GUI 线程（主线程）负责事件循环与绘制，&lt;strong&gt;不应执行长时间阻塞操作&lt;/strong&gt;。耗时任务应放到工作线程，通过信号槽或 &lt;code&gt;QMetaObject::invokeMethod&lt;/code&gt; 将结果回传主线程更新界面。&lt;/p&gt;
+&lt;h2&gt;QThread 两种用法&lt;/h2&gt;
+&lt;h3&gt;用法一：继承 QThread，重写 run()&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;class WorkerThread : public QThread
+{
+    Q_OBJECT
+protected:
+    void run() override {
+        // 耗时计算，不要直接操作 GUI
+        emit resultReady(data);
+    }
+signals:
+    void resultReady(const QString &amp;amp;data);
+};
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;WorkerThread *thread = new WorkerThread;
+connect(thread, &amp;amp;WorkerThread::resultReady, this, &amp;amp;MainWindow::onResult);
+connect(thread, &amp;amp;WorkerThread::finished, thread, &amp;amp;QObject::deleteLater);
+thread-&amp;gt;start();
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;用法二：moveToThread（推荐）&lt;/h3&gt;
+&lt;p&gt;将 &lt;code&gt;QObject&lt;/code&gt; 工作对象移到线程，&lt;code&gt;QThread&lt;/code&gt; 只管理事件循环：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;QThread *thread = new QThread;
+Worker *worker = new Worker;  // 普通 QObject 子类，含 doWork() 槽
+worker-&amp;gt;moveToThread(thread);
+
+connect(thread, &amp;amp;QThread::started, worker, &amp;amp;Worker::doWork);
+connect(worker, &amp;amp;Worker::finished, thread, &amp;amp;QThread::quit);
+connect(worker, &amp;amp;Worker::finished, worker, &amp;amp;QObject::deleteLater);
+connect(thread, &amp;amp;QThread::finished, thread, &amp;amp;QObject::deleteLater);
+
+thread-&amp;gt;start();
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;原则&lt;/strong&gt;：&lt;code&gt;moveToThread&lt;/code&gt; 之后，只在正确线程通过信号槽调用 worker 的槽；不要从其他线程直接调用 worker 的成员函数（除非线程安全且文档允许）。&lt;/p&gt;
+&lt;h2&gt;QtConcurrent&lt;/h2&gt;
+&lt;p&gt;基于线程池的简化 API，适合一次性并行计算：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;#include &amp;lt;QtConcurrent&amp;gt;
+#include &amp;lt;QFutureWatcher&amp;gt;
+
+QFutureWatcher&amp;lt;int&amp;gt; *watcher = new QFutureWatcher&amp;lt;int&amp;gt;(this);
+connect(watcher, &amp;amp;QFutureWatcher&amp;lt;int&amp;gt;::finished, this, [watcher]() {
+    qDebug() &amp;lt;&amp;lt; watcher-&amp;gt;result();
+});
+watcher-&amp;gt;setFuture(QtConcurrent::run([]() { return heavyCompute(); }));
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;QtConcurrent::map&lt;/code&gt; / &lt;code&gt;filtered&lt;/code&gt; / &lt;code&gt;mapped&lt;/code&gt; 可处理容器。&lt;/p&gt;
+&lt;h2&gt;线程同步&lt;/h2&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;类&lt;/th&gt;
+&lt;th&gt;用途&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QMutex&lt;/code&gt; + &lt;code&gt;QMutexLocker&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;互斥锁&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QReadWriteLock&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;读多写少&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QSemaphore&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;计数信号量&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QWaitCondition&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;条件变量&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QAtomicInt&lt;/code&gt; 等&lt;/td&gt;
+&lt;td&gt;原子操作&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;尽量缩小锁粒度；UI 更新仍在主线程完成。&lt;/p&gt;
+&lt;h2&gt;连接类型与线程&lt;/h2&gt;
+&lt;p&gt;工作线程 &lt;code&gt;emit signal()&lt;/code&gt; → 主线程槽：使用默认 &lt;code&gt;AutoConnection&lt;/code&gt; 或显式 &lt;code&gt;QueuedConnection&lt;/code&gt;，槽在主线程执行，可安全更新控件。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;connect(worker, &amp;amp;Worker::progress, this, &amp;amp;MainWindow::onProgress,
+        Qt::QueuedConnection);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;禁止事项&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;不要在 &lt;code&gt;run()&lt;/code&gt; 或子线程中直接 &lt;code&gt;delete&lt;/code&gt; 仍在主线程使用的 &lt;code&gt;QWidget&lt;/code&gt;。&lt;/li&gt;
+&lt;li&gt;不要在工作线程创建带父对象的 GUI 控件（父对象通常在主线程）。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;QSqlDatabase&lt;/code&gt; 连接&lt;strong&gt;不能&lt;/strong&gt;跨线程共享同一连接名；每线程独立 &lt;code&gt;addDatabase&lt;/code&gt; 或连接池。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;QThread 生命周期&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;thread-&amp;gt;quit();      // 退出事件循环
+thread-&amp;gt;wait();      // 等待线程结束
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;析构前确保线程已停止，避免野指针。&lt;/p&gt;
+</content:encoded></item><item><title>【QT】对话框与常用控件</title><link>https://lysj.work/posts/studynotes/qt/qt%E5%AF%B9%E8%AF%9D%E6%A1%86%E4%B8%8E%E5%B8%B8%E7%94%A8%E6%8E%A7%E4%BB%B6/</link><guid isPermaLink="true">https://lysj.work/posts/studynotes/qt/qt%E5%AF%B9%E8%AF%9D%E6%A1%86%E4%B8%8E%E5%B8%B8%E7%94%A8%E6%8E%A7%E4%BB%B6/</guid><description>涵盖 QFileDialog、QMessageBox 等标准对话框及按钮、输入、视图等常用控件分类。</description><pubDate>Thu, 11 Jun 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;标准对话框&lt;/h2&gt;
+&lt;h3&gt;QFileDialog&lt;/h3&gt;
+&lt;h4&gt;打开单个文件&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;QString QFileDialog::getOpenFileName(
+    QWidget *parent = nullptr,
+    const QString &amp;amp;caption = QString(),
+    const QString &amp;amp;dir = QString(),
+    const QString &amp;amp;filter = QString(),
+    QString *selectedFilter = nullptr,
+    QFileDialog::Options options = Options()
+);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;参数&lt;/th&gt;
+&lt;th&gt;说明&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;parent&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;父窗口&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;caption&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;标题&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;dir&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;初始目录&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;filter&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;过滤器；多组用 &lt;code&gt;;;&lt;/code&gt; 分隔，同组多后缀用空格，如 &lt;code&gt;文本(*.txt);;图片(*.jpg *.png)&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;selectedFilter&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;用户选中的过滤器（可选）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;返回值&lt;/td&gt;
+&lt;td&gt;选中文件路径；取消则为空字符串&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;pre&gt;&lt;code&gt;void Dialog::on_btnOpen_clicked()
+{
+    QString curPath = QDir::currentPath();
+    QString dlgTitle = &quot;选择一个文件&quot;;
+    QString filter = &quot;文本文件(*.txt);;图片文件(*.jpg *.gif *.png);;所有文件(*.*)&quot;;
+    QString fileName = QFileDialog::getOpenFileName(this, dlgTitle, curPath, filter);
+    if (!fileName.isEmpty())
+        ui-&amp;gt;plainTextEdit-&amp;gt;appendPlainText(fileName);
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;打开多个文件&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;QStringList files = QFileDialog::getOpenFileNames(
+    this, &quot;选择多个文件&quot;, QDir::homePath(), &quot;文本(*.txt);;所有(*.*)&quot;);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;保存文件&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;QString path = QFileDialog::getSaveFileName(
+    this, &quot;保存&quot;, QDir::currentPath(), &quot;文本(*.txt);;所有(*.*)&quot;);
+if (!path.isEmpty()) {
+  // 写入文件
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;选择已有目录&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;QString QFileDialog::getExistingDirectory(
+    QWidget *parent = nullptr,
+    const QString &amp;amp;caption = QString(),
+    const QString &amp;amp;dir = QString(),
+    QFileDialog::Options options = ShowDirsOnly
+);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;QString dir = QFileDialog::getExistingDirectory(
+    this, &quot;选择目录&quot;, QDir::homePath(), QFileDialog::ShowDirsOnly);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;QColorDialog&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;QColor color = QColorDialog::getColor(Qt::white, this, &quot;选择颜色&quot;);
+if (color.isValid())
+    ui-&amp;gt;widget-&amp;gt;setStyleSheet(QString(&quot;background:%1&quot;).arg(color.name()));
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;QFontDialog&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;bool ok;
+QFont font = QFontDialog::getFont(&amp;amp;ok, QFont(&quot;微软雅黑&quot;, 12), this);
+if (ok)
+    ui-&amp;gt;label-&amp;gt;setFont(font);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;QInputDialog&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;QString text = QInputDialog::getText(this, &quot;输入&quot;, &quot;姓名：&quot;);
+int n = QInputDialog::getInt(this, &quot;输入&quot;, &quot;数量：&quot;, 1, 0, 100, 1);
+double d = QInputDialog::getDouble(this, &quot;输入&quot;, &quot;比例：&quot;, 0.5, 0, 1, 2);
+QString item = QInputDialog::getItem(this, &quot;选择&quot;, &quot;城市：&quot;,
+                                     {&quot;北京&quot;, &quot;上海&quot;, &quot;广州&quot;}, 0, false);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;QMessageBox&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;QMessageBox::information(this, &quot;提示&quot;, &quot;操作成功&quot;);
+QMessageBox::warning(this, &quot;警告&quot;, &quot;磁盘空间不足&quot;);
+QMessageBox::critical(this, &quot;错误&quot;, &quot;无法打开文件&quot;);
+
+auto ret = QMessageBox::question(this, &quot;确认&quot;, &quot;确定删除？&quot;,
+    QMessageBox::Yes | QMessageBox::No);
+if (ret == QMessageBox::Yes) { /* ... */ }
+
+// 自定义按钮
+QMessageBox box(this);
+box.setWindowTitle(&quot;退出&quot;);
+box.setText(&quot;是否保存？&quot;);
+box.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+box.setDefaultButton(QMessageBox::Save);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;常用控件分类（Designer 面板）&lt;/h2&gt;
+&lt;h3&gt;Buttons&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;控件&lt;/th&gt;
+&lt;th&gt;说明&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QPushButton&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;普通按钮&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QToolButton&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;工具栏按钮，可带菜单&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QRadioButton&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;单选，同组互斥&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QCheckBox&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;复选框&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QCommandLinkButton&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;向导式大按钮&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3&gt;Input Widgets&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;控件&lt;/th&gt;
+&lt;th&gt;说明&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QLineEdit&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;单行文本&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QTextEdit&lt;/code&gt; / &lt;code&gt;QPlainTextEdit&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;多行富文本 / 纯文本&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QSpinBox&lt;/code&gt; / &lt;code&gt;QDoubleSpinBox&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;整数 / 浮点调节&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QComboBox&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;下拉框&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QDateEdit&lt;/code&gt; / &lt;code&gt;QTimeEdit&lt;/code&gt; / &lt;code&gt;QDateTimeEdit&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;日期时间&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QSlider&lt;/code&gt; / &lt;code&gt;QDial&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;滑块 / 旋钮&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3&gt;Display Widgets&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;控件&lt;/th&gt;
+&lt;th&gt;说明&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QLabel&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;文本或图片&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QLCDNumber&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;数码管显示&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QProgressBar&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;进度条&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3&gt;Containers&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;控件&lt;/th&gt;
+&lt;th&gt;说明&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QGroupBox&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;分组框&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QTabWidget&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;选项卡&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QStackedWidget&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;多页堆叠，一次显示一页&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QScrollArea&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;可滚动区域&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QMdiArea&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;MDI 子窗口区域&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QToolBox&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;工具箱式折叠页&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3&gt;Item Views（Model-Based）&lt;/h3&gt;
+&lt;p&gt;数据与视图分离，适合大数据量：&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;控件&lt;/th&gt;
+&lt;th&gt;常用模型&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QListView&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;QStringListModel&lt;/code&gt;、&lt;code&gt;QStandardItemModel&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QTreeView&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;树形 &lt;code&gt;QStandardItemModel&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QTableView&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;QSqlTableModel&lt;/code&gt;、&lt;code&gt;QStandardItemModel&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QColumnView&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;列式导航&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3&gt;Item Widgets（Item-Based）&lt;/h3&gt;
+&lt;p&gt;项直接挂在控件上，适合少量静态数据：&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;控件&lt;/th&gt;
+&lt;th&gt;说明&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QListWidget&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;列表&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QTreeWidget&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;树&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QTableWidget&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;表格&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2&gt;与 .ui 文件配合&lt;/h2&gt;
+&lt;p&gt;Designer 生成的 &lt;code&gt;ui_*.h&lt;/code&gt; 提供 &lt;code&gt;setupUi(this)&lt;/code&gt;，控件通过 &lt;code&gt;ui-&amp;gt;objectName&lt;/code&gt; 访问。槽函数命名 &lt;code&gt;on_&amp;lt;objectName&amp;gt;_&amp;lt;signal&amp;gt;()&lt;/code&gt; 可被 &lt;code&gt;QMetaObject::connectSlotsByName&lt;/code&gt; 自动连接（需在含 &lt;code&gt;Q_OBJECT&lt;/code&gt; 的类中）。&lt;/p&gt;
+</content:encoded></item><item><title>【QT】布局与QSS</title><link>https://lysj.work/posts/studynotes/qt/qt%E5%B8%83%E5%B1%80%E4%B8%8Eqss/</link><guid isPermaLink="true">https://lysj.work/posts/studynotes/qt/qt%E5%B8%83%E5%B1%80%E4%B8%8Eqss/</guid><description>介绍 QHBoxLayout 等布局管理、QSS 选择器语法及与 QPalette、QStyle 的关系。</description><pubDate>Thu, 11 Jun 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;布局（Layouts）&lt;/h2&gt;
+&lt;p&gt;布局管理子控件的几何位置与伸缩，窗口缩放时自动调整。子控件可设 &lt;code&gt;minimumSize&lt;/code&gt;、&lt;code&gt;maximumSize&lt;/code&gt;、&lt;code&gt;sizePolicy&lt;/code&gt;。&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;布局类&lt;/th&gt;
+&lt;th&gt;说明&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QHBoxLayout&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;水平排列&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QVBoxLayout&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;垂直排列&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QGridLayout&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;网格&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QFormLayout&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;标签 + 字段两列表单&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3&gt;代码示例&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;QVBoxLayout *layout = new QVBoxLayout(this);
+layout-&amp;gt;addWidget(new QPushButton(&quot;OK&quot;));
+layout-&amp;gt;addWidget(new QPushButton(&quot;Cancel&quot;));
+layout-&amp;gt;addStretch();  // 弹簧，占据剩余空间
+setLayout(layout);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;嵌套与比例&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;QHBoxLayout *row = new QHBoxLayout;
+row-&amp;gt;addWidget(leftEdit, 1);   // stretch 因子 1
+row-&amp;gt;addWidget(rightEdit, 2);  // 右侧占 2 份宽度
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;Spacers&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;QSpacerItem&lt;/code&gt; 或布局的 &lt;code&gt;addStretch()&lt;/code&gt; / &lt;code&gt;addSpacing(n)&lt;/code&gt; 控制空白与对齐。&lt;/p&gt;
+&lt;h3&gt;布局原则&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;顶层窗口或容器设一个主布局，避免用固定 &lt;code&gt;setGeometry&lt;/code&gt; 硬编码坐标。&lt;/li&gt;
+&lt;li&gt;对话框常用 &lt;code&gt;QDialogButtonBox&lt;/code&gt; 放标准按钮并配合布局。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;QSS（Qt Style Sheets）&lt;/h2&gt;
+&lt;p&gt;语法类似 CSS，用于定制控件外观（颜色、边框、字体、状态伪类等）。&lt;/p&gt;
+&lt;h3&gt;基本写法&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;widget-&amp;gt;setStyleSheet(&quot;QPushButton { color: white; background-color: #2d89ef; }&quot;);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;全局：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;qApp-&amp;gt;setStyleSheet(&quot;QToolTip { color: black; background: #ffffcc; }&quot;);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;选择器&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;写法&lt;/th&gt;
+&lt;th&gt;含义&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QPushButton&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;所有按钮&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QPushButton#okButton&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;objectName 为 okButton&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QPushButton:hover&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;悬停状态&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QPushButton:pressed&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;按下&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QPushButton:disabled&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;禁用&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QPushButton:checked&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;可选中按钮选中时&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3&gt;常用属性&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;QLineEdit {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 4px;
+    background: white;
+}
+QLineEdit:focus {
+    border-color: #2d89ef;
+}
+QProgressBar {
+    border: 1px solid grey;
+    text-align: center;
+}
+QProgressBar::chunk {
+    background-color: #05B8CC;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;子控件（部分控件支持）&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;QComboBox::drop-down { width: 20px; }
+QScrollBar:vertical { width: 12px; }
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;与 QPalette、QStyle 的关系&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;QPalette&lt;/strong&gt;：系统调色板，适合跟随主题微调。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;QStyle&lt;/strong&gt;：&lt;code&gt;Fusion&lt;/code&gt;、&lt;code&gt;Windows&lt;/code&gt;、&lt;code&gt;macOS&lt;/code&gt; 等原生或跨平台风格；&lt;code&gt;setStyle()&lt;/code&gt; 换整体风格。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;QSS&lt;/strong&gt;：最灵活，可完全覆盖绘制；对复杂原生控件（如部分 macOS 控件）支持有限。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;外部样式表文件&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;QFile f(&quot;:/styles/app.qss&quot;);
+if (f.open(QIODevice::ReadOnly))
+    qApp-&amp;gt;setStyleSheet(QString::fromUtf8(f.readAll()));
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;资源文件 &lt;code&gt;.qrc&lt;/code&gt; 中可嵌入 &lt;code&gt;app.qss&lt;/code&gt;，路径如 &lt;code&gt;:/styles/app.qss&lt;/code&gt;。&lt;/p&gt;
+&lt;h3&gt;注意事项&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;子控件设置 QSS 后可能失去部分平台原生效果。&lt;/li&gt;
+&lt;li&gt;动态属性可配合选择器：&lt;code&gt;widget-&amp;gt;setProperty(&quot;danger&quot;, true);&lt;/code&gt; 与 &lt;code&gt;QPushButton[danger=&quot;true&quot;] { ... }&lt;/code&gt;。&lt;/li&gt;
+&lt;/ul&gt;
+</content:encoded></item><item><title>【QT】数据库</title><link>https://lysj.work/posts/studynotes/qt/qt%E6%95%B0%E6%8D%AE%E5%BA%93/</link><guid isPermaLink="true">https://lysj.work/posts/studynotes/qt/qt%E6%95%B0%E6%8D%AE%E5%BA%93/</guid><description>介绍 Qt SQL 主要类、SQLite 建表查询及 QSqlTableModel 与 QTableView 绑定用法。</description><pubDate>Thu, 11 Jun 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;模块引入&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;qmake&lt;/strong&gt;：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;QT += sql
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;CMake&lt;/strong&gt;：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;find_package(Qt6 REQUIRED COMPONENTS Sql)
+target_link_libraries(MyApp Qt6::Sql)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;#include &amp;lt;QtSql&amp;gt;
+// 或按需：QSqlDatabase, QSqlQuery, QSqlTableModel ...
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;主要类&lt;/h2&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;类别&lt;/th&gt;
+&lt;th&gt;类名&lt;/th&gt;
+&lt;th&gt;功能&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;连接&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;QSqlDatabase&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;建立与管理数据库连接&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;记录&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;QSqlRecord&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;表中的一行结构&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;字段&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;QSqlField&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;单个字段元数据&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;索引&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;QSqlIndex&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;索引信息&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;模型&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;QSqlTableModel&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;单表可编辑模型，配合 &lt;code&gt;QTableView&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;模型&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;QSqlQueryModel&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;只读查询结果模型&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;关系&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;QSqlRelationalTableModel&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;外键关系表&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;代理&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;QSqlRelationalDelegate&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;关系字段下拉编辑&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;关系&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;QSqlRelation&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;外键关联描述&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;执行&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;QSqlQuery&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;执行 SQL&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;映射&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;QDataWidgetMapper&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;控件与字段绑定&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;错误&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;QSqlError&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;错误信息&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2&gt;数据库编程模型&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;QSqlDatabase::addDatabase(driver) → open()
+        ↓
+QSqlQuery / QSqlTableModel
+        ↓
+QTableView / QDataWidgetMapper（界面）
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ol&gt;
+&lt;li&gt;选择驱动并创建连接&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;open()&lt;/code&gt; 打开数据库（文件路径或主机）&lt;/li&gt;
+&lt;li&gt;用 &lt;code&gt;QSqlQuery&lt;/code&gt; 执行 DDL/DML，或用 &lt;code&gt;QSqlTableModel&lt;/code&gt; 做表级 CRUD&lt;/li&gt;
+&lt;li&gt;模型 &lt;code&gt;setTable&lt;/code&gt; + &lt;code&gt;select()&lt;/code&gt; 后绑定视图&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2&gt;SQLite 示例&lt;/h2&gt;
+&lt;p&gt;SQLite 为嵌入式常用、无需独立服务端的文件数据库，Qt 内置 &lt;code&gt;QSQLITE&lt;/code&gt; 驱动。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;QSqlDatabase db = QSqlDatabase::addDatabase(&quot;QSQLITE&quot;);
+db.setDatabaseName(&quot;mydata.db&quot;);  // 相对路径或绝对路径
+if (!db.open()) {
+    qWarning() &amp;lt;&amp;lt; db.lastError().text();
+    return;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;建表与插入（QSqlQuery）&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;QSqlQuery query;
+query.exec(&quot;CREATE TABLE IF NOT EXISTS person (&quot;
+           &quot;id INTEGER PRIMARY KEY AUTOINCREMENT,&quot;
+           &quot;name TEXT NOT NULL,&quot;
+           &quot;age INTEGER)&quot;);
+
+query.prepare(&quot;INSERT INTO person (name, age) VALUES (:name, :age)&quot;);
+query.bindValue(&quot;:name&quot;, &quot;张三&quot;);
+query.bindValue(&quot;:age&quot;, 25);
+query.exec();
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;查询&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;query.prepare(&quot;SELECT id, name, age FROM person WHERE age &amp;gt; :min&quot;);
+query.bindValue(&quot;:min&quot;, 18);
+if (query.exec()) {
+    while (query.next()) {
+        int id = query.value(0).toInt();
+        QString name = query.value(&quot;name&quot;).toString();
+        int age = query.value(&quot;age&quot;).toInt();
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;QSqlTableModel + QTableView&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;QSqlTableModel *model = new QSqlTableModel(this, db);
+model-&amp;gt;setTable(&quot;person&quot;);
+model-&amp;gt;setEditStrategy(QSqlTableModel::OnManualSubmit);
+model-&amp;gt;select();
+
+ui-&amp;gt;tableView-&amp;gt;setModel(model);
+// 编辑后 model-&amp;gt;submitAll() 或 revertAll()
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;其他驱动&lt;/h2&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;驱动名&lt;/th&gt;
+&lt;th&gt;数据库&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QSQLITE&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;SQLite&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QMYSQL&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;MySQL / MariaDB&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QPSQL&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;PostgreSQL&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QODBC&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;ODBC 通用&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;使用 MySQL/PostgreSQL 时需编译对应插件或确保 Qt 安装包含该驱动，&lt;code&gt;QSqlDatabase::drivers()&lt;/code&gt; 可列出可用驱动。&lt;/p&gt;
+&lt;h2&gt;注意事项&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;连接名默认 &lt;code&gt;&quot;qt_sql_default_connection&quot;&lt;/code&gt;；多连接用 &lt;code&gt;addDatabase(driver, connectionName)&lt;/code&gt; 区分。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;同一 &lt;code&gt;QSqlDatabase&lt;/code&gt; 连接不要跨线程使用&lt;/strong&gt;；每线程独立连接。&lt;/li&gt;
+&lt;li&gt;关闭前 &lt;code&gt;db.close()&lt;/code&gt;；&lt;code&gt;QSqlDatabase::removeDatabase(connectionName)&lt;/code&gt; 在连接无引用后移除。&lt;/li&gt;
+&lt;li&gt;生产环境用预处理与参数绑定，避免 SQL 注入。&lt;/li&gt;
+&lt;/ul&gt;
+</content:encoded></item><item><title>【QT】核心类型与容器</title><link>https://lysj.work/posts/studynotes/qt/qt%E6%A0%B8%E5%BF%83%E7%B1%BB%E5%9E%8B%E4%B8%8E%E5%AE%B9%E5%99%A8/</link><guid isPermaLink="true">https://lysj.work/posts/studynotes/qt/qt%E6%A0%B8%E5%BF%83%E7%B1%BB%E5%9E%8B%E4%B8%8E%E5%AE%B9%E5%99%A8/</guid><description>介绍 QObject 对象树、QString、顺序与关联容器及迭代遍历方式。</description><pubDate>Thu, 11 Jun 2026 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;Qt Core 是所有模块的公共基础：事件循环、字符串、容器、文件 I/O、线程、元对象系统等。&lt;/p&gt;
+&lt;h2&gt;QObject&lt;/h2&gt;
+&lt;p&gt;所有 Qt 对象的基类。类继承链上任意一层为 &lt;code&gt;QObject&lt;/code&gt; 时，可使用信号与槽、父子对象树、事件系统等特性。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;父子关系&lt;/strong&gt;：子对象析构时由父对象负责释放；&lt;code&gt;delete parent&lt;/code&gt; 会级联删除子对象。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;对象树&lt;/strong&gt;：便于管理窗口、布局中的控件生命周期。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;QString 与 QChar&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;QString&lt;/code&gt; 存储 Unicode 字符串，无 &lt;code&gt;QObject&lt;/code&gt; 父类。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;每个字符为 &lt;code&gt;QChar&lt;/code&gt;，内部常用 &lt;strong&gt;UTF-16&lt;/strong&gt; 编码（每码元 2 字节）。&lt;/li&gt;
+&lt;li&gt;与 &lt;code&gt;std::string&lt;/code&gt; 互转：&lt;code&gt;QString::fromStdString()&lt;/code&gt;、&lt;code&gt;toStdString()&lt;/code&gt;。&lt;/li&gt;
+&lt;li&gt;字面量：&lt;code&gt;QString s = u&quot;你好&quot;_qs;&lt;/code&gt;（Qt6）或 &lt;code&gt;QStringLiteral(&quot;hello&quot;)&lt;/code&gt;。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;常用操作：&lt;code&gt;append&lt;/code&gt;、&lt;code&gt;split&lt;/code&gt;、&lt;code&gt;arg&lt;/code&gt; 占位格式化、&lt;code&gt;trimmed&lt;/code&gt;、&lt;code&gt;isEmpty&lt;/code&gt;。&lt;/p&gt;
+&lt;h2&gt;顺序容器&lt;/h2&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;类&lt;/th&gt;
+&lt;th&gt;说明&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QList&amp;lt;T&amp;gt;&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;通用动态数组，Qt6 中 &lt;code&gt;QVector&lt;/code&gt; 为其别名&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QStack&amp;lt;T&amp;gt;&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;栈&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QQueue&amp;lt;T&amp;gt;&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;队列&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Qt6：&lt;code&gt;QVector&lt;/code&gt; 与 &lt;code&gt;QList&lt;/code&gt; 统一为同一实现（基于连续存储的数组机制）。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2&gt;关联容器&lt;/h2&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;类&lt;/th&gt;
+&lt;th&gt;说明&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QSet&amp;lt;T&amp;gt;&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;无序唯一集合&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QMap&amp;lt;Key, T&amp;gt;&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;有序键值对（按键排序）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QMultiMap&amp;lt;Key, T&amp;gt;&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;一键多值&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QHash&amp;lt;Key, T&amp;gt;&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;哈希表，平均 O(1)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QMultiHash&amp;lt;Key, T&amp;gt;&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;哈希，一键多值&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2&gt;容器遍历&lt;/h2&gt;
+&lt;h3&gt;STL 风格迭代器&lt;/h3&gt;
+&lt;p&gt;每个容器提供 &lt;code&gt;const_iterator&lt;/code&gt;（只读）与 &lt;code&gt;iterator&lt;/code&gt;（可写）。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;begin()&lt;/code&gt; / &lt;code&gt;constBegin()&lt;/code&gt;：首元素&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;end()&lt;/code&gt; / &lt;code&gt;constEnd()&lt;/code&gt;：尾后位置（不指向有效元素，仅作循环结束判断）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;顺序容器示例&lt;/strong&gt;：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;QList&amp;lt;QString&amp;gt; list{&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;};
+for (QList&amp;lt;QString&amp;gt;::const_iterator i = list.constBegin();
+     i != list.constEnd(); ++i)
+    qDebug() &amp;lt;&amp;lt; *i;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;关联容器示例&lt;/strong&gt;（键值对用 &lt;code&gt;key()&lt;/code&gt; / &lt;code&gt;value()&lt;/code&gt;）：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;QMap&amp;lt;int, int&amp;gt; map;
+for (QMap&amp;lt;int, int&amp;gt;::const_iterator i = map.constBegin();
+     i != map.constEnd(); ++i)
+    qDebug() &amp;lt;&amp;lt; i.key() &amp;lt;&amp;lt; &apos;:&apos; &amp;lt;&amp;lt; i.value();
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;范围 for（C++11，推荐）&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;for (const QString &amp;amp;s : list)
+    qDebug() &amp;lt;&amp;lt; s;
+
+for (auto it = map.constBegin(); it != map.constEnd(); ++it)
+    qDebug() &amp;lt;&amp;lt; it.key() &amp;lt;&amp;lt; it.value();
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;foreach 宏（Qt5 风格，Qt6 仍可用）&lt;/h3&gt;
+&lt;p&gt;定义于 &lt;code&gt;&amp;lt;QtGlobal&amp;gt;&lt;/code&gt;：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;QList&amp;lt;QString&amp;gt; list;
+foreach (const QString &amp;amp;str, list)
+    qDebug() &amp;lt;&amp;lt; str;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;支持代码块与 &lt;code&gt;break&lt;/code&gt;。多值映射可嵌套 &lt;code&gt;foreach&lt;/code&gt;。&lt;/p&gt;
+&lt;h2&gt;其他常用 Core 类型&lt;/h2&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;类型&lt;/th&gt;
+&lt;th&gt;用途&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QByteArray&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;原始字节序列&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QVariant&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;类型擦除的通用值&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QDateTime&lt;/code&gt; / &lt;code&gt;QDate&lt;/code&gt; / &lt;code&gt;QTime&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;日期时间&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QFile&lt;/code&gt; / &lt;code&gt;QDir&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;文件与目录&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QSettings&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;配置持久化（注册表/ini）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+</content:encoded></item><item><title>【QT】网络编程</title><link>https://lysj.work/posts/studynotes/qt/qt%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/</link><guid isPermaLink="true">https://lysj.work/posts/studynotes/qt/qt%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/</guid><description>介绍 QTcpSocket、QUdpSocket、QNetworkAccessManager 及 SSL 等 Qt 网络编程 API。</description><pubDate>Thu, 11 Jun 2026 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;Qt Network 模块提供 TCP/UDP、HTTP、DNS、SSL 等能力。项目中添加模块：&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;qmake&lt;/strong&gt;（&lt;code&gt;.pro&lt;/code&gt;）：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;QT += network
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;CMake&lt;/strong&gt;：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;find_package(Qt6 REQUIRED COMPONENTS Network)
+target_link_libraries(MyApp Qt6::Network)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;#include &amp;lt;QTcpSocket&amp;gt;
+#include &amp;lt;QUdpSocket&amp;gt;
+#include &amp;lt;QNetworkAccessManager&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;QTcpSocket（TCP 客户端）&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;QTcpSocket *socket = new QTcpSocket(this);
+connect(socket, &amp;amp;QTcpSocket::connected, this, &amp;amp;Client::onConnected);
+connect(socket, &amp;amp;QTcpSocket::readyRead, this, &amp;amp;Client::onReadyRead);
+connect(socket, &amp;amp;QTcpSocket::errorOccurred, this, &amp;amp;Client::onError);
+
+socket-&amp;gt;connectToHost(&quot;example.com&quot;, 80);
+// 连接成功后
+socket-&amp;gt;write(&quot;GET / HTTP/1.0\r\n\r\n&quot;);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;void Client::onReadyRead()
+{
+    QByteArray data = socket-&amp;gt;readAll();
+    // 处理数据；注意 TCP 流式，需自行组包或定长协议
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;QTcpServer（TCP 服务端）&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;QTcpServer *server = new QTcpServer(this);
+connect(server, &amp;amp;QTcpServer::newConnection, this, &amp;amp;Server::onNewConnection);
+
+server-&amp;gt;listen(QHostAddress::Any, 8080);
+
+void Server::onNewConnection()
+{
+    QTcpSocket *client = server-&amp;gt;nextPendingConnection();
+    connect(client, &amp;amp;QTcpSocket::readyRead, this, [client]() {
+        qDebug() &amp;lt;&amp;lt; client-&amp;gt;readAll();
+    });
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;QUdpSocket（UDP）&lt;/h2&gt;
+&lt;p&gt;无连接，面向数据报：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;QUdpSocket *udp = new QUdpSocket(this);
+udp-&amp;gt;bind(QHostAddress::Any, 45454);
+
+connect(udp, &amp;amp;QUdpSocket::readyRead, this, [udp]() {
+    while (udp-&amp;gt;hasPendingDatagrams()) {
+        QByteArray buf;
+        buf.resize(udp-&amp;gt;pendingDatagramSize());
+        QHostAddress sender;
+        quint16 port;
+        udp-&amp;gt;readDatagram(buf.data(), buf.size(), &amp;amp;sender, &amp;amp;port);
+    }
+});
+
+udp-&amp;gt;writeDatagram(&quot;hello&quot;, QHostAddress(&quot;192.168.1.1&quot;), 45454);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;QNetworkAccessManager（HTTP）&lt;/h2&gt;
+&lt;p&gt;高层 HTTP/HTTPS API，异步基于事件循环：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
+connect(mgr, &amp;amp;QNetworkAccessManager::finished,
+        this, &amp;amp;MainWindow::onReplyFinished);
+
+QNetworkRequest req(QUrl(&quot;https://api.example.com/data&quot;));
+req.setHeader(QNetworkRequest::ContentTypeHeader, &quot;application/json&quot;);
+mgr-&amp;gt;get(req);
+
+// POST
+// mgr-&amp;gt;post(req, QByteArray(&quot;{\&quot;key\&quot;:\&quot;value\&quot;}&quot;));
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;void MainWindow::onReplyFinished(QNetworkReply *reply)
+{
+  if (reply-&amp;gt;error() != QNetworkReply::NoError) {
+    qWarning() &amp;lt;&amp;lt; reply-&amp;gt;errorString();
+  } else {
+    QByteArray body = reply-&amp;gt;readAll();
+  }
+  reply-&amp;gt;deleteLater();
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;QSslSocket（TLS）&lt;/h2&gt;
+&lt;p&gt;需 Qt SSL 支持及 OpenSSL 等后端：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;QSslSocket *ssl = new QSslSocket(this);
+connect(ssl, &amp;amp;QSslSocket::encrypted, this, &amp;amp;Client::onEncrypted);
+ssl-&amp;gt;connectToHostEncrypted(&quot;example.com&quot;, 443);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;实用类型&lt;/h2&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;类型&lt;/th&gt;
+&lt;th&gt;说明&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QHostAddress&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;IPv4/IPv6 地址&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QNetworkInterface&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;网卡信息&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;QUrl&lt;/code&gt; / &lt;code&gt;QUrlQuery&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;URL 与查询参数&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2&gt;设计建议&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;自定义协议明确&lt;strong&gt;帧头 + 长度 + 载荷&lt;/strong&gt;，避免粘包/半包问题。&lt;/li&gt;
+&lt;li&gt;长连接用心跳检测断开。&lt;/li&gt;
+&lt;li&gt;大量并发可考虑 &lt;code&gt;QThreadPool&lt;/code&gt; + 每连接 &lt;code&gt;QTcpSocket&lt;/code&gt;，或异步框架；GUI 线程只做调度与展示。&lt;/li&gt;
+&lt;/ul&gt;
 </content:encoded></item><item><title>【LinuxC】进程</title><link>https://lysj.work/posts/studynotes/linux_c/linuxc%E8%BF%9B%E7%A8%8B/</link><guid isPermaLink="true">https://lysj.work/posts/studynotes/linux_c/linuxc%E8%BF%9B%E7%A8%8B/</guid><description>文章描述</description><pubDate>Fri, 29 May 2026 00:00:00 GMT</pubDate><content:encoded/></item><item><title>【C】void与特殊数组类型</title><link>https://lysj.work/posts/studynotes/c/cvoid%E4%B8%8E%E7%89%B9%E6%AE%8A%E6%95%B0%E7%BB%84%E7%B1%BB%E5%9E%8B/</link><guid isPermaLink="true">https://lysj.work/posts/studynotes/c/cvoid%E4%B8%8E%E7%89%B9%E6%AE%8A%E6%95%B0%E7%BB%84%E7%B1%BB%E5%9E%8B/</guid><description>void 的三种用法、柔性数组成员、变长数组 VLA 与二维数组的存储与传参方式。</description><pubDate>Tue, 19 May 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;void 的用法&lt;/h2&gt;
 &lt;table&gt;
 &lt;thead&gt;
@@ -4354,6 +5837,1695 @@ git add . // 添加到暂存区，后接路径
 &lt;li&gt;新建DWORD（32 位）值，名称为&lt;code&gt;FlightSettingsMaxPauseDays&lt;/code&gt;,修改值为十进制10000（30年）&lt;/li&gt;
 &lt;li&gt;到设置更新中，选择暂停时间时长&lt;/li&gt;
 &lt;/ol&gt;
+</content:encoded></item><item><title>【CPP】STL</title><link>https://lysj.work/posts/studynotes/cpp/cppstl/</link><guid isPermaLink="true">https://lysj.work/posts/studynotes/cpp/cppstl/</guid><description>STL 六大组件、容器、迭代器、算法及容器选择策略。</description><pubDate>Thu, 02 Apr 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;概述&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;STL&lt;/strong&gt;（Standard Template Library）是 C++ 标准库中基于&lt;strong&gt;模板&lt;/strong&gt;的容器、迭代器、算法、仿函数、适配器、空间配置器的集合。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;高复用&lt;/strong&gt;：同一套组件适配多种类型。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;高性能&lt;/strong&gt;：如 &lt;code&gt;vector&lt;/code&gt; 连续内存、&lt;code&gt;sort&lt;/code&gt; 优化实现。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;可移植&lt;/strong&gt;：符合标准的编译器均提供。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;六大组件&lt;/h2&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;组件&lt;/th&gt;
+&lt;th&gt;作用&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;容器&lt;/td&gt;
+&lt;td&gt;存储数据&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;迭代器&lt;/td&gt;
+&lt;td&gt;泛化指针，统一访问接口&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;算法&lt;/td&gt;
+&lt;td&gt;操作区间内元素&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;仿函数&lt;/td&gt;
+&lt;td&gt;可调用对象，定制算法行为&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;适配器&lt;/td&gt;
+&lt;td&gt;改造容器/迭代器/仿函数接口&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;空间配置器&lt;/td&gt;
+&lt;td&gt;内存分配与对象构造析构（对使用者多透明）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2&gt;迭代器&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;广义指针&lt;/strong&gt;：可解引用、可前进，使算法与容器解耦。&lt;/p&gt;
+&lt;p&gt;每个容器定义 &lt;code&gt;iterator&lt;/code&gt; / &lt;code&gt;const_iterator&lt;/code&gt;，以及 C++11 起的 &lt;code&gt;cbegin()&lt;/code&gt; 等。&lt;/p&gt;
+&lt;h3&gt;五类迭代器（由弱到强）&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;类别&lt;/th&gt;
+&lt;th&gt;能力&lt;/th&gt;
+&lt;th&gt;典型容器&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;输入 (Input)&lt;/td&gt;
+&lt;td&gt;读、单遍&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;istream_iterator&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;输出 (Output)&lt;/td&gt;
+&lt;td&gt;写、单遍&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;ostream_iterator&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;前向 (Forward)&lt;/td&gt;
+&lt;td&gt;读/写、多遍&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;forward_list&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;双向 (Bidirectional)&lt;/td&gt;
+&lt;td&gt;前进 + 后退&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;list&lt;/code&gt;, &lt;code&gt;set&lt;/code&gt;, &lt;code&gt;map&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;随机访问 (Random Access)&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;+&lt;/code&gt; &lt;code&gt;-&lt;/code&gt; &lt;code&gt;[]&lt;/code&gt;、常数距离&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;vector&lt;/code&gt;, &lt;code&gt;deque&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;算法对迭代器有&lt;strong&gt;最低要求&lt;/strong&gt;（如 &lt;code&gt;sort&lt;/code&gt; 需随机访问）。&lt;/p&gt;
+&lt;h2&gt;序列式容器&lt;/h2&gt;
+&lt;h3&gt;&lt;code&gt;vector&lt;/code&gt;&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;动态数组，&lt;strong&gt;连续&lt;/strong&gt;内存。&lt;/li&gt;
+&lt;li&gt;典型实现：&lt;code&gt;_start&lt;/code&gt;、&lt;code&gt;_finish&lt;/code&gt;、&lt;code&gt;_end_of_storage&lt;/code&gt; 三指针。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;尾部&lt;/strong&gt; &lt;code&gt;push_back&lt;/code&gt; 均摊 O(1)；中间插入/删除 O(n)。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;扩容&lt;/strong&gt;：新容量常为 1.5 或 2 倍（实现相关）；扩容后&lt;strong&gt;所有&lt;/strong&gt;迭代器、指针、引用失效。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;std::vector&amp;lt;int&amp;gt; v = {1, 2, 3};
+v.reserve(100);       // 只扩容量，不改变 size
+v.push_back(4);
+v.shrink_to_fit();    // 请求归还多余容量（非强制）
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;&lt;code&gt;list&lt;/code&gt;&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;双向链表&lt;/strong&gt;，非连续；任意位置插入/删除 O(1)，&lt;strong&gt;无&lt;/strong&gt;随机访问。&lt;/li&gt;
+&lt;li&gt;成员：&lt;code&gt;sort()&lt;/code&gt;、&lt;code&gt;merge()&lt;/code&gt;、&lt;code&gt;unique()&lt;/code&gt;、&lt;code&gt;splice()&lt;/code&gt;。&lt;/li&gt;
+&lt;li&gt;不能用标准 &lt;code&gt;sort&lt;/code&gt;（需随机访问迭代器），用 &lt;code&gt;list::sort&lt;/code&gt;。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;&lt;code&gt;deque&lt;/code&gt;&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;分段连续缓冲区 + 中控 map；头尾插入 O(1)，随机访问略慢于 &lt;code&gt;vector&lt;/code&gt;。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;无&lt;/strong&gt; &lt;code&gt;capacity()&lt;/code&gt; / &lt;code&gt;reserve()&lt;/code&gt;。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;关联式容器&lt;/h2&gt;
+&lt;p&gt;底层多为&lt;strong&gt;红黑树&lt;/strong&gt;（平衡二叉搜索树），有序，查找 O(log n)。&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;容器&lt;/th&gt;
+&lt;th&gt;键&lt;/th&gt;
+&lt;th&gt;值&lt;/th&gt;
+&lt;th&gt;重复键&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;set&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;= 值&lt;/td&gt;
+&lt;td&gt;—&lt;/td&gt;
+&lt;td&gt;否&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;multiset&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;= 值&lt;/td&gt;
+&lt;td&gt;—&lt;/td&gt;
+&lt;td&gt;是&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;map&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;pair&amp;lt;const K, V&amp;gt;&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;映射&lt;/td&gt;
+&lt;td&gt;否&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;multimap&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;同上&lt;/td&gt;
+&lt;td&gt;映射&lt;/td&gt;
+&lt;td&gt;是&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;pre&gt;&lt;code&gt;std::map&amp;lt;std::string, int&amp;gt; scores;
+scores[&quot;alice&quot;] = 90;
+
+std::set&amp;lt;int&amp;gt; s = {3, 1, 2};  // 自动排序去重（set 内唯一）
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;自定义类型作键需提供&lt;strong&gt;严格弱序&lt;/strong&gt;比较（或 C++20 透明比较 / 自定义哈希用于 &lt;code&gt;unordered_*&lt;/code&gt;）。&lt;/p&gt;
+&lt;h2&gt;无序关联容器（补充）&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;unordered_map&lt;/code&gt; / &lt;code&gt;unordered_set&lt;/code&gt;：哈希表，平均 O(1) 查找，无序。&lt;/p&gt;
+&lt;h2&gt;容器适配器&lt;/h2&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;适配器&lt;/th&gt;
+&lt;th&gt;默认底层&lt;/th&gt;
+&lt;th&gt;特点&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;stack&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;deque&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;栈顶操作，无迭代器&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;queue&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;deque&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;队头队尾&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;priority_queue&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;vector&lt;/code&gt; + 堆&lt;/td&gt;
+&lt;td&gt;堆顶最值&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;pre&gt;&lt;code&gt;std::stack&amp;lt;int&amp;gt; st;
+st.push(1);
+st.top();
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;算法&lt;/h2&gt;
+&lt;p&gt;通过迭代器区间 &lt;code&gt;[first, last)&lt;/code&gt; 操作，与容器分离。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;质变&lt;/strong&gt;：修改区间内容 — &lt;code&gt;copy&lt;/code&gt;, &lt;code&gt;fill&lt;/code&gt;, &lt;code&gt;sort&lt;/code&gt;, &lt;code&gt;remove&lt;/code&gt;, &lt;code&gt;transform&lt;/code&gt; …&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;非质变&lt;/strong&gt;：只读 — &lt;code&gt;find&lt;/code&gt;, &lt;code&gt;count&lt;/code&gt;, &lt;code&gt;for_each&lt;/code&gt;（若仿函数写元素则例外）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;std::vector&amp;lt;int&amp;gt; v = {3, 1, 4, 1, 5};
+std::sort(v.begin(), v.end());
+auto it = std::find(v.begin(), v.end(), 4);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;仿函数（函数对象）&lt;/h2&gt;
+&lt;p&gt;重载 &lt;code&gt;operator()&lt;/code&gt; 的类型，可带状态：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;struct Greater {
+    bool operator()(int a, int b) const { return a &amp;gt; b; }
+};
+std::sort(v.begin(), v.end(), Greater{});
+// 或 std::sort(v.begin(), v.end(), std::greater&amp;lt;int&amp;gt;{});
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;谓词&lt;/strong&gt;：返回 &lt;code&gt;bool&lt;/code&gt; 的仿函数，如 &lt;code&gt;std::less&lt;/code&gt;、&lt;code&gt;std::equal_to&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;内建仿函数&lt;/strong&gt;：&lt;code&gt;plus&lt;/code&gt;, &lt;code&gt;minus&lt;/code&gt;, &lt;code&gt;multiplies&lt;/code&gt;, &lt;code&gt;less&lt;/code&gt;, &lt;code&gt;logical_and&lt;/code&gt; 等。&lt;/p&gt;
+&lt;h2&gt;适配器&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;stack&lt;/code&gt; / &lt;code&gt;queue&lt;/code&gt; / &lt;code&gt;priority_queue&lt;/code&gt;：容器适配器。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;reverse_iterator&lt;/code&gt;、&lt;code&gt;insert_iterator&lt;/code&gt;：迭代器适配器。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;bind1st&lt;/code&gt; / &lt;code&gt;bind2nd&lt;/code&gt;（C++11 前常用，现多被 lambda 与 &lt;code&gt;std::bind&lt;/code&gt; 替代）。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;容器选择策略&lt;/h2&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;需求&lt;/th&gt;
+&lt;th&gt;推荐&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;随机访问、尾部增删多&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;vector&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;中间频繁插入删除、不需随机访问&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;list&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;头尾频繁操作&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;deque&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;有序、去重、只关心键&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;set&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;键值映射&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;map&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;只需快速查找、不关心顺序&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;unordered_map&lt;/code&gt; / &lt;code&gt;unordered_set&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;LIFO / FIFO&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;stack&lt;/code&gt; / &lt;code&gt;queue&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2&gt;C++11 相关（与 STL 配合）&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;auto&lt;/code&gt;、&lt;code&gt;nullptr&lt;/code&gt;、范围 for：&lt;code&gt;for (auto&amp;amp; x : v)&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Lambda&lt;/strong&gt;：&lt;code&gt;std::sort(v.begin(), v.end(), [](int a, int b){ return a &amp;gt; b; });&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;移动语义：&lt;code&gt;push_back(std::move(x))&lt;/code&gt; 减少拷贝&lt;/li&gt;
+&lt;/ul&gt;
+</content:encoded></item><item><title>【CPP】模板</title><link>https://lysj.work/posts/studynotes/cpp/cpp%E6%A8%A1%E6%9D%BF/</link><guid isPermaLink="true">https://lysj.work/posts/studynotes/cpp/cpp%E6%A8%A1%E6%9D%BF/</guid><description>函数模板与类模板、特化、实例化及与 STL 的关系。</description><pubDate>Fri, 27 Mar 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;泛型编程&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;面向对象&lt;/strong&gt;：关注数据与类型的绑定（多态）。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;泛型 / 模板&lt;/strong&gt;：关注&lt;strong&gt;算法&lt;/strong&gt;与数据结构，将类型参数化，编译期生成具体代码。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;STL 即泛型编程的典型应用。&lt;/p&gt;
+&lt;h2&gt;函数模板&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;template&amp;lt;typename T&amp;gt;
+T maximum(T a, T b) {
+    return (a &amp;gt; b) ? a : b;
+}
+
+int m = maximum(3, 5);           // 推导 T = int
+double d = maximum&amp;lt;double&amp;gt;(3.1, 2.2);  // 显式指定
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;要点&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;模板&lt;strong&gt;不是&lt;/strong&gt;函数，是生成函数的“模具”；每个使用的 &lt;code&gt;(T, 实参类型组合)&lt;/code&gt; 会实例化一份函数。&lt;/li&gt;
+&lt;li&gt;定义通常在头文件中（或显式实例化在 .cpp），否则链接阶段找不到实例。&lt;/li&gt;
+&lt;li&gt;函数模板&lt;strong&gt;一般不支持&lt;/strong&gt;与内置类型相同的隐式窄化转换规则（实参类型必须匹配或能推导）。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;与普通函数共存&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;int add(int a, int b) { return a + b; }
+
+template&amp;lt;typename T&amp;gt;
+T add(T a, T b) { return a + b; }
+
+add(1, 2);              // 优先非模板 add(int,int)
+add&amp;lt;&amp;gt;(1, 2);            // 强制使用模板实例 add&amp;lt;int&amp;gt;
+add&amp;lt;double&amp;gt;(1, 2);      // 显式模板
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;重载与特化&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;多个模板或模板与非模板可构成重载集。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;全特化&lt;/strong&gt;：针对特定类型单独实现。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;偏特化&lt;/strong&gt;：仅类模板支持偏特化，函数模板只有全特化。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;template&amp;lt;&amp;gt;
+const char* maximum&amp;lt;const char*&amp;gt;(const char* a, const char* b) {
+    return strcmp(a, b) &amp;gt; 0 ? a : b;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;局限性处理&lt;/h3&gt;
+&lt;p&gt;对模板不适用的类型（如指针比较语义），可：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;重载非模板函数；&lt;/li&gt;
+&lt;li&gt;模板特化；&lt;/li&gt;
+&lt;li&gt;C++20 &lt;strong&gt;约束&lt;/strong&gt;（&lt;code&gt;requires&lt;/code&gt; / concepts）限制模板参数。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2&gt;类模板&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;template&amp;lt;typename T&amp;gt;
+class Stack {
+    std::vector&amp;lt;T&amp;gt; data;
+public:
+    void push(const T&amp;amp; v) { data.push_back(v); }
+    void pop() { if (!data.empty()) data.pop_back(); }
+    T&amp;amp; top() { return data.back(); }
+};
+
+Stack&amp;lt;int&amp;gt; s;
+Stack&amp;lt;std::string&amp;gt; ss;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;要点&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;不能&lt;/strong&gt;像函数模板那样自动推导类模板参数（C++17 起类模板参数推导 CTAD 有例外，如 &lt;code&gt;pair p(1, 2.0);&lt;/code&gt;）。&lt;/li&gt;
+&lt;li&gt;成员函数若在类外实现，须带模板声明：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;template&amp;lt;typename T&amp;gt;
+void Stack&amp;lt;T&amp;gt;::push(const T&amp;amp; v) { /* ... */ }
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;类模板作函数参数&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;template&amp;lt;typename T&amp;gt;
+void process(Stack&amp;lt;T&amp;gt;&amp;amp; st) { /* ... */ }
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;普通类继承类模板实例&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;template&amp;lt;typename T&amp;gt;
+class Vector { /* ... */ };
+
+class MyVec : public Vector&amp;lt;int&amp;gt; {};  // 继承某一实例化
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;类模板与友元、静态成员&lt;/h3&gt;
+&lt;p&gt;每个 &lt;code&gt;Stack&amp;lt;int&amp;gt;&lt;/code&gt;、&lt;code&gt;Stack&amp;lt;double&amp;gt;&lt;/code&gt; 是&lt;strong&gt;不同类型&lt;/strong&gt;，静态成员、友元各自独立。&lt;/p&gt;
+&lt;h2&gt;编译模型（两次编译）&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;模板定义阶段&lt;/strong&gt;：检查模板语法。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;实例化阶段&lt;/strong&gt;：根据调用生成具体函数/类，再编译。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;因此错误可能在&lt;strong&gt;实例化时&lt;/strong&gt;才暴露。&lt;/p&gt;
+&lt;h2&gt;与 STL 的关系&lt;/h2&gt;
+&lt;p&gt;容器 &lt;code&gt;vector&amp;lt;T&amp;gt;&lt;/code&gt;、算法 &lt;code&gt;sort&lt;/code&gt;、迭代器均为模板；详见 &lt;a href=&quot;./%5BCPP%5DSTL.md&quot;&gt;[CPP]STL.md&lt;/a&gt;。&lt;/p&gt;
+</content:encoded></item><item><title>【CPP】类型转换与异常</title><link>https://lysj.work/posts/studynotes/cpp/cpp%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E4%B8%8E%E5%BC%82%E5%B8%B8/</link><guid isPermaLink="true">https://lysj.work/posts/studynotes/cpp/cpp%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E4%B8%8E%E5%BC%82%E5%B8%B8/</guid><description>static_cast 等四种 cast、异常处理机制与 RTTI。</description><pubDate>Fri, 27 Mar 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;为什么 C++ 需要新的转换方式&lt;/h2&gt;
+&lt;p&gt;C 风格 &lt;code&gt;(Type)expr&lt;/code&gt; 与 &lt;code&gt;Type(expr)&lt;/code&gt; 可在一次转换中完成多种语义（截断、指针转换、去掉 const 等），&lt;strong&gt;难以在代码中一眼看出意图&lt;/strong&gt;，也不易在编译期拦截错误。&lt;/p&gt;
+&lt;p&gt;C++ 提供四种&lt;strong&gt;命名&lt;/strong&gt;的转换，语义清晰、可检索。&lt;/p&gt;
+&lt;h2&gt;四种 cast&lt;/h2&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;转换&lt;/th&gt;
+&lt;th&gt;用途&lt;/th&gt;
+&lt;th&gt;安全性&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;static_cast&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;相关类型之间的编译期转换&lt;/td&gt;
+&lt;td&gt;由程序员保证&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;dynamic_cast&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;多态类型的运行时下行转换&lt;/td&gt;
+&lt;td&gt;有 RTTI 检查&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;const_cast&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;增加或去掉 &lt;code&gt;const&lt;/code&gt;/&lt;code&gt;volatile&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;仅改 cv 限定，不改类型布局&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;reinterpret_cast&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;比特级重新解释&lt;/td&gt;
+&lt;td&gt;危险，极少使用&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3&gt;&lt;code&gt;static_cast&lt;/code&gt;&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;double d = 3.14;
+int i = static_cast&amp;lt;int&amp;gt;(d);
+
+Derived* pd = static_cast&amp;lt;Derived*&amp;gt;(pBase);  // 下行：无运行时检查，不安全
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;数值转换、显式调用单参数构造函数、&lt;strong&gt;无虚函数&lt;/strong&gt;时的上行/下行指针转换。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;不能&lt;/strong&gt;去掉 &lt;code&gt;const&lt;/code&gt;（用 &lt;code&gt;const_cast&lt;/code&gt;）。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;&lt;code&gt;dynamic_cast&lt;/code&gt;&lt;/h3&gt;
+&lt;p&gt;要求基类至少有一个 &lt;strong&gt;虚函数&lt;/strong&gt;（多态类型）。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Base* pb = /* 指向 Derived */;
+Derived* pd = dynamic_cast&amp;lt;Derived*&amp;gt;(pb);
+if (pd) { /* 确实是 Derived */ }
+
+try {
+    Derived&amp;amp; dr = dynamic_cast&amp;lt;Derived&amp;amp;&amp;gt;(*pb);
+} catch (const std::bad_cast&amp;amp;) { /* 引用失败抛异常 */ }
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;指针失败 → &lt;code&gt;nullptr&lt;/code&gt;；引用失败 → &lt;code&gt;std::bad_cast&lt;/code&gt;。&lt;/li&gt;
+&lt;li&gt;有运行时开销（RTTI）。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;&lt;code&gt;const_cast&lt;/code&gt;&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;const int ci = 10;
+int* p = const_cast&amp;lt;int*&amp;gt;(&amp;amp;ci);
+// *p = 20;  // 若 ci 在只读段，未定义行为
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;仅用于去掉/添加 const、volatile；&lt;strong&gt;不能&lt;/strong&gt;改变除 cv 外的类型。&lt;/p&gt;
+&lt;h3&gt;&lt;code&gt;reinterpret_cast&lt;/code&gt;&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;intptr_t addr = reinterpret_cast&amp;lt;intptr_t&amp;gt;(ptr);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;用于指针与整数、无关类型指针之间；&lt;strong&gt;可移植性差&lt;/strong&gt;，除非底层/互操作必需，否则避免。&lt;/p&gt;
+&lt;h2&gt;父类转子类（原笔记要点）&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;上行&lt;/strong&gt;（派生 → 基类）：隐式、安全。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;下行&lt;/strong&gt;（基类 → 派生）：应用 &lt;code&gt;dynamic_cast&lt;/code&gt; 或确保对象真实类型，避免 &lt;code&gt;static_cast&lt;/code&gt; 盲目下行。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;异常 (exception)&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;异常&lt;/strong&gt;：程序运行时出现的错误或非预期路径，通过 &lt;code&gt;throw&lt;/code&gt; 抛出，沿调用栈展开，由匹配的 &lt;code&gt;catch&lt;/code&gt; 处理。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;double divide(double a, double b) {
+    if (b == 0) throw std::invalid_argument(&quot;division by zero&quot;);
+    return a / b;
+}
+
+try {
+    double r = divide(1, 0);
+} catch (const std::invalid_argument&amp;amp; e) {
+    std::cerr &amp;lt;&amp;lt; e.what() &amp;lt;&amp;lt; &apos;\n&apos;;
+} catch (...) {
+    std::cerr &amp;lt;&amp;lt; &quot;unknown error\n&quot;;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;机制&lt;/strong&gt;：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;try&lt;/code&gt;：可能抛异常的代码。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;throw&lt;/code&gt;：抛出对象（通常是 &lt;code&gt;std::exception&lt;/code&gt; 派生类）。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;catch&lt;/code&gt;：按类型匹配；派生类 catch 须写在基类之前。&lt;/li&gt;
+&lt;li&gt;未捕获异常 → 调用 &lt;code&gt;std::terminate&lt;/code&gt;。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;strong&gt;规范&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;按&lt;strong&gt;const 引用&lt;/strong&gt;捕获，避免切片：&lt;code&gt;catch (const std::exception&amp;amp; e)&lt;/code&gt;。&lt;/li&gt;
+&lt;li&gt;析构函数默认 &lt;code&gt;noexcept&lt;/code&gt;；析构中抛异常危险。&lt;/li&gt;
+&lt;li&gt;资源管理配合 RAII，异常安全等级（基本/强/不抛）与智能指针、移动语义相关。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;不宜用异常的场景&lt;/strong&gt;：极热路径、嵌入式无异常支持的编译选项（&lt;code&gt;-fno-exceptions&lt;/code&gt;）。&lt;/p&gt;
+&lt;h2&gt;RTTI&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;Runtime Type Identification&lt;/strong&gt;：&lt;code&gt;typeid&lt;/code&gt;、&lt;code&gt;dynamic_cast&lt;/code&gt; 依赖运行时类型信息。可 &lt;code&gt;-fno-rtti&lt;/code&gt; 关闭以减小体积（则 &lt;code&gt;dynamic_cast&lt;/code&gt; 受限）。&lt;/p&gt;
+</content:encoded></item><item><title>【CPP】继承与多态</title><link>https://lysj.work/posts/studynotes/cpp/cpp%E7%BB%A7%E6%89%BF%E4%B8%8E%E5%A4%9A%E6%80%81/</link><guid isPermaLink="true">https://lysj.work/posts/studynotes/cpp/cpp%E7%BB%A7%E6%89%BF%E4%B8%8E%E5%A4%9A%E6%80%81/</guid><description>继承方式、虚函数、纯虚函数、菱形继承与 dynamic_cast。</description><pubDate>Thu, 26 Mar 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;类之间的关系&lt;/h2&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;关系&lt;/th&gt;
+&lt;th&gt;英文&lt;/th&gt;
+&lt;th&gt;含义&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;继承&lt;/td&gt;
+&lt;td&gt;is-a&lt;/td&gt;
+&lt;td&gt;派生类是一种基类&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;组合/聚合&lt;/td&gt;
+&lt;td&gt;has-a&lt;/td&gt;
+&lt;td&gt;整体包含部分&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;依赖/关联&lt;/td&gt;
+&lt;td&gt;uses-a&lt;/td&gt;
+&lt;td&gt;一个类使用另一个类&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;实现&lt;/td&gt;
+&lt;td&gt;implements&lt;/td&gt;
+&lt;td&gt;类实现接口（抽象类/纯虚）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;另有 &lt;strong&gt;instance-of&lt;/strong&gt;：对象是类的实例。&lt;/p&gt;
+&lt;h2&gt;Liskov 替换原则 (LSP)&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;子类型必须能够替换其基类型，且程序行为不变。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;经典反例：从 &lt;code&gt;Rectangle&lt;/code&gt; 派生 &lt;code&gt;Square&lt;/code&gt;，若基类允许独立修改宽和高，正方形约束被破坏，&lt;strong&gt;行为上&lt;/strong&gt;不能替换矩形。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;实践&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;继承应基于&lt;strong&gt;可替换的行为&lt;/strong&gt;，不仅是分类直觉。&lt;/li&gt;
+&lt;li&gt;子类&lt;strong&gt;扩展&lt;/strong&gt;基类，不要破坏基类契约。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;继承方式与访问&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;class Base {
+public:
+    int pub;
+protected:
+    int prot;
+private:
+    int priv;
+};
+
+class D_pub  : public    Base {};  // is-a，最常用
+class D_prot : protected Base {};
+class D_priv : private   Base {};
+&lt;/code&gt;&lt;/pre&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;继承方式&lt;/th&gt;
+&lt;th&gt;基类 public&lt;/th&gt;
+&lt;th&gt;基类 protected&lt;/th&gt;
+&lt;th&gt;基类 private&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;public&lt;/td&gt;
+&lt;td&gt;public&lt;/td&gt;
+&lt;td&gt;protected&lt;/td&gt;
+&lt;td&gt;不可访问&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;protected&lt;/td&gt;
+&lt;td&gt;protected&lt;/td&gt;
+&lt;td&gt;protected&lt;/td&gt;
+&lt;td&gt;不可访问&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;private&lt;/td&gt;
+&lt;td&gt;private&lt;/td&gt;
+&lt;td&gt;private&lt;/td&gt;
+&lt;td&gt;不可访问&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;只有 public 继承&lt;/strong&gt;才保持典型的 &lt;strong&gt;is-a&lt;/strong&gt; 语义，适合多态。&lt;/p&gt;
+&lt;h2&gt;成员继承与构造/析构&lt;/h2&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;成员/函数&lt;/th&gt;
+&lt;th&gt;是否继承&lt;/th&gt;
+&lt;th&gt;说明&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;普通成员函数&lt;/td&gt;
+&lt;td&gt;✓&lt;/td&gt;
+&lt;td&gt;子类同名函数&lt;strong&gt;隐藏&lt;/strong&gt;基类所有重载（可用 &lt;code&gt;using Base::f&lt;/code&gt; 引入）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;虚函数&lt;/td&gt;
+&lt;td&gt;✓&lt;/td&gt;
+&lt;td&gt;可 &lt;strong&gt;override&lt;/strong&gt;（C++11 建议显式写 &lt;code&gt;override&lt;/code&gt;）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;静态成员函数&lt;/td&gt;
+&lt;td&gt;✓&lt;/td&gt;
+&lt;td&gt;子类同名同样隐藏基类同名&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;构造函数&lt;/td&gt;
+&lt;td&gt;✗&lt;/td&gt;
+&lt;td&gt;子类须在初始化列表调用基类构造&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;析构函数&lt;/td&gt;
+&lt;td&gt;部分&lt;/td&gt;
+&lt;td&gt;子类析构自动调用基类析构&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;友元&lt;/td&gt;
+&lt;td&gt;✗&lt;/td&gt;
+&lt;td&gt;友元不传递&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;注意&lt;/strong&gt;：若基类&lt;strong&gt;没有默认构造&lt;/strong&gt;且子类未在初始化列表中调用基类合适构造，子类的默认构造会被 &lt;strong&gt;&lt;code&gt;= delete&lt;/code&gt;&lt;/strong&gt;。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;class Base { public: Base(int) {} };
+class Derived : public Base {
+public:
+    Derived() : Base(0) {}  // 必须显式调用
+};
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;C++11：&lt;code&gt;using Base::Base;&lt;/code&gt; 可继承构造函数。&lt;/p&gt;
+&lt;h2&gt;多态与虚函数&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;编译期多态&lt;/strong&gt;：函数重载、模板。&lt;br /&gt;
+&lt;strong&gt;运行期多态&lt;/strong&gt;：通过基类指针/引用调用 &lt;strong&gt;virtual&lt;/strong&gt; 函数，根据&lt;strong&gt;对象实际类型&lt;/strong&gt;分派。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;struct Animal {
+    virtual void speak() const { std::cout &amp;lt;&amp;lt; &quot;?\n&quot;; }
+    virtual ~Animal() = default;  // 多态基类必备
+};
+struct Dog : Animal {
+    void speak() const override { std::cout &amp;lt;&amp;lt; &quot;woof\n&quot;; }
+};
+
+void call(const Animal&amp;amp; a) { a.speak(); }  // 运行时决定
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;实现上，含虚函数的类常有 &lt;strong&gt;虚表指针 (vptr)&lt;/strong&gt; 指向虚函数表；因此对象大小可能多一个指针。&lt;/p&gt;
+&lt;h3&gt;纯虚函数与抽象类&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;class Shape {
+public:
+    virtual double area() const = 0;  // 纯虚
+    virtual ~Shape() = default;
+};
+// Shape s;           // 错误：不能实例化抽象类
+class Circle : public Shape {
+public:
+    double area() const override { return 3.14 * r * r; }
+private:
+    double r;
+};
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;含&lt;strong&gt;至少一个&lt;/strong&gt;纯虚函数的类为&lt;strong&gt;抽象类&lt;/strong&gt;。&lt;/li&gt;
+&lt;li&gt;派生类&lt;strong&gt;必须实现&lt;/strong&gt;所有纯虚函数才能实例化（除非自己也成为抽象类）。&lt;/li&gt;
+&lt;li&gt;接口类：抽象类中&lt;strong&gt;全部为&lt;/strong&gt;纯虚函数。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;&lt;code&gt;override&lt;/code&gt; 与 &lt;code&gt;final&lt;/code&gt;&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;void f() override;   // 编译期检查是否真的覆盖
+void g() final;      // 禁止进一步 override
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;多继承与菱形继承&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;class A { public: int x; };
+class B : public A {};
+class C : public A {};
+class D : public B, public C {};  // D 中有两份 A::x
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;问题&lt;/strong&gt;：&lt;code&gt;D&lt;/code&gt; 对象含&lt;strong&gt;两份&lt;/strong&gt; &lt;code&gt;A&lt;/code&gt; 子对象 → 二义性、浪费。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;解决：虚继承&lt;/strong&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;class B : virtual public A {};
+class C : virtual public A {};
+class D : public B, public C {};  // 仅一份 A
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;虚继承增加实现复杂度，应谨慎使用；优先组合往往更清晰。&lt;/p&gt;
+&lt;h2&gt;指针/引用的转换&lt;/h2&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;转换&lt;/th&gt;
+&lt;th&gt;方向&lt;/th&gt;
+&lt;th&gt;安全性&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;上行&lt;/td&gt;
+&lt;td&gt;派生 → 基类&lt;/td&gt;
+&lt;td&gt;安全（隐式）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;下行&lt;/td&gt;
+&lt;td&gt;基类 → 派生&lt;/td&gt;
+&lt;td&gt;不安全，需 &lt;code&gt;dynamic_cast&lt;/code&gt; 等&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;pre&gt;&lt;code&gt;Dog d;
+Animal* pa = &amp;amp;d;           // OK
+
+Animal* pa = /* ... */;
+Dog* pd = dynamic_cast&amp;lt;Dog*&amp;gt;(pa);  // 失败返回 nullptr（指针形式）
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;重写 vs 重载（原笔记疑问）&lt;/h2&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;重载 (overload)&lt;/th&gt;
+&lt;th&gt;重写/覆盖 (override)&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;作用域&lt;/td&gt;
+&lt;td&gt;同一作用域&lt;/td&gt;
+&lt;td&gt;基类与派生类&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;函数签名&lt;/td&gt;
+&lt;td&gt;参数不同&lt;/td&gt;
+&lt;td&gt;参数相同（协变返回类型例外）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;绑定&lt;/td&gt;
+&lt;td&gt;编译期&lt;/td&gt;
+&lt;td&gt;运行期（虚函数）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;关键字&lt;/td&gt;
+&lt;td&gt;无&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;virtual&lt;/code&gt; / &lt;code&gt;override&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+</content:encoded></item><item><title>【CPP】类</title><link>https://lysj.work/posts/studynotes/cpp/cpp%E7%B1%BB/</link><guid isPermaLink="true">https://lysj.work/posts/studynotes/cpp/cpp%E7%B1%BB/</guid><description>封装、构造与析构、拷贝、静态成员、友元及 const 成员函数。</description><pubDate>Tue, 24 Mar 2026 00:00:00 GMT</pubDate><content:encoded>&lt;blockquote&gt;
+&lt;p&gt;整理自 0319、0320、0323、0324 相关章节，已校对并补充。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2&gt;类与对象&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;类&lt;/strong&gt;：类型的蓝图，描述属性（成员变量）与行为（成员函数）。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;对象&lt;/strong&gt;：类的实例。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;访问控制&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;关键字&lt;/th&gt;
+&lt;th&gt;类内&lt;/th&gt;
+&lt;th&gt;派生类&lt;/th&gt;
+&lt;th&gt;类外&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;public&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;✓&lt;/td&gt;
+&lt;td&gt;✓&lt;/td&gt;
+&lt;td&gt;✓&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;protected&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;✓&lt;/td&gt;
+&lt;td&gt;✓&lt;/td&gt;
+&lt;td&gt;✗&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;private&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;✓&lt;/td&gt;
+&lt;td&gt;✗&lt;/td&gt;
+&lt;td&gt;✗&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;ul&gt;
+&lt;li&gt;默认成员访问权限为 &lt;strong&gt;&lt;code&gt;private&lt;/code&gt;&lt;/strong&gt;（&lt;code&gt;struct&lt;/code&gt; 默认为 &lt;code&gt;public&lt;/code&gt;）。&lt;/li&gt;
+&lt;li&gt;访问说明符作用到&lt;strong&gt;下一个说明符或类结束&lt;/strong&gt;。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;class Demo {
+    int num;           // private
+public:
+    void setNum(int v);
+};
+
+void Demo::setNum(int v) {
+    this-&amp;gt;num = v;     // 成员函数内可用 this
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;类外定义成员函数&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;class Stock {
+public:
+    void set_tot();
+};
+
+// 类内声明、类外定义；若在类外定义且希望内联，可加 inline
+inline void Stock::set_tot() { /* ... */ }
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;在类内定义的函数&lt;strong&gt;隐式为 inline&lt;/strong&gt;（是否真内联由编译器决定）。&lt;/p&gt;
+&lt;h2&gt;构造函数&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;与类名相同，&lt;strong&gt;无返回值&lt;/strong&gt;（不写 &lt;code&gt;void&lt;/code&gt;）。&lt;/li&gt;
+&lt;li&gt;创建对象时&lt;strong&gt;自动&lt;/strong&gt;调用，可重载。&lt;/li&gt;
+&lt;li&gt;未自定义任何构造函数时，编译器生成&lt;strong&gt;默认构造函数&lt;/strong&gt;（无参或带默认参数）。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;自定义了任意构造函数后，编译器不再自动生成默认构造函数&lt;/strong&gt;；需要时应显式写 &lt;code&gt;= default&lt;/code&gt; 或自己写无参构造。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;class Foo {
+public:
+    Foo() = default;
+    Foo(int x) : x_(x) {}
+private:
+    int x_;
+};
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;初始化列表&lt;/h3&gt;
+&lt;p&gt;构造函数后加 &lt;code&gt;: 成员(初值), ...&lt;/code&gt;，按&lt;strong&gt;成员在类中声明顺序&lt;/strong&gt;初始化（与列表书写顺序无关）。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;必须使用初始化列表的情况&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;const&lt;/code&gt; 成员&lt;/li&gt;
+&lt;li&gt;引用成员&lt;/li&gt;
+&lt;li&gt;没有默认构造函数的子对象成员&lt;/li&gt;
+&lt;li&gt;基类需特定参数时（在派生类构造中）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;class Member {
+public:
+    explicit Member(int) {}  // 无默认构造
+};
+
+class MyClass {
+    Member m;
+    const int id;
+public:
+    MyClass(int val, int id) : m(val), id(id) {}  // 正确
+    // MyClass(int val, int id) { m = Member(val); }  // 错误：无法先默认构造 m
+};
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;拷贝构造函数&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;触发&lt;/strong&gt;：用同类对象初始化新对象（值传递、按值返回、显式拷贝构造等）。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;class Widget {
+public:
+    Widget(const Widget&amp;amp; other);  // 形参必须是引用，否则无限递归
+};
+&lt;/code&gt;&lt;/pre&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;拷贝方式&lt;/th&gt;
+&lt;th&gt;行为&lt;/th&gt;
+&lt;th&gt;风险&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;浅拷贝&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;复制指针值，共享堆内存&lt;/td&gt;
+&lt;td&gt;双重释放、悬垂&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;深拷贝&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;复制指针指向的内容&lt;/td&gt;
+&lt;td&gt;安全但可能昂贵&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;含动态资源的类应实现&lt;strong&gt;深拷贝&lt;/strong&gt;，或禁用拷贝（&lt;code&gt;delete&lt;/code&gt;）、改用移动语义。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Rule of Three / Five&lt;/strong&gt;：若自定义析构、拷贝构造、拷贝赋值之一，通常需考虑三者（C++11 起再加移动构造、移动赋值）。&lt;/p&gt;
+&lt;h3&gt;&lt;code&gt;explicit&lt;/code&gt;（原笔记空缺，已补充）&lt;/h3&gt;
+&lt;p&gt;阻止&lt;strong&gt;隐式&lt;/strong&gt;单参数转换：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;class String {
+public:
+    explicit String(int size) { /* 分配 size */ }
+};
+
+// String s = 100;   // 错误
+String s(100);       // OK
+String s{100};       // OK
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;析构函数&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;函数名 &lt;code&gt;~类名()&lt;/code&gt;，无参、无返回值、&lt;strong&gt;不可重载&lt;/strong&gt;。&lt;/li&gt;
+&lt;li&gt;对象生命周期结束时自动调用（离开作用域、&lt;code&gt;delete&lt;/code&gt;、临时对象结束等）。&lt;/li&gt;
+&lt;li&gt;未自定义时编译器生成&lt;strong&gt;默认析构&lt;/strong&gt;；对含指针成员仅“浅释放”的类，默认析构&lt;strong&gt;不会&lt;/strong&gt; &lt;code&gt;delete&lt;/code&gt; 指针指向的堆内存。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;应自定义析构的情况&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;new&lt;/code&gt; 分配的内存&lt;/li&gt;
+&lt;li&gt;文件句柄、套接字、锁等需显式释放的资源&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;多态基类&lt;/strong&gt;：基类析构函数应声明为 &lt;strong&gt;&lt;code&gt;virtual&lt;/code&gt;&lt;/strong&gt;，否则通过基类指针 &lt;code&gt;delete&lt;/code&gt; 派生对象时可能只调用基类析构，造成资源泄漏。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;struct Base {
+    virtual ~Base() = default;
+};
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;静态成员&lt;/h2&gt;
+&lt;p&gt;属于&lt;strong&gt;类&lt;/strong&gt;而非某个对象；所有对象共享一份。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;class Counter {
+public:
+    static int count;
+    static void inc() { ++count; }
+};
+int Counter::count = 0;  // 类外定义（C++17 起 inline 静态成员可在类内初始化）
+&lt;/code&gt;&lt;/pre&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;类型&lt;/th&gt;
+&lt;th&gt;类内&lt;/th&gt;
+&lt;th&gt;类外&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;静态数据成员&lt;/td&gt;
+&lt;td&gt;声明&lt;/td&gt;
+&lt;td&gt;定义（除非 &lt;code&gt;inline&lt;/code&gt;）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;静态成员函数&lt;/td&gt;
+&lt;td&gt;声明/定义&lt;/td&gt;
+&lt;td&gt;无 &lt;code&gt;this&lt;/code&gt;，只能直接访问静态成员&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;ul&gt;
+&lt;li&gt;静态成员函数&lt;strong&gt;不能&lt;/strong&gt;访问非静态成员（无 &lt;code&gt;this&lt;/code&gt;）。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;const&lt;/code&gt; 整型静态成员可在类内初始化；字符串等非字面量类型等规则见标准（C++17 &lt;code&gt;inline&lt;/code&gt; 变量简化很多场景）。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;对象模型与 &lt;code&gt;this&lt;/code&gt;&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;类本身&lt;/strong&gt;不占运行时内存；&lt;strong&gt;对象&lt;/strong&gt;大小由非静态数据成员、对齐、虚表指针等决定。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;不影响对象大小&lt;/strong&gt;：静态成员、成员函数（在代码段）。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;this&lt;/code&gt;&lt;/strong&gt;：非静态成员函数隐式传入的指针，指向当前对象；类型为 &lt;code&gt;T* const&lt;/code&gt;（不能改指向别的对象）。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;链式调用&lt;/strong&gt;：成员函数返回 &lt;code&gt;*this&lt;/code&gt; 的引用。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;class Builder {
+public:
+    Builder&amp;amp; step1() { /* ... */ return *this; }
+    Builder&amp;amp; step2() { /* ... */ return *this; }
+};
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;静态成员函数&lt;strong&gt;没有&lt;/strong&gt; &lt;code&gt;this&lt;/code&gt;。&lt;/p&gt;
+&lt;h2&gt;&lt;code&gt;const&lt;/code&gt; 与 &lt;code&gt;mutable&lt;/code&gt;&lt;/h2&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;&lt;code&gt;const&lt;/code&gt; 对象&lt;/th&gt;
+&lt;th&gt;&lt;code&gt;const&lt;/code&gt; 成员函数&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;修改数据成员&lt;/td&gt;
+&lt;td&gt;一般禁止&lt;/td&gt;
+&lt;td&gt;一般禁止&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;调用非 const 成员函数&lt;/td&gt;
+&lt;td&gt;禁止&lt;/td&gt;
+&lt;td&gt;—&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;调用 const 成员函数&lt;/td&gt;
+&lt;td&gt;允许&lt;/td&gt;
+&lt;td&gt;—&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;pre&gt;&lt;code&gt;class Cache {
+    mutable int hits = 0;  // 即使在 const 成员函数中也可修改
+public:
+    int get() const { ++hits; return 42; }
+};
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;友元&lt;/h2&gt;
+&lt;p&gt;允许指定函数或类访问 &lt;strong&gt;private / protected&lt;/strong&gt; 成员。友元&lt;strong&gt;不&lt;/strong&gt;是成员，&lt;strong&gt;不&lt;/strong&gt;传递、&lt;strong&gt;不&lt;/strong&gt;继承。&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;类型&lt;/th&gt;
+&lt;th&gt;说明&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;友元函数&lt;/td&gt;
+&lt;td&gt;普通函数或另一类的成员函数&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;友元类&lt;/td&gt;
+&lt;td&gt;整个类的所有成员函数&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;友元成员函数&lt;/td&gt;
+&lt;td&gt;只授权另一个类的某个成员函数&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;pre&gt;&lt;code&gt;class B;  // 前向声明
+
+class A {
+    friend void show(const A&amp;amp;);
+    friend class B;
+    int secret = 0;
+};
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;友元关系需在类定义内&lt;strong&gt;显式声明&lt;/strong&gt;；友元类若定义在后，需前向声明。&lt;/p&gt;
+</content:encoded></item><item><title>【CPP】运算符重载</title><link>https://lysj.work/posts/studynotes/cpp/cpp%E8%BF%90%E7%AE%97%E7%AC%A6%E9%87%8D%E8%BD%BD/</link><guid isPermaLink="true">https://lysj.work/posts/studynotes/cpp/cpp%E8%BF%90%E7%AE%97%E7%AC%A6%E9%87%8D%E8%BD%BD/</guid><description>运算符重载规则、成员与非成员选择及常见重载示例。</description><pubDate>Tue, 24 Mar 2026 00:00:00 GMT</pubDate><content:encoded>&lt;blockquote&gt;
+&lt;p&gt;整理自 0324.md，已校对并补充示例与选择建议。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2&gt;目的&lt;/h2&gt;
+&lt;p&gt;让自定义类型能像内置类型一样使用 &lt;code&gt;+&lt;/code&gt;、&lt;code&gt;-&lt;/code&gt;、&lt;code&gt;&amp;lt;&amp;lt;&lt;/code&gt; 等运算符，提高可读性并封装逻辑。&lt;/p&gt;
+&lt;h2&gt;基本规则&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;至少有一个操作数是&lt;strong&gt;用户定义类型&lt;/strong&gt;（类、枚举、模板实例等）。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;不能&lt;/strong&gt;创造新运算符，只能重载已有运算符。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;不能&lt;/strong&gt;改变优先级与结合性。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;不能&lt;/strong&gt;改变操作数个数（元数）。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;不能&lt;/strong&gt;重载的运算符：
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;::&lt;/code&gt;、&lt;code&gt;.&lt;/code&gt;、&lt;code&gt;.*&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;?:&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;sizeof&lt;/code&gt;、&lt;code&gt;typeid&lt;/code&gt;、&lt;code&gt;alignof&lt;/code&gt;（C++11 起）&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;.*&lt;/code&gt; 等成员访问相关&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2&gt;成员函数 vs 非成员函数&lt;/h2&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;形式&lt;/th&gt;
+&lt;th&gt;一元运算符&lt;/th&gt;
+&lt;th&gt;二元运算符&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;成员函数&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;无显式参数（&lt;code&gt;this&lt;/code&gt; 为操作数）&lt;/td&gt;
+&lt;td&gt;一个显式参数（&lt;code&gt;this&lt;/code&gt; 为左操作数）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;非成员函数&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;一个参数&lt;/td&gt;
+&lt;td&gt;两个参数&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;“元”&lt;/strong&gt;：操作数的个数。一元一个，二元两个。&lt;/p&gt;
+&lt;h3&gt;必须以成员函数重载&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;=&lt;/code&gt; 赋值&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;()&lt;/code&gt; 函数调用&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;[]&lt;/code&gt; 下标&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;-&amp;gt;&lt;/code&gt; 成员访问（箭头）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;建议用非成员 &lt;code&gt;friend&lt;/code&gt; 或自由函数重载&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;二元运算符且需要&lt;strong&gt;左操作数不是本类&lt;/strong&gt;（如 &lt;code&gt;cout &amp;lt;&amp;lt; obj&lt;/code&gt;）：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;class Point {
+    int x, y;
+    friend std::ostream&amp;amp; operator&amp;lt;&amp;lt;(std::ostream&amp;amp; os, const Point&amp;amp; p);
+public:
+    Point(int x, int y) : x(x), y(y) {}
+};
+
+std::ostream&amp;amp; operator&amp;lt;&amp;lt;(std::ostream&amp;amp; os, const Point&amp;amp; p) {
+    return os &amp;lt;&amp;lt; &apos;(&apos; &amp;lt;&amp;lt; p.x &amp;lt;&amp;lt; &apos;,&apos; &amp;lt;&amp;lt; p.y &amp;lt;&amp;lt; &apos;)&apos;;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;选择建议（原笔记“什么情况用哪种”）&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;场景&lt;/th&gt;
+&lt;th&gt;推荐&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;修改左操作数且左操作数是本类&lt;/td&gt;
+&lt;td&gt;成员（如 &lt;code&gt;+=&lt;/code&gt;）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;对称二元运算（&lt;code&gt;a + b&lt;/code&gt; 与 &lt;code&gt;b + a&lt;/code&gt;）&lt;/td&gt;
+&lt;td&gt;非成员，常配合 &lt;code&gt;friend&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;需要支持隐式转换的一侧在左&lt;/td&gt;
+&lt;td&gt;非成员&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;=&lt;/code&gt;、&lt;code&gt;[]&lt;/code&gt;、&lt;code&gt;()&lt;/code&gt;、&lt;code&gt;-&amp;gt;&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;成员&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2&gt;常见示例&lt;/h2&gt;
+&lt;h3&gt;一元 &lt;code&gt;++&lt;/code&gt;&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;class Counter {
+    int n = 0;
+public:
+    Counter&amp;amp; operator++() { ++n; return *this; }       // 前置
+    Counter operator++(int) { Counter tmp = *this; ++n; return tmp; }  // 后置
+};
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;二元 &lt;code&gt;+&lt;/code&gt;&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;class Vec2 {
+public:
+    double x, y;
+    Vec2 operator+(const Vec2&amp;amp; rhs) const {
+        return {x + rhs.x, y + rhs.y};
+    }
+};
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;赋值 &lt;code&gt;=&lt;/code&gt;&lt;/h3&gt;
+&lt;p&gt;编译器生成的拷贝/移动赋值在多数情况下够用；涉及资源管理时需自定义，并注意&lt;strong&gt;自赋值&lt;/strong&gt;与&lt;strong&gt;拷贝交换惯用法&lt;/strong&gt;。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Widget&amp;amp; operator=(const Widget&amp;amp; rhs) {
+    if (this == &amp;amp;rhs) return *this;
+    // 释放旧资源，深拷贝 rhs
+    return *this;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;注意&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;重载不改变内置类型运算：&lt;code&gt;int + int&lt;/code&gt; 仍按内置规则。&lt;/li&gt;
+&lt;li&gt;不要为炫技重载 &lt;code&gt;&amp;amp;&amp;amp;&lt;/code&gt;、&lt;code&gt;||&lt;/code&gt;（会失去短路求值）。&lt;/li&gt;
+&lt;li&gt;与 &lt;code&gt;explicit&lt;/code&gt; 类似，谨慎重载可隐式转换的运算符。&lt;/li&gt;
+&lt;/ul&gt;
+</content:encoded></item><item><title>【CPP】设计模式</title><link>https://lysj.work/posts/studynotes/cpp/cpp%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/</link><guid isPermaLink="true">https://lysj.work/posts/studynotes/cpp/cpp%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/</guid><description>单例模式原理、Meyers 单例与饿汉懒汉实现对比。</description><pubDate>Mon, 23 Mar 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;设计模式简述&lt;/h2&gt;
+&lt;p&gt;针对 recurring 问题的可复用&lt;strong&gt;面向对象&lt;/strong&gt;方案，通常包含：模式名、问题、解决方案、效果。&lt;/p&gt;
+&lt;h2&gt;单例 (Singleton)&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;意图&lt;/strong&gt;：保证一个类在程序生命周期内&lt;strong&gt;只有一个实例&lt;/strong&gt;，并提供全局访问点。&lt;/p&gt;
+&lt;h3&gt;现代推荐：Meyers 单例（局部静态）&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;class Singleton {
+public:
+    static Singleton&amp;amp; getInstance() {
+        static Singleton instance;  // C++11 起：初始化线程安全
+        return instance;
+    }
+
+    Singleton(const Singleton&amp;amp;) = delete;
+    Singleton&amp;amp; operator=(const Singleton&amp;amp;) = delete;
+
+    void doSomething() const;
+
+private:
+    Singleton() = default;
+    ~Singleton() = default;
+};
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;优点&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;懒加载（首次调用时构造）。&lt;/li&gt;
+&lt;li&gt;自动析构（程序结束时按静态对象销毁顺序）。&lt;/li&gt;
+&lt;li&gt;无需手动 &lt;code&gt;delete&lt;/code&gt;。&lt;/li&gt;
+&lt;li&gt;C++11 保证局部静态初始化&lt;strong&gt;线程安全&lt;/strong&gt;。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;原笔记勘误&lt;/strong&gt;：懒汉式 &lt;code&gt;new&lt;/code&gt; 单例若从不 &lt;code&gt;delete&lt;/code&gt;，会&lt;strong&gt;泄漏&lt;/strong&gt;；Meyers 单例无此问题。&lt;/p&gt;
+&lt;h3&gt;饿汉式（静态成员对象）&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;class SingletonEager {
+public:
+    static SingletonEager&amp;amp; getInstance() { return instance; }
+    SingletonEager(const SingletonEager&amp;amp;) = delete;
+    SingletonEager&amp;amp; operator=(const SingletonEager&amp;amp;) = delete;
+private:
+    SingletonEager() = default;
+    static SingletonEager instance;
+};
+SingletonEager SingletonEager::instance;  // 程序启动时构造（main 前或静态初始化阶段）
+&lt;/code&gt;&lt;/pre&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;饿汉&lt;/th&gt;
+&lt;th&gt;Meyers 懒汉&lt;/th&gt;
+&lt;th&gt;指针懒汉 + 双重检查&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;初始化时机&lt;/td&gt;
+&lt;td&gt;静态存储期开始&lt;/td&gt;
+&lt;td&gt;首次 &lt;code&gt;getInstance&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;首次 &lt;code&gt;getInstance&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;线程安全&lt;/td&gt;
+&lt;td&gt;静态初始化保证&lt;/td&gt;
+&lt;td&gt;C++11 局部静态保证&lt;/td&gt;
+&lt;td&gt;需 &lt;code&gt;mutex&lt;/code&gt; + DCL&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;内存&lt;/td&gt;
+&lt;td&gt;自动释放&lt;/td&gt;
+&lt;td&gt;自动释放&lt;/td&gt;
+&lt;td&gt;常泄漏 unless 注册 &lt;code&gt;atexit&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;析构顺序&lt;/td&gt;
+&lt;td&gt;与其他静态对象顺序有关&lt;/td&gt;
+&lt;td&gt;同左&lt;/td&gt;
+&lt;td&gt;可控制性差&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3&gt;懒汉式（指针，仅作了解）&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;class SingletonLazy {
+public:
+    static SingletonLazy* getInstance() {
+        if (!instance) {
+            instance = new SingletonLazy();
+        }
+        return instance;
+    }
+    // delete 拷贝...
+private:
+    static SingletonLazy* instance;
+};
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;多线程下上述代码&lt;strong&gt;不安全&lt;/strong&gt;，需双重检查锁定（DCLP）；且 &lt;code&gt;new&lt;/code&gt; 分配的内存在进程结束前通常&lt;strong&gt;不会&lt;/strong&gt;释放。C++11 后应优先 &lt;strong&gt;Meyers&lt;/strong&gt; 或：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;static std::unique_ptr&amp;lt;Singleton&amp;gt; instance;
+// 在 getInstance 内用 std::call_once + make_unique
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;设计要点&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;构造函数、拷贝构造、赋值&lt;strong&gt;私有化或 delete&lt;/strong&gt;。&lt;/li&gt;
+&lt;li&gt;提供 &lt;code&gt;getInstance()&lt;/code&gt; 等静态访问接口。&lt;/li&gt;
+&lt;li&gt;多线程环境避免手写 DCLP，用 Meyers 或 &lt;code&gt;std::call_once&lt;/code&gt;。&lt;/li&gt;
+&lt;li&gt;单例&lt;strong&gt;不是&lt;/strong&gt;银弹：隐藏依赖、难测试，过度使用等同全局变量；优先考虑依赖注入。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3&gt;单例 vs 全局变量&lt;/h3&gt;
+&lt;p&gt;单例可延迟初始化、可禁止拷贝、可封装行为；但本质仍是&lt;strong&gt;全局状态&lt;/strong&gt;，应克制使用。&lt;/p&gt;
+</content:encoded></item><item><title>【CPP】内存与指针</title><link>https://lysj.work/posts/studynotes/cpp/cpp%E5%86%85%E5%AD%98%E4%B8%8E%E6%8C%87%E9%92%88/</link><guid isPermaLink="true">https://lysj.work/posts/studynotes/cpp/cpp%E5%86%85%E5%AD%98%E4%B8%8E%E6%8C%87%E9%92%88/</guid><description>进程地址空间、new/delete、malloc/free 及智能指针 RAII 要点。</description><pubDate>Thu, 19 Mar 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;进程地址空间（典型模型）&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;高地址 +------------------+
+      |  命令行参数/环境   |
+      +------------------+
+      |       栈 ↓        |  局部变量、函数调用帧
+      |       ...         |
+      |       堆 ↑        |  动态分配（new/malloc）
+      +------------------+
+      |  BSS（未初始化静态）|
+      +------------------+
+      |  数据段 .data     |  已初始化全局/静态
+      +------------------+
+      |  代码段 .text     |
+低地址 +------------------+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;说明&lt;/strong&gt;：具体布局因 OS/ABI 略有差异；&lt;strong&gt;栈向低地址增长、堆向高地址增长&lt;/strong&gt;是常见教学模型。&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;分配方式&lt;/th&gt;
+&lt;th&gt;时机&lt;/th&gt;
+&lt;th&gt;存储区域&lt;/th&gt;
+&lt;th&gt;释放&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;静态/栈&lt;/td&gt;
+&lt;td&gt;编译期或进入作用域&lt;/td&gt;
+&lt;td&gt;栈 / 静态区&lt;/td&gt;
+&lt;td&gt;自动&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;动态&lt;/td&gt;
+&lt;td&gt;运行时 &lt;code&gt;new&lt;/code&gt;/&lt;code&gt;malloc&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;堆&lt;/td&gt;
+&lt;td&gt;手动 &lt;code&gt;delete&lt;/code&gt;/&lt;code&gt;free&lt;/code&gt; 或智能指针&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;pre&gt;&lt;code&gt;int arr[10];           // 栈上，大小须编译期常量
+int* heap = new int[10];
+delete[] heap;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;C 风格：&lt;code&gt;malloc&lt;/code&gt; / &lt;code&gt;free&lt;/code&gt;&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;void* malloc(size_t size);
+void* calloc(size_t nmemb, size_t size);  /* 分配并置零 */
+void* realloc(void* ptr, size_t size);
+void free(void* ptr);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;返回 &lt;code&gt;void*&lt;/code&gt;，在 C++ 中应转为具体类型指针。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;不会&lt;/strong&gt;调用构造函数；&lt;strong&gt;不会&lt;/strong&gt;自动类型安全。&lt;/li&gt;
+&lt;li&gt;与 &lt;code&gt;new&lt;/code&gt;/&lt;code&gt;delete&lt;/code&gt; &lt;strong&gt;不要混用&lt;/strong&gt;同一块内存。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;C++ 风格：&lt;code&gt;new&lt;/code&gt; / &lt;code&gt;delete&lt;/code&gt;&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;int* p = new int(10);
+delete p;
+
+int* arr = new int[10]{1,2,3};
+delete[] arr;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;规则&lt;/strong&gt;：&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;规则&lt;/th&gt;
+&lt;th&gt;说明&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;new&lt;/code&gt; 配 &lt;code&gt;delete&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;单对象&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;new[]&lt;/code&gt; 配 &lt;code&gt;delete[]&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;数组&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;勿重复 &lt;code&gt;delete&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;未定义行为&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;勿 &lt;code&gt;delete&lt;/code&gt; 非 &lt;code&gt;new&lt;/code&gt; 分配的内存&lt;/td&gt;
+&lt;td&gt;未定义行为&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;对空指针 &lt;code&gt;delete&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;安全，无操作&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;与 malloc 区别&lt;/strong&gt;：&lt;code&gt;new&lt;/code&gt; 分配后会调用构造函数，&lt;code&gt;delete&lt;/code&gt; 前会调用析构函数。&lt;/p&gt;
+&lt;h2&gt;指针基础（补充）&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;int x = 10;
+int* p = &amp;amp;x;      // p 存 x 的地址
+*p = 20;          // 解引用修改 x
+int* q = nullptr; // C++11 推荐 nullptr，而非 NULL
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;野指针&lt;/strong&gt;：未初始化或已释放仍使用。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;悬垂指针&lt;/strong&gt;：指向已销毁对象（局部变量地址、已 &lt;code&gt;delete&lt;/code&gt; 的内存）。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;内存泄漏&lt;/strong&gt;：&lt;code&gt;new&lt;/code&gt; 后未 &lt;code&gt;delete&lt;/code&gt;，且无智能指针管理。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;智能指针（RAII）&lt;/h2&gt;
+&lt;p&gt;用类对象&lt;strong&gt;自动&lt;/strong&gt;管理堆内存，析构时释放。&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;类型&lt;/th&gt;
+&lt;th&gt;所有权&lt;/th&gt;
+&lt;th&gt;典型场景&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;std::unique_ptr&amp;lt;T&amp;gt;&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;独占&lt;/td&gt;
+&lt;td&gt;默认首选，不可拷贝，可移动&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;std::shared_ptr&amp;lt;T&amp;gt;&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;共享引用计数&lt;/td&gt;
+&lt;td&gt;多处共享同一资源&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;std::weak_ptr&amp;lt;T&amp;gt;&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;不增加计数，观察 &lt;code&gt;shared_ptr&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;打破循环引用&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;pre&gt;&lt;code&gt;auto p = std::make_unique&amp;lt;int&amp;gt;(100);   // 推荐，异常安全
+auto sp = std::make_shared&amp;lt;std::string&amp;gt;(&quot;hi&quot;);
+
+// 不要 delete unique_ptr.get() 返回的裸指针后再让智能指针析构
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;原则&lt;/strong&gt;：现代 C++ 中，裸 &lt;code&gt;new&lt;/code&gt;/&lt;code&gt;delete&lt;/code&gt; 应出现在&lt;strong&gt;资源管理类的实现内部&lt;/strong&gt;，业务代码优先智能指针。&lt;/p&gt;
+&lt;h2&gt;原笔记相关勘误&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;“动态指的时程序运行时” → 应为&lt;strong&gt;动态指的是&lt;/strong&gt;程序运行时分配。&lt;/li&gt;
+&lt;li&gt;C 中 &lt;code&gt;const&lt;/code&gt; “存在符号表、改地址仍从符号表读” —— 属于&lt;strong&gt;编译器实现细节&lt;/strong&gt;，标准只保证 &lt;code&gt;const&lt;/code&gt; 语义；以标准与可移植行为为准。&lt;/li&gt;
+&lt;li&gt;C++ “不支持 VLA”正确；&lt;code&gt;vector&lt;/code&gt; 等容器用于运行期决定长度。&lt;/li&gt;
+&lt;/ol&gt;
+</content:encoded></item><item><title>【CPP】基础与命名空间</title><link>https://lysj.work/posts/studynotes/cpp/cpp%E5%9F%BA%E7%A1%80%E4%B8%8E%E5%91%BD%E5%90%8D%E7%A9%BA%E9%97%B4/</link><guid isPermaLink="true">https://lysj.work/posts/studynotes/cpp/cpp%E5%9F%BA%E7%A1%80%E4%B8%8E%E5%91%BD%E5%90%8D%E7%A9%BA%E9%97%B4/</guid><description>C/C++ 差异、命名空间、函数重载及面向对象三大特征速查。</description><pubDate>Wed, 18 Mar 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;C++ 与 C 的关系&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;C++ 在 C 基础上增加&lt;strong&gt;面向对象&lt;/strong&gt;与&lt;strong&gt;泛型编程&lt;/strong&gt;（模板、STL），&lt;strong&gt;不是&lt;/strong&gt;完全独立的语言。&lt;/li&gt;
+&lt;li&gt;多数 C 代码可被 C++ 编译器编译，但反过来不成立。&lt;/li&gt;
+&lt;li&gt;面向过程：以函数/步骤为中心，数据与操作分离。&lt;/li&gt;
+&lt;li&gt;面向对象：以对象为中心，数据（属性）与操作（方法）封装在类中。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;C 与 C++ 主要差异（速查）&lt;/h2&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;特性&lt;/th&gt;
+&lt;th&gt;C&lt;/th&gt;
+&lt;th&gt;C++&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;重复声明&lt;/td&gt;
+&lt;td&gt;允许&lt;/td&gt;
+&lt;td&gt;同一作用域内不允许&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;函数返回值省略&lt;/td&gt;
+&lt;td&gt;旧式 C 可省略（不推荐）&lt;/td&gt;
+&lt;td&gt;不能省略&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;空参数列表 &lt;code&gt;f()&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;表示参数未指定（旧语义）&lt;/td&gt;
+&lt;td&gt;表示&lt;strong&gt;无参数&lt;/strong&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;类型转换&lt;/td&gt;
+&lt;td&gt;较宽松&lt;/td&gt;
+&lt;td&gt;更严格，多用显式转换&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;引用&lt;/td&gt;
+&lt;td&gt;无&lt;/td&gt;
+&lt;td&gt;有&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;bool&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;C99 起有&lt;/td&gt;
+&lt;td&gt;内置&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;结构体标签&lt;/td&gt;
+&lt;td&gt;定义变量常需 &lt;code&gt;struct&lt;/code&gt; 前缀&lt;/td&gt;
+&lt;td&gt;标签名即类型名，可含成员函数&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;变长数组 VLA&lt;/td&gt;
+&lt;td&gt;C99 支持&lt;/td&gt;
+&lt;td&gt;&lt;strong&gt;不支持&lt;/strong&gt;，数组长度须为编译期常量&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;const&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;可通过指针间接修改（视实现）&lt;/td&gt;
+&lt;td&gt;语义更强；真正的常量语义&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3&gt;&lt;code&gt;#define&lt;/code&gt; 与 &lt;code&gt;const&lt;/code&gt; 定义常量&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;&lt;code&gt;#define&lt;/code&gt;&lt;/th&gt;
+&lt;th&gt;&lt;code&gt;const&lt;/code&gt;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;类型&lt;/td&gt;
+&lt;td&gt;无类型（预处理替换）&lt;/td&gt;
+&lt;td&gt;有类型，受类型检查&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;作用域&lt;/td&gt;
+&lt;td&gt;不受命名空间约束&lt;/td&gt;
+&lt;td&gt;受命名空间与作用域约束&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;调试&lt;/td&gt;
+&lt;td&gt;符号表中难追踪&lt;/td&gt;
+&lt;td&gt;可调试&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2&gt;命名空间&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;目的&lt;/strong&gt;：划分声明区域，避免多人协作或引入第三方库时的标识符冲突。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;namespace MyNamespace {
+    int value = 0;
+    void func() { /* ... */ }
+    namespace inside { int temp = 0; }  // 可嵌套
+}
+
+// 同名命名空间自动合并
+namespace fun { void test(); }
+namespace fun { void test() { std::cout &amp;lt;&amp;lt; &quot;定义\n&quot;; } }
+
+// 别名
+namespace name { int num = 3; }
+namespace other_name = name;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;匿名命名空间&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;int value = 100;
+
+namespace {
+    int value = 200;  // 仅本翻译单元可见，内部链接
+}
+
+int main() {
+    std::cout &amp;lt;&amp;lt; value &amp;lt;&amp;lt; &apos;\n&apos;;    // 200（未限定名优先找到匿名命名空间成员）
+    std::cout &amp;lt;&amp;lt; ::value &amp;lt;&amp;lt; &apos;\n&apos;;  // 100（显式全局）
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;要点&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;不能定义在块作用域内（只能文件作用域）。&lt;/li&gt;
+&lt;li&gt;等价于用 &lt;code&gt;static&lt;/code&gt; 限制链接属性的全局实体，但可包含类、函数等，语法更统一。&lt;/li&gt;
+&lt;li&gt;C++17 起也可写 &lt;code&gt;inline namespace&lt;/code&gt; 做版本兼容，笔记未涉及，此处不展开。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;使用方式&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;方式&lt;/th&gt;
+&lt;th&gt;作用&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;using&lt;/code&gt; 声明&lt;/td&gt;
+&lt;td&gt;将&lt;strong&gt;单个&lt;/strong&gt;名字引入当前作用域&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;using namespace&lt;/code&gt; 指令&lt;/td&gt;
+&lt;td&gt;将整个命名空间名字引入当前作用域&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;::&lt;/code&gt; 作用域解析&lt;/td&gt;
+&lt;td&gt;显式指定所属作用域&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;pre&gt;&lt;code&gt;namespace Test {
+    int num = 10;
+    void show() { std::cout &amp;lt;&amp;lt; &quot;Test::show\n&quot;; }
+}
+
+// using 声明：若当前作用域已有同名，冲突
+// int num = 20;
+// using Test::num;  // 错误：重复定义
+
+using namespace Test;
+int num = 20;           // 局部变量遮蔽 Test::num
+std::cout &amp;lt;&amp;lt; num;       // 20（局部）
+std::cout &amp;lt;&amp;lt; Test::num; // 10
+show();                 // Test::show
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;常见误区（原笔记已修正）&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;using namespace Test&lt;/code&gt; 后 &lt;code&gt;cout &amp;lt;&amp;lt; num&lt;/code&gt; 输出 20&lt;/strong&gt; —— 原稿写“输出 20”的语境需有&lt;strong&gt;局部同名变量&lt;/strong&gt;；若只有 &lt;code&gt;Test::num&lt;/code&gt;，则输出 10。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;::&lt;/code&gt; 的查找顺序&lt;/strong&gt; —— &lt;code&gt;::name&lt;/code&gt; 表示从&lt;strong&gt;全局命名空间&lt;/strong&gt;起查找；未加 &lt;code&gt;::&lt;/code&gt; 的名字按 C++ &lt;strong&gt;未限定名查找&lt;/strong&gt;规则（内层作用域 → 外层 → using 引入的名字等），&lt;strong&gt;不是&lt;/strong&gt;“先全局再匿名再局部”的固定三步。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;不要在头文件中使用 &lt;code&gt;using namespace&lt;/code&gt;&lt;/strong&gt; —— 会污染所有包含该头文件的翻译单元。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2&gt;函数重载&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;同一作用域内，&lt;strong&gt;函数名相同、参数列表不同&lt;/strong&gt;（类型或个数）构成重载；&lt;strong&gt;与返回值类型无关&lt;/strong&gt;。&lt;/li&gt;
+&lt;li&gt;默认参数：从&lt;strong&gt;右向左&lt;/strong&gt;连续设置，中间不能“跳空”。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;占位参数&lt;/strong&gt;（只有类型没有名字）：调用时仍须传实参，常用于预留接口。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;void f(int) {}
+void f(double) {}  // OK
+
+// void f(int);      // 仅重复声明，不构成重载
+// int  f(int);      // 错误：仅返回值不同
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;面向对象三大特征（简述）&lt;/h2&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;特征&lt;/th&gt;
+&lt;th&gt;含义&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;封装&lt;/td&gt;
+&lt;td&gt;隐藏实现细节，通过公有接口访问&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;继承&lt;/td&gt;
+&lt;td&gt;派生类获得基类成员，实现代码复用&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;多态&lt;/td&gt;
+&lt;td&gt;同一接口不同实现；编译期（重载）与运行期（虚函数）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+</content:encoded></item><item><title>【CPP】引用与值类别</title><link>https://lysj.work/posts/studynotes/cpp/cpp%E5%BC%95%E7%94%A8%E4%B8%8E%E5%80%BC%E7%B1%BB%E5%88%AB/</link><guid isPermaLink="true">https://lysj.work/posts/studynotes/cpp/cpp%E5%BC%95%E7%94%A8%E4%B8%8E%E5%80%BC%E7%B1%BB%E5%88%AB/</guid><description>左值右值、左值引用与右值引用、const 引用及移动语义入门。</description><pubDate>Wed, 18 Mar 2026 00:00:00 GMT</pubDate><content:encoded>&lt;blockquote&gt;
+&lt;p&gt;整理自 0318.md，已校对并补充移动语义入门。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2&gt;左值与右值&lt;/h2&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;类别&lt;/th&gt;
+&lt;th&gt;特征&lt;/th&gt;
+&lt;th&gt;示例&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;左值 (lvalue)&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;有身份、可取地址、可出现在赋值号左侧（在合适类型下）&lt;/td&gt;
+&lt;td&gt;变量、数组元素、返回左值引用的函数&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;右值 (rvalue)&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;临时对象、字面量、即将销毁的值&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;42&lt;/code&gt;、&lt;code&gt;std::move(x)&lt;/code&gt; 的结果、返回值的临时对象&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;C++11 进一步细分：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;纯右值 (prvalue)&lt;/strong&gt;：如 &lt;code&gt;42&lt;/code&gt;、&lt;code&gt;std::string(&quot;hi&quot;)&lt;/code&gt; 的临时结果。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;将亡值 (xvalue)&lt;/strong&gt;：通过 &lt;code&gt;std::move&lt;/code&gt; 或即将被移动的资源。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;左值 (lvalue)&lt;/strong&gt; / &lt;strong&gt;亡值 (glvalue)&lt;/strong&gt;：统称“有身份”的表达式。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;日常口诀：&lt;strong&gt;能取地址的通常是左值；字面量和临时量是右值。&lt;/strong&gt;&lt;/p&gt;
+&lt;h2&gt;左值引用&lt;/h2&gt;
+&lt;p&gt;已存在对象的别名，&lt;strong&gt;不是指针&lt;/strong&gt;。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int a = 10;
+int&amp;amp; ref = a;   // 必须初始化
+ref = 20;       // 修改 ref 即修改 a
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;规则&lt;/strong&gt;：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;声明时必须初始化。&lt;/li&gt;
+&lt;li&gt;初始化后&lt;strong&gt;不能改绑&lt;/strong&gt;到其他对象（指针可以改指向）。&lt;/li&gt;
+&lt;li&gt;不存在“空引用”，必须绑定到合法对象。&lt;/li&gt;
+&lt;li&gt;传参用引用可避免拷贝（对大对象尤其重要）。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3&gt;引用与指针的区别&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;引用&lt;/th&gt;
+&lt;th&gt;指针&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;空值&lt;/td&gt;
+&lt;td&gt;不允许&lt;/td&gt;
+&lt;td&gt;允许 &lt;code&gt;nullptr&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;重新绑定&lt;/td&gt;
+&lt;td&gt;不允许&lt;/td&gt;
+&lt;td&gt;允许&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;语法&lt;/td&gt;
+&lt;td&gt;像别名，无需解引用&lt;/td&gt;
+&lt;td&gt;需 &lt;code&gt;*&lt;/code&gt; / &lt;code&gt;-&amp;gt;&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;sizeof&lt;/td&gt;
+&lt;td&gt;不占额外空间（实现上常是指针）&lt;/td&gt;
+&lt;td&gt;占指针大小&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3&gt;各种类型的引用&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;int x = 10;
+int&amp;amp; r = x;
+
+int arr[5] = {1,2,3,4,5};
+int (&amp;amp;r_arr)[5] = arr;   // 数组引用
+
+int* p = &amp;amp;x;
+int*&amp;amp; r_p = p;           // 指针的引用
+r_p = &amp;amp;y;                // 修改的是 p 本身，不是“引用改绑”
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;返回引用&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;禁止&lt;/strong&gt;返回局部变量的引用（悬垂引用）：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int&amp;amp; bad() {
+    int local = 1;
+    return local;  // 未定义行为
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;可以&lt;/strong&gt;返回：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;静态或全局对象&lt;/li&gt;
+&lt;li&gt;成员变量（&lt;code&gt;return *this&lt;/code&gt; 链式调用）&lt;/li&gt;
+&lt;li&gt;由参数传入的对象的引用&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;class Builder {
+    int value = 0;
+public:
+    Builder&amp;amp; set(int v) { value = v; return *this; }
+};
+// Builder().set(1).set(2);  // 注意：临时对象的链式调用生命期极短，易出错
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;右值引用&lt;/h2&gt;
+&lt;p&gt;绑定到右值，为&lt;strong&gt;移动语义&lt;/strong&gt;服务：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;int&amp;amp;&amp;amp; r = 42;        // 绑定到字面量
+std::string&amp;amp;&amp;amp; s = std::string(&quot;hello&quot;);
+
+int x = 10;
+int&amp;amp;&amp;amp; rr = std::move(x);  // 显式将左值转为右值引用
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;右值引用变量本身是&lt;strong&gt;左值&lt;/strong&gt;（有名字就能取地址），若要继续传递为右值，需再 &lt;code&gt;std::move&lt;/code&gt;。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;移动构造函数 / 移动赋值&lt;/strong&gt;接受右值引用，可“窃取”资源而非深拷贝。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;常量引用 &lt;code&gt;const T&amp;amp;&lt;/code&gt;&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;不能通过该引用修改对象（除非原对象本身可变且通过其他途径修改）。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;可绑定到右值&lt;/strong&gt;，延长临时对象生命期（绑定到 &lt;code&gt;const&lt;/code&gt; 左值引用时）：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;// int&amp;amp; r = 90;           // 错误：非 const 左值引用不能绑右值
+const int&amp;amp; r = 90;        // OK
+const std::string&amp;amp; s = std::string(&quot;tmp&quot;);  // 临时对象生命期延长至 s 所在作用域结束
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;典型用途&lt;/strong&gt;：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;只读传参，避免拷贝：&lt;code&gt;void f(const std::string&amp;amp; name);&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;接受字面量或临时量。&lt;/li&gt;
+&lt;li&gt;接口中表达“不修改实参”的约定。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2&gt;补充：万能引用与转发（C++11）&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;template&amp;lt;typename T&amp;gt;
+void wrapper(T&amp;amp;&amp;amp; arg) {  // 转发引用（原称万能引用）
+    process(std::forward&amp;lt;T&amp;gt;(arg));
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;T&amp;amp;&amp;amp;&lt;/code&gt; 在模板推导中可能是左值引用或右值引用，需配合 &lt;code&gt;std::forward&lt;/code&gt; 保持值类别。初学阶段知道存在即可，与 &lt;code&gt;std::move&lt;/code&gt; 成对学习。&lt;/p&gt;
 </content:encoded></item><item><title>Markdown Extended Features</title><link>https://lysj.work/posts/markdown-extended/</link><guid isPermaLink="true">https://lysj.work/posts/markdown-extended/</guid><description>Read more about Markdown features in Mizuki</description><pubDate>Wed, 01 May 2024 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;GitHub Repository Cards&lt;/h2&gt;
 &lt;p&gt;You can add dynamic cards that link to GitHub repositories, on page load, the repository information is pulled from the GitHub API.&lt;/p&gt;
 &lt;p&gt;::github{repo=&quot;matsuzaka-yuki/Mizuki&quot;}&lt;/p&gt;

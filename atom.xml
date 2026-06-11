@@ -5,7 +5,7 @@
   <link href="https://lysj.work/" rel="alternate" type="text/html"/>
   <link href="https://lysj.work/atom.xml" rel="self" type="application/atom+xml"/>
   <id>https://lysj.work/</id>
-  <updated>2026-06-04T01:43:17.243Z</updated>
+  <updated>2026-06-11T02:25:59.710Z</updated>
   <language>zh_CN</language>
   <entry>
     <title>Markdown Tutorial</title>
@@ -729,6 +729,1619 @@ This is another regular paragraph.
       <name>Sekiro</name>
     </author>
     <category term="Examples"></category>
+  </entry>
+  <entry>
+    <title>【QT】交叉编译与部署</title>
+    <link href="https://lysj.work/posts/studynotes/qt/qt%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91%E4%B8%8E%E9%83%A8%E7%BD%B2/" rel="alternate" type="text/html"/>
+    <id>https://lysj.work/posts/studynotes/qt/qt%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91%E4%B8%8E%E9%83%A8%E7%BD%B2/</id>
+    <published>2026-06-11T00:00:00.000Z</published>
+    <updated>2026-06-11T00:00:00.000Z</updated>
+    <summary>以 NXP i.MX 为例说明交叉工具链配置、Qt Creator Kits 及嵌入式板端部署要点。</summary>
+    <content type="html"><![CDATA[<h2>配置交叉编译工具链（以 NXP i.MX 为例）</h2>
+<ol>
+<li>将官方 SDK 拷贝到 <code>/opt</code>，执行安装脚本：</li>
+</ol>
+<pre><code>./fsl-imx-x11-glibc-x86_64-meta-toolchain-qt5-cortexa7hf-neon-toolchain-4.1.15-2.1.0.sh
+</code></pre>
+<ol>
+<li>配置环境变量（<code>~/.bashrc</code> 末尾）：</li>
+</ol>
+<pre><code>source /opt/fsl-imx-x11/4.1.15-2.1.0/environment-setup-cortexa7hf-neon-poky-linux-gnueabi
+</code></pre>
+<p>保存后执行 <code>source ~/.bashrc</code> 生效。</p>
+<ol>
+<li>验证：</li>
+</ol>
+<pre><code>arm-poky-linux-gnueabi-gcc -v
+</code></pre>
+<h2>安装 Qt（主机端 Qt Creator + SDK）</h2>
+<pre><code>wget http://download.qt.io/archive/qt/5.12/5.12.9/qt-opensource-linux-x64-5.12.9.run
+chmod u+x qt-opensource-linux-x64-5.12.9.run
+sudo ./qt-opensource-linux-x64-5.12.9.run
+</code></pre>
+<p>在图形界面中安装 Qt 与 Qt Creator（需图形环境）。</p>
+<h2>Qt Creator Kits 配置 ARM 环境</h2>
+<ol>
+<li>编辑 Qt 安装目录下 <code>Tools/QtCreator/bin/qtcreator.sh</code>，在<strong>首行</strong>加入：</li>
+</ol>
+<pre><code>source /opt/fsl-imx-x11/4.1.15-2.1.0/environment-setup-cortexa7hf-neon-poky-linux-gnueabi
+</code></pre>
+<ol>
+<li>启动 Creator：</li>
+</ol>
+<pre><code>/path/to/qt/Tools/QtCreator/bin/qtcreator.sh &amp;
+</code></pre>
+<ol>
+<li>
+<p><strong>Tools → Options</strong>（工具 → 选项）<br />
+<img src="./qt_step1.png" alt="步骤1" /></p>
+</li>
+<li>
+<p><strong>Kits → Qt Versions</strong>：手动添加 SDK 中的 <code>qmake</code>，自定义名称与版本，应用。<br />
+<img src="./qt_step2.png" alt="步骤2" /></p>
+</li>
+<li>
+<p><strong>Kits → Compilers</strong>：添加 Manual 的 GCC C++，编译器路径示例：</p>
+</li>
+</ol>
+<pre><code>/opt/fsl-imx-x11/4.1.15-2.1.0/sysroots/x86_64-pokysdk-linux/usr/bin/arm-poky-linux-gnueabi/arm-poky-linux-gnueabi-g++
+</code></pre>
+<p><img src="./qt_step3.png" alt="步骤3" /></p>
+<ol>
+<li>
+<p><strong>Kits → Kits</strong>：新建 Kit，选择上述 Qt 版本、交叉编译器、Sysroot（按向导填写）。<br />
+<img src="./qt_step4_1.png" alt="步骤4_1" /><br />
+<img src="./qt_step4_2.png" alt="步骤4_2" /></p>
+</li>
+<li>
+<p>新建项目时选择该 Kit 进行交叉编译。<br />
+<img src="./qt_step5.png" alt="步骤5" /></p>
+</li>
+</ol>
+<h2>部署到板子</h2>
+<ul>
+<li>将可执行文件与所需 Qt 库（或静态链接）拷贝到开发板。</li>
+<li>动态链接时需设置 <code>LD_LIBRARY_PATH</code> 或使用 <code>qt.conf</code> 指定 <code>Plugins</code> 与 <code>Libraries</code> 路径。</li>
+<li>无显示环境时注意 <code>QT_QPA_PLATFORM</code>（如 <code>linuxfb</code>、<code>eglfs</code>、<code>offscreen</code>）。</li>
+</ul>
+<h2>与桌面开发的区别</h2>
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th>桌面</th>
+<th>交叉编译</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>编译器</td>
+<td>本机 gcc/clang</td>
+<td>arm-*-g++ 等</td>
+</tr>
+<tr>
+<td>Qt 库</td>
+<td>主机 Qt</td>
+<td>目标架构 Qt / sysroot 内 Qt</td>
+</tr>
+<tr>
+<td>运行</td>
+<td>本机直接运行</td>
+<td>拷贝到板子或 qemu 运行</td>
+</tr>
+<tr>
+<td>Creator Kit</td>
+<td>Desktop</td>
+<td>自定义 Cross-compile Kit</td>
+</tr>
+</tbody>
+</table>
+<p>路径与版本号请按实际 SDK 文档调整；上文以笔记中的 4.1.15-2.1.0 工具链为例。</p>
+]]></content>
+    <author>
+      <name>Sekiro</name>
+    </author>
+    <category term="StudyNotes"></category>
+  </entry>
+  <entry>
+    <title>【QT】信号槽与事件</title>
+    <link href="https://lysj.work/posts/studynotes/qt/qt%E4%BF%A1%E5%8F%B7%E6%A7%BD%E4%B8%8E%E4%BA%8B%E4%BB%B6/" rel="alternate" type="text/html"/>
+    <id>https://lysj.work/posts/studynotes/qt/qt%E4%BF%A1%E5%8F%B7%E6%A7%BD%E4%B8%8E%E4%BA%8B%E4%BB%B6/</id>
+    <published>2026-06-11T00:00:00.000Z</published>
+    <updated>2026-06-11T00:00:00.000Z</updated>
+    <summary>讲解信号与槽的 connect 写法、连接类型、事件处理与 eventFilter 及 QTimer 定时器。</summary>
+    <content type="html"><![CDATA[<h2>信号与槽</h2>
+<p>Qt 的对象间通信机制：发送方<strong>信号</strong>与接收方<strong>槽</strong>关联后，信号发射时槽函数被调用（可跨线程，由连接类型决定）。</p>
+<h3>概念</h3>
+<table>
+<thead>
+<tr>
+<th>术语</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>信号（signal）</strong></td>
+<td>在特定情况下发出的通知；在类声明的 <code>signals:</code> 区声明，只需原型，无需实现</td>
+</tr>
+<tr>
+<td><strong>槽（slot）</strong></td>
+<td>对信号的响应函数；写在 <code>public slots:</code>、<code>private slots:</code> 等；可与普通成员函数一样带参数</td>
+</tr>
+</tbody>
+</table>
+<h3>connect 写法</h3>
+<p><strong>Qt5/6 函数指针（推荐，编译期检查类型）</strong>：</p>
+<pre><code>connect(sender, &amp;Sender::valueChanged,
+        receiver, &amp;Receiver::onValueChanged);
+
+// 带参数自动匹配（参数类型须兼容）
+connect(spinBox, QOverload&lt;int&gt;::of(&amp;QSpinBox::valueChanged),
+        this, &amp;MainWindow::onSpinChanged);
+</code></pre>
+<p><strong>Lambda</strong>：</p>
+<pre><code>connect(button, &amp;QPushButton::clicked, this, [this]() {
+    ui-&gt;label-&gt;setText("clicked");
+});
+</code></pre>
+<p><strong>Qt4 字符串写法（不推荐，仅运行时检查）</strong>：</p>
+<pre><code>connect(sender, SIGNAL(valueChanged(int)),
+        receiver, SLOT(onValueChanged(int)));
+</code></pre>
+<h3>连接类型 <code>Qt::ConnectionType</code></h3>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>行为</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AutoConnection</code>（默认）</td>
+<td>同线程直接调用；跨线程则队列到接收方线程</td>
+</tr>
+<tr>
+<td><code>DirectConnection</code></td>
+<td>始终在发射线程同步调用槽</td>
+</tr>
+<tr>
+<td><code>QueuedConnection</code></td>
+<td>事件入队，在接收方线程事件循环中异步执行</td>
+</tr>
+<tr>
+<td><code>BlockingQueuedConnection</code></td>
+<td>跨线程时阻塞发射方直到槽执行完（同线程不可用）</td>
+</tr>
+</tbody>
+</table>
+<p>跨线程更新 UI 时，槽应在主线程（<code>QObject</code> 所在线程）中执行，通常用 <code>QueuedConnection</code> 或 <code>AutoConnection</code>。</p>
+<h3>一对多、多对一、断开</h3>
+<pre><code>connect(a, &amp;A::sig, b, &amp;B::slot1);
+connect(a, &amp;A::sig, c, &amp;C::slot2);   // 一对多
+
+disconnect(a, &amp;A::sig, b, &amp;B::slot1); // 精确断开
+disconnect(a, nullptr, nullptr, nullptr); // 断开 a 发出的所有连接
+</code></pre>
+<h3>信号带参数、槽参数可更少</h3>
+<p>信号参数类型须与槽兼容；槽可忽略多余参数。<code>connect</code> 会根据函数指针推导签名。</p>
+<h2>事件处理</h2>
+<p>除信号槽外，Qt 还有**事件（QEvent）**体系：键盘、鼠标、绘制、定时器、自定义事件等。</p>
+<h3>事件传播顺序（简要）</h3>
+<ol>
+<li><code>QApplication::notify()</code> 分发</li>
+<li>目标对象的 <code>event()</code> — 可统一过滤或转发</li>
+<li>具体处理函数如 <code>mousePressEvent()</code>、<code>keyPressEvent()</code>、<code>paintEvent()</code></li>
+<li>未处理可调用基类实现或 <code>ignore()</code></li>
+</ol>
+<h3>重写事件处理函数</h3>
+<pre><code>void MyWidget::mousePressEvent(QMouseEvent *event)
+{
+    if (event-&gt;button() == Qt::LeftButton) {
+        // 处理
+        event-&gt;accept();
+        return;
+    }
+    QWidget::mousePressEvent(event);  // 交给基类
+}
+</code></pre>
+<h3>eventFilter（事件过滤器）</h3>
+<p>在一个对象上为<strong>另一个</strong>对象安装过滤器，在事件到达目标前拦截：</p>
+<pre><code>target-&gt;installEventFilter(this);
+
+bool MainWindow::eventFilter(QObject *obj, QEvent *event)
+{
+    if (obj == target &amp;&amp; event-&gt;type() == QEvent::KeyPress) {
+        // 处理或 return true 表示已消费
+    }
+    return QMainWindow::eventFilter(obj, event);
+}
+</code></pre>
+<h3>信号槽 vs 事件</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>信号槽</th>
+<th>事件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>方向</td>
+<td>明确的发布-订阅</td>
+<td>自顶向下分发</td>
+</tr>
+<tr>
+<td>类型</td>
+<td>用户定义的语义</td>
+<td><code>QEvent</code> 子类（类型枚举）</td>
+</tr>
+<tr>
+<td>典型用途</td>
+<td>业务逻辑联动</td>
+<td>底层输入、绘制、窗口系统消息</td>
+</tr>
+</tbody>
+</table>
+<h3>定时器</h3>
+<pre><code>QTimer *timer = new QTimer(this);
+connect(timer, &amp;QTimer::timeout, this, &amp;MainWindow::onTimeout);
+timer-&gt;start(1000);  // 毫秒
+
+// 单次
+QTimer::singleShot(500, this, &amp;MainWindow::delayedAction);
+</code></pre>
+<p><code>QObject::timerEvent()</code> 配合 <code>startTimer()</code> 为底层 C 风格 API，一般用 <code>QTimer</code> 即可。</p>
+]]></content>
+    <author>
+      <name>Sekiro</name>
+    </author>
+    <category term="StudyNotes"></category>
+  </entry>
+  <entry>
+    <title>【QT】入门与构建</title>
+    <link href="https://lysj.work/posts/studynotes/qt/qt%E5%85%A5%E9%97%A8%E4%B8%8E%E6%9E%84%E5%BB%BA/" rel="alternate" type="text/html"/>
+    <id>https://lysj.work/posts/studynotes/qt/qt%E5%85%A5%E9%97%A8%E4%B8%8E%E6%9E%84%E5%BB%BA/</id>
+    <published>2026-06-11T00:00:00.000Z</published>
+    <updated>2026-06-11T00:00:00.000Z</updated>
+    <summary>介绍 Qt 事件循环、链接库、qmake/CMake 构建及 MOC/UIC/RCC 编译流程与跨平台原理。</summary>
+    <content type="html"><![CDATA[<h2>前置知识：事件循环</h2>
+<p>事件循环是图形界面程序的核心机制。程序不断接收并分发各类事件（鼠标、键盘、定时器等）到对应对象处理。</p>
+<p>Qt 通过 <code>QCoreApplication::exec()</code> 或 <code>QApplication::exec()</code> 启动事件循环。调用后程序进入等待状态，直到调用 <code>quit()</code> 或关闭主窗口才退出。</p>
+<pre><code>QApplication app(argc, argv);
+MainWindow w;
+w.show();
+return app.exec();  // 进入事件循环
+</code></pre>
+<h2>链接库</h2>
+<p>Qt 以动态库（<code>.dll</code>、<code>.so</code>、<code>.dylib</code>）或静态库（<code>.lib</code>、<code>.a</code>）形式提供。</p>
+<table>
+<thead>
+<tr>
+<th>方式</th>
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>动态链接</td>
+<td>可执行文件小，升级库方便</td>
+<td>部署时需带上 Qt 运行时</td>
+</tr>
+<tr>
+<td>静态链接</td>
+<td>单文件部署，无外部依赖</td>
+<td>体积大，许可需注意</td>
+</tr>
+</tbody>
+</table>
+<p>常用模块（Qt5 命名示例）：</p>
+<ul>
+<li><code>Qt5Core</code>：核心（信号槽、字符串、容器、事件循环）</li>
+<li><code>Qt5Gui</code>：图形（窗口、图像、字体）</li>
+<li><code>Qt5Widgets</code>：桌面控件</li>
+</ul>
+<h2>构建工具：qmake 与 CMake</h2>
+<table>
+<thead>
+<tr>
+<th>工具</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>qmake</strong></td>
+<td>Qt 传统构建工具，通过 <code>.pro</code> 描述项目，生成 Makefile</td>
+</tr>
+<tr>
+<td><strong>CMake</strong></td>
+<td>跨平台推荐；Qt6 官方主推，与 IDE 集成更好</td>
+</tr>
+</tbody>
+</table>
+<p><strong>qmake 示例</strong>（<code>.pro</code>）：</p>
+<pre><code>QT += core gui widgets
+SOURCES = main.cpp mainwindow.cpp
+HEADERS = mainwindow.h
+</code></pre>
+<p><strong>CMake 示例</strong>（<code>CMakeLists.txt</code>）：</p>
+<pre><code>cmake_minimum_required(VERSION 3.16)
+project(MyQtApp)
+
+find_package(Qt6 REQUIRED COMPONENTS Core Widgets)
+
+qt6_add_executable(MyQtApp main.cpp mainwindow.cpp)
+target_link_libraries(MyQtApp Qt6::Core Qt6::Widgets)
+</code></pre>
+<p>Qt6 项目常用 <code>qt6_standard_project_setup()</code> 与 <code>qt6_add_executable()</code>；旧版 Qt5 对应 <code>find_package(Qt5 ...)</code> 与 <code>qt5_wrap_ui</code> 等宏。</p>
+<h2>Qt 概述</h2>
+<ul>
+<li><strong>跨平台</strong>：Windows、Linux、macOS、Android、iOS 等</li>
+<li><strong>模块化</strong>：Core、Gui、Widgets、Network、Sql、Multimedia、Qml 等</li>
+<li><strong>信号与槽</strong>：类型安全的对象间通信</li>
+<li><strong>工具链</strong>：Qt Designer、Qt Creator、qmake/CMake、QML</li>
+</ul>
+<h2>跨平台原理</h2>
+<ol>
+<li>
+<p><strong>平台抽象层（QPA）</strong><br />
+窗口系统、输入、OpenGL 等差异抽象为统一接口；各平台实现插件（如 <code>qwindows</code>、<code>qxcb</code>、<code>qcocoa</code>），运行时自动加载。</p>
+</li>
+<li>
+<p><strong>自绘机制</strong><br />
+Qt Widgets 多用 <code>QPainter</code> 自绘，外观一致且可用 QSS 定制；不依赖各系统原生控件 API。</p>
+</li>
+<li>
+<p><strong>统一 API + 条件编译</strong><br />
+底层按平台调用不同系统 API；平台相关代码用 <code>Q_OS_WIN</code>、<code>Q_OS_LINUX</code> 等宏隔离。</p>
+</li>
+<li>
+<p><strong>跨平台工具链</strong><br />
+qmake/CMake 按目标平台生成 Makefile、Visual Studio 工程等。</p>
+</li>
+</ol>
+<h2>构建流程（MOC / UIC / RCC）</h2>
+<pre><code>main.cpp
+mainwindow.h  ──► moc ──► moc_mainwindow.cpp
+mainwindow.ui ──► uic ──► ui_mainwindow.h
+resources.qrc ──► rcc ──► qrc_resources.cpp
+             ├─────────────────────────────┐
+             └──► C++ 编译器 + 链接器 ──► 可执行文件
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>工具</th>
+<th>全称</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>MOC</strong></td>
+<td>Meta-Object Compiler</td>
+<td>处理含 <code>Q_OBJECT</code> 的头文件，生成 <code>moc_*.cpp</code>（信号槽、元对象反射）</td>
+</tr>
+<tr>
+<td><strong>UIC</strong></td>
+<td>UI Compiler</td>
+<td>将 <code>.ui</code> 转为 <code>ui_*.h</code>，内含 <code>setupUi()</code></td>
+</tr>
+<tr>
+<td><strong>RCC</strong></td>
+<td>Resource Compiler</td>
+<td>将 <code>.qrc</code> 转为 <code>qrc_*.cpp</code>，把图片、翻译等嵌入二进制</td>
+</tr>
+</tbody>
+</table>
+<p>含 <code>Q_OBJECT</code> 的类必须经 MOC 处理，否则链接阶段会报 <code>vtable</code> 或 <code>staticMetaObject</code> 相关错误。</p>
+]]></content>
+    <author>
+      <name>Sekiro</name>
+    </author>
+    <category term="StudyNotes"></category>
+  </entry>
+  <entry>
+    <title>【QT】多媒体</title>
+    <link href="https://lysj.work/posts/studynotes/qt/qt%E5%A4%9A%E5%AA%92%E4%BD%93/" rel="alternate" type="text/html"/>
+    <id>https://lysj.work/posts/studynotes/qt/qt%E5%A4%9A%E5%AA%92%E4%BD%93/</id>
+    <published>2026-06-11T00:00:00.000Z</published>
+    <updated>2026-06-11T00:00:00.000Z</updated>
+    <summary>介绍 Qt6 多媒体模块、QMediaPlayer 音视频播放、摄像头预览及 Qt5/Qt6 差异。</summary>
+    <content type="html"><![CDATA[<blockquote>
+<p>Qt6 多媒体在 6.2 起正式发布。与 Qt5 相比架构变化较大：放弃基于插件的多后端结构，改为统一后端（对用户隐藏）。</p>
+</blockquote>
+<h2>模块引入</h2>
+<p><strong>qmake</strong>：</p>
+<pre><code>QT += multimedia multimediawidgets
+</code></pre>
+<p><strong>CMake</strong>：</p>
+<pre><code>find_package(Qt6 REQUIRED COMPONENTS Multimedia MultimediaWidgets)
+target_link_libraries(MyApp Qt6::Multimedia Qt6::MultimediaWidgets)
+</code></pre>
+<pre><code>#include &lt;QtMultimedia&gt;
+#include &lt;QtMultimediaWidgets&gt;
+</code></pre>
+<h2>子模块</h2>
+<table>
+<thead>
+<tr>
+<th>模块</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Qt Multimedia</strong></td>
+<td>播放、采集、设备、格式等核心类</td>
+</tr>
+<tr>
+<td><strong>Qt Multimedia Widgets</strong></td>
+<td><code>QVideoWidget</code> 等界面组件</td>
+</tr>
+</tbody>
+</table>
+<h2>主要类</h2>
+<table>
+<thead>
+<tr>
+<th>类名</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>QMediaPlayer</code></td>
+<td>播放音频或视频（本地/网络）</td>
+</tr>
+<tr>
+<td><code>QVideoWidget</code></td>
+<td>显示视频画面</td>
+</tr>
+<tr>
+<td><code>QMediaCaptureSession</code></td>
+<td>统一管理采集管线（Qt6）</td>
+</tr>
+<tr>
+<td><code>QCamera</code></td>
+<td>摄像头</td>
+</tr>
+<tr>
+<td><code>QAudioInput</code> / <code>QAudioOutput</code></td>
+<td>音频输入 / 输出设备</td>
+</tr>
+<tr>
+<td><code>QAudioSource</code> / <code>QAudioSink</code></td>
+<td>原始 PCM 采集 / 播放</td>
+</tr>
+<tr>
+<td><code>QImageCapture</code></td>
+<td>静态拍照</td>
+</tr>
+<tr>
+<td><code>QMediaRecorder</code></td>
+<td>录制音视频</td>
+</tr>
+<tr>
+<td><code>QMediaDevices</code></td>
+<td>枚举系统音视频设备</td>
+</tr>
+<tr>
+<td><code>QMediaFormat</code></td>
+<td>编码与容器格式</td>
+</tr>
+<tr>
+<td><code>QVideoSink</code></td>
+<td>访问/处理视频帧</td>
+</tr>
+</tbody>
+</table>
+<h2>基于 QMediaPlayer 的音频播放（Qt6）</h2>
+<p>典型步骤：</p>
+<ol>
+<li>创建 <code>QMediaPlayer</code></li>
+<li><code>setAudioOutput()</code> 绑定 <code>QAudioOutput</code></li>
+<li><code>setSource()</code> 设置 URL 或本地路径</li>
+<li><code>play()</code> / <code>pause()</code> / <code>stop()</code> 控制</li>
+</ol>
+<pre><code>QMediaPlayer *player = new QMediaPlayer(this);
+QAudioOutput *audioOutput = new QAudioOutput(this);
+player-&gt;setAudioOutput(audioOutput);
+player-&gt;setSource(QUrl::fromLocalFile("/path/to/music.mp3"));
+
+connect(ui-&gt;btnPlay, &amp;QPushButton::clicked, player, &amp;QMediaPlayer::play);
+connect(ui-&gt;btnPause, &amp;QPushButton::clicked, player, &amp;QMediaPlayer::pause);
+connect(ui-&gt;sliderVolume, &amp;QSlider::valueChanged, audioOutput, [audioOutput](int v) {
+    audioOutput-&gt;setVolume(v / 100.0);
+});
+
+player-&gt;play();
+</code></pre>
+<p>常用信号：<code>positionChanged</code>、<code>durationChanged</code>、<code>playbackStateChanged</code>、<code>errorOccurred</code>。</p>
+<h2>视频播放</h2>
+<pre><code>QMediaPlayer *player = new QMediaPlayer(this);
+QAudioOutput *audioOutput = new QAudioOutput(this);
+QVideoWidget *videoWidget = new QVideoWidget(this);
+
+player-&gt;setAudioOutput(audioOutput);
+player-&gt;setVideoOutput(videoWidget);
+player-&gt;setSource(QUrl("file:///path/to/video.mp4"));
+
+videoWidget-&gt;show();
+player-&gt;play();
+</code></pre>
+<p>网络视频使用 <code>QUrl("https://...")</code>；需平台解码器与格式支持。</p>
+<h2>摄像头预览（Qt6 概念）</h2>
+<pre><code>QMediaCaptureSession *session = new QMediaCaptureSession(this);
+QCamera *camera = new QCamera(QMediaDevices::defaultVideoInput(), this);
+QVideoWidget *viewfinder = new QVideoWidget(this);
+
+session-&gt;setCamera(camera);
+session-&gt;setVideoOutput(viewfinder);
+
+camera-&gt;start();
+viewfinder-&gt;show();
+</code></pre>
+<p>拍照、录像分别通过 <code>QImageCapture</code>、<code>QMediaRecorder</code> 挂到同一 <code>QMediaCaptureSession</code>。</p>
+<h2>Qt5 与 Qt6 差异（查阅旧代码时注意）</h2>
+<table>
+<thead>
+<tr>
+<th>Qt5</th>
+<th>Qt6</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>QMediaPlayer</code> + <code>QMediaPlaylist</code></td>
+<td>播放列表需自行管理或第三方</td>
+</tr>
+<tr>
+<td><code>setMedia(QUrl)</code></td>
+<td><code>setSource(QUrl)</code></td>
+</tr>
+<tr>
+<td>视频输出 <code>setVideoOutput(QVideoWidget*)</code></td>
+<td>类似，但常与 <code>QMediaCaptureSession</code> 配合采集</td>
+</tr>
+<tr>
+<td>模块结构多插件</td>
+<td>单一后端</td>
+</tr>
+</tbody>
+</table>
+<h2>部署注意</h2>
+<ul>
+<li>Linux 需 GStreamer 等依赖（视发行版与 Qt 构建选项而定）。</li>
+<li>Windows 常用系统 Media Foundation 或 FFmpeg 后端。</li>
+<li>嵌入式需确认目标板编解码器与 Qt Multimedia 插件是否可用。</li>
+</ul>
+]]></content>
+    <author>
+      <name>Sekiro</name>
+    </author>
+    <category term="StudyNotes"></category>
+  </entry>
+  <entry>
+    <title>【QT】多线程</title>
+    <link href="https://lysj.work/posts/studynotes/qt/qt%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="alternate" type="text/html"/>
+    <id>https://lysj.work/posts/studynotes/qt/qt%E5%A4%9A%E7%BA%BF%E7%A8%8B/</id>
+    <published>2026-06-11T00:00:00.000Z</published>
+    <updated>2026-06-11T00:00:00.000Z</updated>
+    <summary>介绍 QThread 两种用法、QtConcurrent、线程同步及跨线程更新 UI 的注意事项。</summary>
+    <content type="html"><![CDATA[<p>GUI 线程（主线程）负责事件循环与绘制，<strong>不应执行长时间阻塞操作</strong>。耗时任务应放到工作线程，通过信号槽或 <code>QMetaObject::invokeMethod</code> 将结果回传主线程更新界面。</p>
+<h2>QThread 两种用法</h2>
+<h3>用法一：继承 QThread，重写 run()</h3>
+<pre><code>class WorkerThread : public QThread
+{
+    Q_OBJECT
+protected:
+    void run() override {
+        // 耗时计算，不要直接操作 GUI
+        emit resultReady(data);
+    }
+signals:
+    void resultReady(const QString &amp;data);
+};
+</code></pre>
+<pre><code>WorkerThread *thread = new WorkerThread;
+connect(thread, &amp;WorkerThread::resultReady, this, &amp;MainWindow::onResult);
+connect(thread, &amp;WorkerThread::finished, thread, &amp;QObject::deleteLater);
+thread-&gt;start();
+</code></pre>
+<h3>用法二：moveToThread（推荐）</h3>
+<p>将 <code>QObject</code> 工作对象移到线程，<code>QThread</code> 只管理事件循环：</p>
+<pre><code>QThread *thread = new QThread;
+Worker *worker = new Worker;  // 普通 QObject 子类，含 doWork() 槽
+worker-&gt;moveToThread(thread);
+
+connect(thread, &amp;QThread::started, worker, &amp;Worker::doWork);
+connect(worker, &amp;Worker::finished, thread, &amp;QThread::quit);
+connect(worker, &amp;Worker::finished, worker, &amp;QObject::deleteLater);
+connect(thread, &amp;QThread::finished, thread, &amp;QObject::deleteLater);
+
+thread-&gt;start();
+</code></pre>
+<p><strong>原则</strong>：<code>moveToThread</code> 之后，只在正确线程通过信号槽调用 worker 的槽；不要从其他线程直接调用 worker 的成员函数（除非线程安全且文档允许）。</p>
+<h2>QtConcurrent</h2>
+<p>基于线程池的简化 API，适合一次性并行计算：</p>
+<pre><code>#include &lt;QtConcurrent&gt;
+#include &lt;QFutureWatcher&gt;
+
+QFutureWatcher&lt;int&gt; *watcher = new QFutureWatcher&lt;int&gt;(this);
+connect(watcher, &amp;QFutureWatcher&lt;int&gt;::finished, this, [watcher]() {
+    qDebug() &lt;&lt; watcher-&gt;result();
+});
+watcher-&gt;setFuture(QtConcurrent::run([]() { return heavyCompute(); }));
+</code></pre>
+<p><code>QtConcurrent::map</code> / <code>filtered</code> / <code>mapped</code> 可处理容器。</p>
+<h2>线程同步</h2>
+<table>
+<thead>
+<tr>
+<th>类</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>QMutex</code> + <code>QMutexLocker</code></td>
+<td>互斥锁</td>
+</tr>
+<tr>
+<td><code>QReadWriteLock</code></td>
+<td>读多写少</td>
+</tr>
+<tr>
+<td><code>QSemaphore</code></td>
+<td>计数信号量</td>
+</tr>
+<tr>
+<td><code>QWaitCondition</code></td>
+<td>条件变量</td>
+</tr>
+<tr>
+<td><code>QAtomicInt</code> 等</td>
+<td>原子操作</td>
+</tr>
+</tbody>
+</table>
+<p>尽量缩小锁粒度；UI 更新仍在主线程完成。</p>
+<h2>连接类型与线程</h2>
+<p>工作线程 <code>emit signal()</code> → 主线程槽：使用默认 <code>AutoConnection</code> 或显式 <code>QueuedConnection</code>，槽在主线程执行，可安全更新控件。</p>
+<pre><code>connect(worker, &amp;Worker::progress, this, &amp;MainWindow::onProgress,
+        Qt::QueuedConnection);
+</code></pre>
+<h2>禁止事项</h2>
+<ul>
+<li>不要在 <code>run()</code> 或子线程中直接 <code>delete</code> 仍在主线程使用的 <code>QWidget</code>。</li>
+<li>不要在工作线程创建带父对象的 GUI 控件（父对象通常在主线程）。</li>
+<li><code>QSqlDatabase</code> 连接<strong>不能</strong>跨线程共享同一连接名；每线程独立 <code>addDatabase</code> 或连接池。</li>
+</ul>
+<h2>QThread 生命周期</h2>
+<pre><code>thread-&gt;quit();      // 退出事件循环
+thread-&gt;wait();      // 等待线程结束
+</code></pre>
+<p>析构前确保线程已停止，避免野指针。</p>
+]]></content>
+    <author>
+      <name>Sekiro</name>
+    </author>
+    <category term="StudyNotes"></category>
+  </entry>
+  <entry>
+    <title>【QT】对话框与常用控件</title>
+    <link href="https://lysj.work/posts/studynotes/qt/qt%E5%AF%B9%E8%AF%9D%E6%A1%86%E4%B8%8E%E5%B8%B8%E7%94%A8%E6%8E%A7%E4%BB%B6/" rel="alternate" type="text/html"/>
+    <id>https://lysj.work/posts/studynotes/qt/qt%E5%AF%B9%E8%AF%9D%E6%A1%86%E4%B8%8E%E5%B8%B8%E7%94%A8%E6%8E%A7%E4%BB%B6/</id>
+    <published>2026-06-11T00:00:00.000Z</published>
+    <updated>2026-06-11T00:00:00.000Z</updated>
+    <summary>涵盖 QFileDialog、QMessageBox 等标准对话框及按钮、输入、视图等常用控件分类。</summary>
+    <content type="html"><![CDATA[<h2>标准对话框</h2>
+<h3>QFileDialog</h3>
+<h4>打开单个文件</h4>
+<pre><code>QString QFileDialog::getOpenFileName(
+    QWidget *parent = nullptr,
+    const QString &amp;caption = QString(),
+    const QString &amp;dir = QString(),
+    const QString &amp;filter = QString(),
+    QString *selectedFilter = nullptr,
+    QFileDialog::Options options = Options()
+);
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>parent</code></td>
+<td>父窗口</td>
+</tr>
+<tr>
+<td><code>caption</code></td>
+<td>标题</td>
+</tr>
+<tr>
+<td><code>dir</code></td>
+<td>初始目录</td>
+</tr>
+<tr>
+<td><code>filter</code></td>
+<td>过滤器；多组用 <code>;;</code> 分隔，同组多后缀用空格，如 <code>文本(*.txt);;图片(*.jpg *.png)</code></td>
+</tr>
+<tr>
+<td><code>selectedFilter</code></td>
+<td>用户选中的过滤器（可选）</td>
+</tr>
+<tr>
+<td>返回值</td>
+<td>选中文件路径；取消则为空字符串</td>
+</tr>
+</tbody>
+</table>
+<pre><code>void Dialog::on_btnOpen_clicked()
+{
+    QString curPath = QDir::currentPath();
+    QString dlgTitle = "选择一个文件";
+    QString filter = "文本文件(*.txt);;图片文件(*.jpg *.gif *.png);;所有文件(*.*)";
+    QString fileName = QFileDialog::getOpenFileName(this, dlgTitle, curPath, filter);
+    if (!fileName.isEmpty())
+        ui-&gt;plainTextEdit-&gt;appendPlainText(fileName);
+}
+</code></pre>
+<h4>打开多个文件</h4>
+<pre><code>QStringList files = QFileDialog::getOpenFileNames(
+    this, "选择多个文件", QDir::homePath(), "文本(*.txt);;所有(*.*)");
+</code></pre>
+<h4>保存文件</h4>
+<pre><code>QString path = QFileDialog::getSaveFileName(
+    this, "保存", QDir::currentPath(), "文本(*.txt);;所有(*.*)");
+if (!path.isEmpty()) {
+  // 写入文件
+}
+</code></pre>
+<h4>选择已有目录</h4>
+<pre><code>QString QFileDialog::getExistingDirectory(
+    QWidget *parent = nullptr,
+    const QString &amp;caption = QString(),
+    const QString &amp;dir = QString(),
+    QFileDialog::Options options = ShowDirsOnly
+);
+</code></pre>
+<pre><code>QString dir = QFileDialog::getExistingDirectory(
+    this, "选择目录", QDir::homePath(), QFileDialog::ShowDirsOnly);
+</code></pre>
+<h3>QColorDialog</h3>
+<pre><code>QColor color = QColorDialog::getColor(Qt::white, this, "选择颜色");
+if (color.isValid())
+    ui-&gt;widget-&gt;setStyleSheet(QString("background:%1").arg(color.name()));
+</code></pre>
+<h3>QFontDialog</h3>
+<pre><code>bool ok;
+QFont font = QFontDialog::getFont(&amp;ok, QFont("微软雅黑", 12), this);
+if (ok)
+    ui-&gt;label-&gt;setFont(font);
+</code></pre>
+<h3>QInputDialog</h3>
+<pre><code>QString text = QInputDialog::getText(this, "输入", "姓名：");
+int n = QInputDialog::getInt(this, "输入", "数量：", 1, 0, 100, 1);
+double d = QInputDialog::getDouble(this, "输入", "比例：", 0.5, 0, 1, 2);
+QString item = QInputDialog::getItem(this, "选择", "城市：",
+                                     {"北京", "上海", "广州"}, 0, false);
+</code></pre>
+<h3>QMessageBox</h3>
+<pre><code>QMessageBox::information(this, "提示", "操作成功");
+QMessageBox::warning(this, "警告", "磁盘空间不足");
+QMessageBox::critical(this, "错误", "无法打开文件");
+
+auto ret = QMessageBox::question(this, "确认", "确定删除？",
+    QMessageBox::Yes | QMessageBox::No);
+if (ret == QMessageBox::Yes) { /* ... */ }
+
+// 自定义按钮
+QMessageBox box(this);
+box.setWindowTitle("退出");
+box.setText("是否保存？");
+box.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+box.setDefaultButton(QMessageBox::Save);
+</code></pre>
+<h2>常用控件分类（Designer 面板）</h2>
+<h3>Buttons</h3>
+<table>
+<thead>
+<tr>
+<th>控件</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>QPushButton</code></td>
+<td>普通按钮</td>
+</tr>
+<tr>
+<td><code>QToolButton</code></td>
+<td>工具栏按钮，可带菜单</td>
+</tr>
+<tr>
+<td><code>QRadioButton</code></td>
+<td>单选，同组互斥</td>
+</tr>
+<tr>
+<td><code>QCheckBox</code></td>
+<td>复选框</td>
+</tr>
+<tr>
+<td><code>QCommandLinkButton</code></td>
+<td>向导式大按钮</td>
+</tr>
+</tbody>
+</table>
+<h3>Input Widgets</h3>
+<table>
+<thead>
+<tr>
+<th>控件</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>QLineEdit</code></td>
+<td>单行文本</td>
+</tr>
+<tr>
+<td><code>QTextEdit</code> / <code>QPlainTextEdit</code></td>
+<td>多行富文本 / 纯文本</td>
+</tr>
+<tr>
+<td><code>QSpinBox</code> / <code>QDoubleSpinBox</code></td>
+<td>整数 / 浮点调节</td>
+</tr>
+<tr>
+<td><code>QComboBox</code></td>
+<td>下拉框</td>
+</tr>
+<tr>
+<td><code>QDateEdit</code> / <code>QTimeEdit</code> / <code>QDateTimeEdit</code></td>
+<td>日期时间</td>
+</tr>
+<tr>
+<td><code>QSlider</code> / <code>QDial</code></td>
+<td>滑块 / 旋钮</td>
+</tr>
+</tbody>
+</table>
+<h3>Display Widgets</h3>
+<table>
+<thead>
+<tr>
+<th>控件</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>QLabel</code></td>
+<td>文本或图片</td>
+</tr>
+<tr>
+<td><code>QLCDNumber</code></td>
+<td>数码管显示</td>
+</tr>
+<tr>
+<td><code>QProgressBar</code></td>
+<td>进度条</td>
+</tr>
+</tbody>
+</table>
+<h3>Containers</h3>
+<table>
+<thead>
+<tr>
+<th>控件</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>QGroupBox</code></td>
+<td>分组框</td>
+</tr>
+<tr>
+<td><code>QTabWidget</code></td>
+<td>选项卡</td>
+</tr>
+<tr>
+<td><code>QStackedWidget</code></td>
+<td>多页堆叠，一次显示一页</td>
+</tr>
+<tr>
+<td><code>QScrollArea</code></td>
+<td>可滚动区域</td>
+</tr>
+<tr>
+<td><code>QMdiArea</code></td>
+<td>MDI 子窗口区域</td>
+</tr>
+<tr>
+<td><code>QToolBox</code></td>
+<td>工具箱式折叠页</td>
+</tr>
+</tbody>
+</table>
+<h3>Item Views（Model-Based）</h3>
+<p>数据与视图分离，适合大数据量：</p>
+<table>
+<thead>
+<tr>
+<th>控件</th>
+<th>常用模型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>QListView</code></td>
+<td><code>QStringListModel</code>、<code>QStandardItemModel</code></td>
+</tr>
+<tr>
+<td><code>QTreeView</code></td>
+<td>树形 <code>QStandardItemModel</code></td>
+</tr>
+<tr>
+<td><code>QTableView</code></td>
+<td><code>QSqlTableModel</code>、<code>QStandardItemModel</code></td>
+</tr>
+<tr>
+<td><code>QColumnView</code></td>
+<td>列式导航</td>
+</tr>
+</tbody>
+</table>
+<h3>Item Widgets（Item-Based）</h3>
+<p>项直接挂在控件上，适合少量静态数据：</p>
+<table>
+<thead>
+<tr>
+<th>控件</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>QListWidget</code></td>
+<td>列表</td>
+</tr>
+<tr>
+<td><code>QTreeWidget</code></td>
+<td>树</td>
+</tr>
+<tr>
+<td><code>QTableWidget</code></td>
+<td>表格</td>
+</tr>
+</tbody>
+</table>
+<h2>与 .ui 文件配合</h2>
+<p>Designer 生成的 <code>ui_*.h</code> 提供 <code>setupUi(this)</code>，控件通过 <code>ui-&gt;objectName</code> 访问。槽函数命名 <code>on_&lt;objectName&gt;_&lt;signal&gt;()</code> 可被 <code>QMetaObject::connectSlotsByName</code> 自动连接（需在含 <code>Q_OBJECT</code> 的类中）。</p>
+]]></content>
+    <author>
+      <name>Sekiro</name>
+    </author>
+    <category term="StudyNotes"></category>
+  </entry>
+  <entry>
+    <title>【QT】布局与QSS</title>
+    <link href="https://lysj.work/posts/studynotes/qt/qt%E5%B8%83%E5%B1%80%E4%B8%8Eqss/" rel="alternate" type="text/html"/>
+    <id>https://lysj.work/posts/studynotes/qt/qt%E5%B8%83%E5%B1%80%E4%B8%8Eqss/</id>
+    <published>2026-06-11T00:00:00.000Z</published>
+    <updated>2026-06-11T00:00:00.000Z</updated>
+    <summary>介绍 QHBoxLayout 等布局管理、QSS 选择器语法及与 QPalette、QStyle 的关系。</summary>
+    <content type="html"><![CDATA[<h2>布局（Layouts）</h2>
+<p>布局管理子控件的几何位置与伸缩，窗口缩放时自动调整。子控件可设 <code>minimumSize</code>、<code>maximumSize</code>、<code>sizePolicy</code>。</p>
+<table>
+<thead>
+<tr>
+<th>布局类</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>QHBoxLayout</code></td>
+<td>水平排列</td>
+</tr>
+<tr>
+<td><code>QVBoxLayout</code></td>
+<td>垂直排列</td>
+</tr>
+<tr>
+<td><code>QGridLayout</code></td>
+<td>网格</td>
+</tr>
+<tr>
+<td><code>QFormLayout</code></td>
+<td>标签 + 字段两列表单</td>
+</tr>
+</tbody>
+</table>
+<h3>代码示例</h3>
+<pre><code>QVBoxLayout *layout = new QVBoxLayout(this);
+layout-&gt;addWidget(new QPushButton("OK"));
+layout-&gt;addWidget(new QPushButton("Cancel"));
+layout-&gt;addStretch();  // 弹簧，占据剩余空间
+setLayout(layout);
+</code></pre>
+<h3>嵌套与比例</h3>
+<pre><code>QHBoxLayout *row = new QHBoxLayout;
+row-&gt;addWidget(leftEdit, 1);   // stretch 因子 1
+row-&gt;addWidget(rightEdit, 2);  // 右侧占 2 份宽度
+</code></pre>
+<h3>Spacers</h3>
+<p><code>QSpacerItem</code> 或布局的 <code>addStretch()</code> / <code>addSpacing(n)</code> 控制空白与对齐。</p>
+<h3>布局原则</h3>
+<ul>
+<li>顶层窗口或容器设一个主布局，避免用固定 <code>setGeometry</code> 硬编码坐标。</li>
+<li>对话框常用 <code>QDialogButtonBox</code> 放标准按钮并配合布局。</li>
+</ul>
+<h2>QSS（Qt Style Sheets）</h2>
+<p>语法类似 CSS，用于定制控件外观（颜色、边框、字体、状态伪类等）。</p>
+<h3>基本写法</h3>
+<pre><code>widget-&gt;setStyleSheet("QPushButton { color: white; background-color: #2d89ef; }");
+</code></pre>
+<p>全局：</p>
+<pre><code>qApp-&gt;setStyleSheet("QToolTip { color: black; background: #ffffcc; }");
+</code></pre>
+<h3>选择器</h3>
+<table>
+<thead>
+<tr>
+<th>写法</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>QPushButton</code></td>
+<td>所有按钮</td>
+</tr>
+<tr>
+<td><code>QPushButton#okButton</code></td>
+<td>objectName 为 okButton</td>
+</tr>
+<tr>
+<td><code>QPushButton:hover</code></td>
+<td>悬停状态</td>
+</tr>
+<tr>
+<td><code>QPushButton:pressed</code></td>
+<td>按下</td>
+</tr>
+<tr>
+<td><code>QPushButton:disabled</code></td>
+<td>禁用</td>
+</tr>
+<tr>
+<td><code>QPushButton:checked</code></td>
+<td>可选中按钮选中时</td>
+</tr>
+</tbody>
+</table>
+<h3>常用属性</h3>
+<pre><code>QLineEdit {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 4px;
+    background: white;
+}
+QLineEdit:focus {
+    border-color: #2d89ef;
+}
+QProgressBar {
+    border: 1px solid grey;
+    text-align: center;
+}
+QProgressBar::chunk {
+    background-color: #05B8CC;
+}
+</code></pre>
+<h3>子控件（部分控件支持）</h3>
+<pre><code>QComboBox::drop-down { width: 20px; }
+QScrollBar:vertical { width: 12px; }
+</code></pre>
+<h3>与 QPalette、QStyle 的关系</h3>
+<ul>
+<li><strong>QPalette</strong>：系统调色板，适合跟随主题微调。</li>
+<li><strong>QStyle</strong>：<code>Fusion</code>、<code>Windows</code>、<code>macOS</code> 等原生或跨平台风格；<code>setStyle()</code> 换整体风格。</li>
+<li><strong>QSS</strong>：最灵活，可完全覆盖绘制；对复杂原生控件（如部分 macOS 控件）支持有限。</li>
+</ul>
+<h3>外部样式表文件</h3>
+<pre><code>QFile f(":/styles/app.qss");
+if (f.open(QIODevice::ReadOnly))
+    qApp-&gt;setStyleSheet(QString::fromUtf8(f.readAll()));
+</code></pre>
+<p>资源文件 <code>.qrc</code> 中可嵌入 <code>app.qss</code>，路径如 <code>:/styles/app.qss</code>。</p>
+<h3>注意事项</h3>
+<ul>
+<li>子控件设置 QSS 后可能失去部分平台原生效果。</li>
+<li>动态属性可配合选择器：<code>widget-&gt;setProperty("danger", true);</code> 与 <code>QPushButton[danger="true"] { ... }</code>。</li>
+</ul>
+]]></content>
+    <author>
+      <name>Sekiro</name>
+    </author>
+    <category term="StudyNotes"></category>
+  </entry>
+  <entry>
+    <title>【QT】数据库</title>
+    <link href="https://lysj.work/posts/studynotes/qt/qt%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="alternate" type="text/html"/>
+    <id>https://lysj.work/posts/studynotes/qt/qt%E6%95%B0%E6%8D%AE%E5%BA%93/</id>
+    <published>2026-06-11T00:00:00.000Z</published>
+    <updated>2026-06-11T00:00:00.000Z</updated>
+    <summary>介绍 Qt SQL 主要类、SQLite 建表查询及 QSqlTableModel 与 QTableView 绑定用法。</summary>
+    <content type="html"><![CDATA[<h2>模块引入</h2>
+<p><strong>qmake</strong>：</p>
+<pre><code>QT += sql
+</code></pre>
+<p><strong>CMake</strong>：</p>
+<pre><code>find_package(Qt6 REQUIRED COMPONENTS Sql)
+target_link_libraries(MyApp Qt6::Sql)
+</code></pre>
+<pre><code>#include &lt;QtSql&gt;
+// 或按需：QSqlDatabase, QSqlQuery, QSqlTableModel ...
+</code></pre>
+<h2>主要类</h2>
+<table>
+<thead>
+<tr>
+<th>类别</th>
+<th>类名</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>连接</td>
+<td><code>QSqlDatabase</code></td>
+<td>建立与管理数据库连接</td>
+</tr>
+<tr>
+<td>记录</td>
+<td><code>QSqlRecord</code></td>
+<td>表中的一行结构</td>
+</tr>
+<tr>
+<td>字段</td>
+<td><code>QSqlField</code></td>
+<td>单个字段元数据</td>
+</tr>
+<tr>
+<td>索引</td>
+<td><code>QSqlIndex</code></td>
+<td>索引信息</td>
+</tr>
+<tr>
+<td>模型</td>
+<td><code>QSqlTableModel</code></td>
+<td>单表可编辑模型，配合 <code>QTableView</code></td>
+</tr>
+<tr>
+<td>模型</td>
+<td><code>QSqlQueryModel</code></td>
+<td>只读查询结果模型</td>
+</tr>
+<tr>
+<td>关系</td>
+<td><code>QSqlRelationalTableModel</code></td>
+<td>外键关系表</td>
+</tr>
+<tr>
+<td>代理</td>
+<td><code>QSqlRelationalDelegate</code></td>
+<td>关系字段下拉编辑</td>
+</tr>
+<tr>
+<td>关系</td>
+<td><code>QSqlRelation</code></td>
+<td>外键关联描述</td>
+</tr>
+<tr>
+<td>执行</td>
+<td><code>QSqlQuery</code></td>
+<td>执行 SQL</td>
+</tr>
+<tr>
+<td>映射</td>
+<td><code>QDataWidgetMapper</code></td>
+<td>控件与字段绑定</td>
+</tr>
+<tr>
+<td>错误</td>
+<td><code>QSqlError</code></td>
+<td>错误信息</td>
+</tr>
+</tbody>
+</table>
+<h2>数据库编程模型</h2>
+<pre><code>QSqlDatabase::addDatabase(driver) → open()
+        ↓
+QSqlQuery / QSqlTableModel
+        ↓
+QTableView / QDataWidgetMapper（界面）
+</code></pre>
+<ol>
+<li>选择驱动并创建连接</li>
+<li><code>open()</code> 打开数据库（文件路径或主机）</li>
+<li>用 <code>QSqlQuery</code> 执行 DDL/DML，或用 <code>QSqlTableModel</code> 做表级 CRUD</li>
+<li>模型 <code>setTable</code> + <code>select()</code> 后绑定视图</li>
+</ol>
+<h2>SQLite 示例</h2>
+<p>SQLite 为嵌入式常用、无需独立服务端的文件数据库，Qt 内置 <code>QSQLITE</code> 驱动。</p>
+<pre><code>QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
+db.setDatabaseName("mydata.db");  // 相对路径或绝对路径
+if (!db.open()) {
+    qWarning() &lt;&lt; db.lastError().text();
+    return;
+}
+</code></pre>
+<h3>建表与插入（QSqlQuery）</h3>
+<pre><code>QSqlQuery query;
+query.exec("CREATE TABLE IF NOT EXISTS person ("
+           "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+           "name TEXT NOT NULL,"
+           "age INTEGER)");
+
+query.prepare("INSERT INTO person (name, age) VALUES (:name, :age)");
+query.bindValue(":name", "张三");
+query.bindValue(":age", 25);
+query.exec();
+</code></pre>
+<h3>查询</h3>
+<pre><code>query.prepare("SELECT id, name, age FROM person WHERE age &gt; :min");
+query.bindValue(":min", 18);
+if (query.exec()) {
+    while (query.next()) {
+        int id = query.value(0).toInt();
+        QString name = query.value("name").toString();
+        int age = query.value("age").toInt();
+    }
+}
+</code></pre>
+<h3>QSqlTableModel + QTableView</h3>
+<pre><code>QSqlTableModel *model = new QSqlTableModel(this, db);
+model-&gt;setTable("person");
+model-&gt;setEditStrategy(QSqlTableModel::OnManualSubmit);
+model-&gt;select();
+
+ui-&gt;tableView-&gt;setModel(model);
+// 编辑后 model-&gt;submitAll() 或 revertAll()
+</code></pre>
+<h2>其他驱动</h2>
+<table>
+<thead>
+<tr>
+<th>驱动名</th>
+<th>数据库</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>QSQLITE</code></td>
+<td>SQLite</td>
+</tr>
+<tr>
+<td><code>QMYSQL</code></td>
+<td>MySQL / MariaDB</td>
+</tr>
+<tr>
+<td><code>QPSQL</code></td>
+<td>PostgreSQL</td>
+</tr>
+<tr>
+<td><code>QODBC</code></td>
+<td>ODBC 通用</td>
+</tr>
+</tbody>
+</table>
+<p>使用 MySQL/PostgreSQL 时需编译对应插件或确保 Qt 安装包含该驱动，<code>QSqlDatabase::drivers()</code> 可列出可用驱动。</p>
+<h2>注意事项</h2>
+<ul>
+<li>连接名默认 <code>"qt_sql_default_connection"</code>；多连接用 <code>addDatabase(driver, connectionName)</code> 区分。</li>
+<li><strong>同一 <code>QSqlDatabase</code> 连接不要跨线程使用</strong>；每线程独立连接。</li>
+<li>关闭前 <code>db.close()</code>；<code>QSqlDatabase::removeDatabase(connectionName)</code> 在连接无引用后移除。</li>
+<li>生产环境用预处理与参数绑定，避免 SQL 注入。</li>
+</ul>
+]]></content>
+    <author>
+      <name>Sekiro</name>
+    </author>
+    <category term="StudyNotes"></category>
+  </entry>
+  <entry>
+    <title>【QT】核心类型与容器</title>
+    <link href="https://lysj.work/posts/studynotes/qt/qt%E6%A0%B8%E5%BF%83%E7%B1%BB%E5%9E%8B%E4%B8%8E%E5%AE%B9%E5%99%A8/" rel="alternate" type="text/html"/>
+    <id>https://lysj.work/posts/studynotes/qt/qt%E6%A0%B8%E5%BF%83%E7%B1%BB%E5%9E%8B%E4%B8%8E%E5%AE%B9%E5%99%A8/</id>
+    <published>2026-06-11T00:00:00.000Z</published>
+    <updated>2026-06-11T00:00:00.000Z</updated>
+    <summary>介绍 QObject 对象树、QString、顺序与关联容器及迭代遍历方式。</summary>
+    <content type="html"><![CDATA[<p>Qt Core 是所有模块的公共基础：事件循环、字符串、容器、文件 I/O、线程、元对象系统等。</p>
+<h2>QObject</h2>
+<p>所有 Qt 对象的基类。类继承链上任意一层为 <code>QObject</code> 时，可使用信号与槽、父子对象树、事件系统等特性。</p>
+<ul>
+<li><strong>父子关系</strong>：子对象析构时由父对象负责释放；<code>delete parent</code> 会级联删除子对象。</li>
+<li><strong>对象树</strong>：便于管理窗口、布局中的控件生命周期。</li>
+</ul>
+<h2>QString 与 QChar</h2>
+<p><code>QString</code> 存储 Unicode 字符串，无 <code>QObject</code> 父类。</p>
+<ul>
+<li>每个字符为 <code>QChar</code>，内部常用 <strong>UTF-16</strong> 编码（每码元 2 字节）。</li>
+<li>与 <code>std::string</code> 互转：<code>QString::fromStdString()</code>、<code>toStdString()</code>。</li>
+<li>字面量：<code>QString s = u"你好"_qs;</code>（Qt6）或 <code>QStringLiteral("hello")</code>。</li>
+</ul>
+<p>常用操作：<code>append</code>、<code>split</code>、<code>arg</code> 占位格式化、<code>trimmed</code>、<code>isEmpty</code>。</p>
+<h2>顺序容器</h2>
+<table>
+<thead>
+<tr>
+<th>类</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>QList&lt;T&gt;</code></td>
+<td>通用动态数组，Qt6 中 <code>QVector</code> 为其别名</td>
+</tr>
+<tr>
+<td><code>QStack&lt;T&gt;</code></td>
+<td>栈</td>
+</tr>
+<tr>
+<td><code>QQueue&lt;T&gt;</code></td>
+<td>队列</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>Qt6：<code>QVector</code> 与 <code>QList</code> 统一为同一实现（基于连续存储的数组机制）。</p>
+</blockquote>
+<h2>关联容器</h2>
+<table>
+<thead>
+<tr>
+<th>类</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>QSet&lt;T&gt;</code></td>
+<td>无序唯一集合</td>
+</tr>
+<tr>
+<td><code>QMap&lt;Key, T&gt;</code></td>
+<td>有序键值对（按键排序）</td>
+</tr>
+<tr>
+<td><code>QMultiMap&lt;Key, T&gt;</code></td>
+<td>一键多值</td>
+</tr>
+<tr>
+<td><code>QHash&lt;Key, T&gt;</code></td>
+<td>哈希表，平均 O(1)</td>
+</tr>
+<tr>
+<td><code>QMultiHash&lt;Key, T&gt;</code></td>
+<td>哈希，一键多值</td>
+</tr>
+</tbody>
+</table>
+<h2>容器遍历</h2>
+<h3>STL 风格迭代器</h3>
+<p>每个容器提供 <code>const_iterator</code>（只读）与 <code>iterator</code>（可写）。</p>
+<ul>
+<li><code>begin()</code> / <code>constBegin()</code>：首元素</li>
+<li><code>end()</code> / <code>constEnd()</code>：尾后位置（不指向有效元素，仅作循环结束判断）</li>
+</ul>
+<p><strong>顺序容器示例</strong>：</p>
+<pre><code>QList&lt;QString&gt; list{"a", "b", "c", "d"};
+for (QList&lt;QString&gt;::const_iterator i = list.constBegin();
+     i != list.constEnd(); ++i)
+    qDebug() &lt;&lt; *i;
+</code></pre>
+<p><strong>关联容器示例</strong>（键值对用 <code>key()</code> / <code>value()</code>）：</p>
+<pre><code>QMap&lt;int, int&gt; map;
+for (QMap&lt;int, int&gt;::const_iterator i = map.constBegin();
+     i != map.constEnd(); ++i)
+    qDebug() &lt;&lt; i.key() &lt;&lt; ':' &lt;&lt; i.value();
+</code></pre>
+<h3>范围 for（C++11，推荐）</h3>
+<pre><code>for (const QString &amp;s : list)
+    qDebug() &lt;&lt; s;
+
+for (auto it = map.constBegin(); it != map.constEnd(); ++it)
+    qDebug() &lt;&lt; it.key() &lt;&lt; it.value();
+</code></pre>
+<h3>foreach 宏（Qt5 风格，Qt6 仍可用）</h3>
+<p>定义于 <code>&lt;QtGlobal&gt;</code>：</p>
+<pre><code>QList&lt;QString&gt; list;
+foreach (const QString &amp;str, list)
+    qDebug() &lt;&lt; str;
+</code></pre>
+<p>支持代码块与 <code>break</code>。多值映射可嵌套 <code>foreach</code>。</p>
+<h2>其他常用 Core 类型</h2>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>QByteArray</code></td>
+<td>原始字节序列</td>
+</tr>
+<tr>
+<td><code>QVariant</code></td>
+<td>类型擦除的通用值</td>
+</tr>
+<tr>
+<td><code>QDateTime</code> / <code>QDate</code> / <code>QTime</code></td>
+<td>日期时间</td>
+</tr>
+<tr>
+<td><code>QFile</code> / <code>QDir</code></td>
+<td>文件与目录</td>
+</tr>
+<tr>
+<td><code>QSettings</code></td>
+<td>配置持久化（注册表/ini）</td>
+</tr>
+</tbody>
+</table>
+]]></content>
+    <author>
+      <name>Sekiro</name>
+    </author>
+    <category term="StudyNotes"></category>
+  </entry>
+  <entry>
+    <title>【QT】网络编程</title>
+    <link href="https://lysj.work/posts/studynotes/qt/qt%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/" rel="alternate" type="text/html"/>
+    <id>https://lysj.work/posts/studynotes/qt/qt%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/</id>
+    <published>2026-06-11T00:00:00.000Z</published>
+    <updated>2026-06-11T00:00:00.000Z</updated>
+    <summary>介绍 QTcpSocket、QUdpSocket、QNetworkAccessManager 及 SSL 等 Qt 网络编程 API。</summary>
+    <content type="html"><![CDATA[<p>Qt Network 模块提供 TCP/UDP、HTTP、DNS、SSL 等能力。项目中添加模块：</p>
+<p><strong>qmake</strong>（<code>.pro</code>）：</p>
+<pre><code>QT += network
+</code></pre>
+<p><strong>CMake</strong>：</p>
+<pre><code>find_package(Qt6 REQUIRED COMPONENTS Network)
+target_link_libraries(MyApp Qt6::Network)
+</code></pre>
+<pre><code>#include &lt;QTcpSocket&gt;
+#include &lt;QUdpSocket&gt;
+#include &lt;QNetworkAccessManager&gt;
+</code></pre>
+<h2>QTcpSocket（TCP 客户端）</h2>
+<pre><code>QTcpSocket *socket = new QTcpSocket(this);
+connect(socket, &amp;QTcpSocket::connected, this, &amp;Client::onConnected);
+connect(socket, &amp;QTcpSocket::readyRead, this, &amp;Client::onReadyRead);
+connect(socket, &amp;QTcpSocket::errorOccurred, this, &amp;Client::onError);
+
+socket-&gt;connectToHost("example.com", 80);
+// 连接成功后
+socket-&gt;write("GET / HTTP/1.0\r\n\r\n");
+</code></pre>
+<pre><code>void Client::onReadyRead()
+{
+    QByteArray data = socket-&gt;readAll();
+    // 处理数据；注意 TCP 流式，需自行组包或定长协议
+}
+</code></pre>
+<h2>QTcpServer（TCP 服务端）</h2>
+<pre><code>QTcpServer *server = new QTcpServer(this);
+connect(server, &amp;QTcpServer::newConnection, this, &amp;Server::onNewConnection);
+
+server-&gt;listen(QHostAddress::Any, 8080);
+
+void Server::onNewConnection()
+{
+    QTcpSocket *client = server-&gt;nextPendingConnection();
+    connect(client, &amp;QTcpSocket::readyRead, this, [client]() {
+        qDebug() &lt;&lt; client-&gt;readAll();
+    });
+}
+</code></pre>
+<h2>QUdpSocket（UDP）</h2>
+<p>无连接，面向数据报：</p>
+<pre><code>QUdpSocket *udp = new QUdpSocket(this);
+udp-&gt;bind(QHostAddress::Any, 45454);
+
+connect(udp, &amp;QUdpSocket::readyRead, this, [udp]() {
+    while (udp-&gt;hasPendingDatagrams()) {
+        QByteArray buf;
+        buf.resize(udp-&gt;pendingDatagramSize());
+        QHostAddress sender;
+        quint16 port;
+        udp-&gt;readDatagram(buf.data(), buf.size(), &amp;sender, &amp;port);
+    }
+});
+
+udp-&gt;writeDatagram("hello", QHostAddress("192.168.1.1"), 45454);
+</code></pre>
+<h2>QNetworkAccessManager（HTTP）</h2>
+<p>高层 HTTP/HTTPS API，异步基于事件循环：</p>
+<pre><code>QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
+connect(mgr, &amp;QNetworkAccessManager::finished,
+        this, &amp;MainWindow::onReplyFinished);
+
+QNetworkRequest req(QUrl("https://api.example.com/data"));
+req.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+mgr-&gt;get(req);
+
+// POST
+// mgr-&gt;post(req, QByteArray("{\"key\":\"value\"}"));
+</code></pre>
+<pre><code>void MainWindow::onReplyFinished(QNetworkReply *reply)
+{
+  if (reply-&gt;error() != QNetworkReply::NoError) {
+    qWarning() &lt;&lt; reply-&gt;errorString();
+  } else {
+    QByteArray body = reply-&gt;readAll();
+  }
+  reply-&gt;deleteLater();
+}
+</code></pre>
+<h2>QSslSocket（TLS）</h2>
+<p>需 Qt SSL 支持及 OpenSSL 等后端：</p>
+<pre><code>QSslSocket *ssl = new QSslSocket(this);
+connect(ssl, &amp;QSslSocket::encrypted, this, &amp;Client::onEncrypted);
+ssl-&gt;connectToHostEncrypted("example.com", 443);
+</code></pre>
+<h2>实用类型</h2>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>QHostAddress</code></td>
+<td>IPv4/IPv6 地址</td>
+</tr>
+<tr>
+<td><code>QNetworkInterface</code></td>
+<td>网卡信息</td>
+</tr>
+<tr>
+<td><code>QUrl</code> / <code>QUrlQuery</code></td>
+<td>URL 与查询参数</td>
+</tr>
+</tbody>
+</table>
+<h2>设计建议</h2>
+<ul>
+<li>自定义协议明确<strong>帧头 + 长度 + 载荷</strong>，避免粘包/半包问题。</li>
+<li>长连接用心跳检测断开。</li>
+<li>大量并发可考虑 <code>QThreadPool</code> + 每连接 <code>QTcpSocket</code>，或异步框架；GUI 线程只做调度与展示。</li>
+</ul>
+]]></content>
+    <author>
+      <name>Sekiro</name>
+    </author>
+    <category term="StudyNotes"></category>
   </entry>
   <entry>
     <title>【LinuxC】进程</title>
@@ -4661,6 +6274,1825 @@ git add . // 添加到暂存区，后接路径
       <name>Sekiro</name>
     </author>
     <category term="Cookbook"></category>
+  </entry>
+  <entry>
+    <title>【CPP】STL</title>
+    <link href="https://lysj.work/posts/studynotes/cpp/cppstl/" rel="alternate" type="text/html"/>
+    <id>https://lysj.work/posts/studynotes/cpp/cppstl/</id>
+    <published>2026-04-02T00:00:00.000Z</published>
+    <updated>2026-04-02T00:00:00.000Z</updated>
+    <summary>STL 六大组件、容器、迭代器、算法及容器选择策略。</summary>
+    <content type="html"><![CDATA[<h2>概述</h2>
+<p><strong>STL</strong>（Standard Template Library）是 C++ 标准库中基于<strong>模板</strong>的容器、迭代器、算法、仿函数、适配器、空间配置器的集合。</p>
+<ul>
+<li><strong>高复用</strong>：同一套组件适配多种类型。</li>
+<li><strong>高性能</strong>：如 <code>vector</code> 连续内存、<code>sort</code> 优化实现。</li>
+<li><strong>可移植</strong>：符合标准的编译器均提供。</li>
+</ul>
+<h2>六大组件</h2>
+<table>
+<thead>
+<tr>
+<th>组件</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>容器</td>
+<td>存储数据</td>
+</tr>
+<tr>
+<td>迭代器</td>
+<td>泛化指针，统一访问接口</td>
+</tr>
+<tr>
+<td>算法</td>
+<td>操作区间内元素</td>
+</tr>
+<tr>
+<td>仿函数</td>
+<td>可调用对象，定制算法行为</td>
+</tr>
+<tr>
+<td>适配器</td>
+<td>改造容器/迭代器/仿函数接口</td>
+</tr>
+<tr>
+<td>空间配置器</td>
+<td>内存分配与对象构造析构（对使用者多透明）</td>
+</tr>
+</tbody>
+</table>
+<h2>迭代器</h2>
+<p><strong>广义指针</strong>：可解引用、可前进，使算法与容器解耦。</p>
+<p>每个容器定义 <code>iterator</code> / <code>const_iterator</code>，以及 C++11 起的 <code>cbegin()</code> 等。</p>
+<h3>五类迭代器（由弱到强）</h3>
+<table>
+<thead>
+<tr>
+<th>类别</th>
+<th>能力</th>
+<th>典型容器</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>输入 (Input)</td>
+<td>读、单遍</td>
+<td><code>istream_iterator</code></td>
+</tr>
+<tr>
+<td>输出 (Output)</td>
+<td>写、单遍</td>
+<td><code>ostream_iterator</code></td>
+</tr>
+<tr>
+<td>前向 (Forward)</td>
+<td>读/写、多遍</td>
+<td><code>forward_list</code></td>
+</tr>
+<tr>
+<td>双向 (Bidirectional)</td>
+<td>前进 + 后退</td>
+<td><code>list</code>, <code>set</code>, <code>map</code></td>
+</tr>
+<tr>
+<td>随机访问 (Random Access)</td>
+<td><code>+</code> <code>-</code> <code>[]</code>、常数距离</td>
+<td><code>vector</code>, <code>deque</code></td>
+</tr>
+</tbody>
+</table>
+<p>算法对迭代器有<strong>最低要求</strong>（如 <code>sort</code> 需随机访问）。</p>
+<h2>序列式容器</h2>
+<h3><code>vector</code></h3>
+<ul>
+<li>动态数组，<strong>连续</strong>内存。</li>
+<li>典型实现：<code>_start</code>、<code>_finish</code>、<code>_end_of_storage</code> 三指针。</li>
+<li><strong>尾部</strong> <code>push_back</code> 均摊 O(1)；中间插入/删除 O(n)。</li>
+<li><strong>扩容</strong>：新容量常为 1.5 或 2 倍（实现相关）；扩容后<strong>所有</strong>迭代器、指针、引用失效。</li>
+</ul>
+<pre><code>std::vector&lt;int&gt; v = {1, 2, 3};
+v.reserve(100);       // 只扩容量，不改变 size
+v.push_back(4);
+v.shrink_to_fit();    // 请求归还多余容量（非强制）
+</code></pre>
+<h3><code>list</code></h3>
+<ul>
+<li><strong>双向链表</strong>，非连续；任意位置插入/删除 O(1)，<strong>无</strong>随机访问。</li>
+<li>成员：<code>sort()</code>、<code>merge()</code>、<code>unique()</code>、<code>splice()</code>。</li>
+<li>不能用标准 <code>sort</code>（需随机访问迭代器），用 <code>list::sort</code>。</li>
+</ul>
+<h3><code>deque</code></h3>
+<ul>
+<li>分段连续缓冲区 + 中控 map；头尾插入 O(1)，随机访问略慢于 <code>vector</code>。</li>
+<li><strong>无</strong> <code>capacity()</code> / <code>reserve()</code>。</li>
+</ul>
+<h2>关联式容器</h2>
+<p>底层多为<strong>红黑树</strong>（平衡二叉搜索树），有序，查找 O(log n)。</p>
+<table>
+<thead>
+<tr>
+<th>容器</th>
+<th>键</th>
+<th>值</th>
+<th>重复键</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>set</code></td>
+<td>= 值</td>
+<td>—</td>
+<td>否</td>
+</tr>
+<tr>
+<td><code>multiset</code></td>
+<td>= 值</td>
+<td>—</td>
+<td>是</td>
+</tr>
+<tr>
+<td><code>map</code></td>
+<td><code>pair&lt;const K, V&gt;</code></td>
+<td>映射</td>
+<td>否</td>
+</tr>
+<tr>
+<td><code>multimap</code></td>
+<td>同上</td>
+<td>映射</td>
+<td>是</td>
+</tr>
+</tbody>
+</table>
+<pre><code>std::map&lt;std::string, int&gt; scores;
+scores["alice"] = 90;
+
+std::set&lt;int&gt; s = {3, 1, 2};  // 自动排序去重（set 内唯一）
+</code></pre>
+<p>自定义类型作键需提供<strong>严格弱序</strong>比较（或 C++20 透明比较 / 自定义哈希用于 <code>unordered_*</code>）。</p>
+<h2>无序关联容器（补充）</h2>
+<p><code>unordered_map</code> / <code>unordered_set</code>：哈希表，平均 O(1) 查找，无序。</p>
+<h2>容器适配器</h2>
+<table>
+<thead>
+<tr>
+<th>适配器</th>
+<th>默认底层</th>
+<th>特点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>stack</code></td>
+<td><code>deque</code></td>
+<td>栈顶操作，无迭代器</td>
+</tr>
+<tr>
+<td><code>queue</code></td>
+<td><code>deque</code></td>
+<td>队头队尾</td>
+</tr>
+<tr>
+<td><code>priority_queue</code></td>
+<td><code>vector</code> + 堆</td>
+<td>堆顶最值</td>
+</tr>
+</tbody>
+</table>
+<pre><code>std::stack&lt;int&gt; st;
+st.push(1);
+st.top();
+</code></pre>
+<h2>算法</h2>
+<p>通过迭代器区间 <code>[first, last)</code> 操作，与容器分离。</p>
+<ul>
+<li><strong>质变</strong>：修改区间内容 — <code>copy</code>, <code>fill</code>, <code>sort</code>, <code>remove</code>, <code>transform</code> …</li>
+<li><strong>非质变</strong>：只读 — <code>find</code>, <code>count</code>, <code>for_each</code>（若仿函数写元素则例外）</li>
+</ul>
+<pre><code>std::vector&lt;int&gt; v = {3, 1, 4, 1, 5};
+std::sort(v.begin(), v.end());
+auto it = std::find(v.begin(), v.end(), 4);
+</code></pre>
+<h2>仿函数（函数对象）</h2>
+<p>重载 <code>operator()</code> 的类型，可带状态：</p>
+<pre><code>struct Greater {
+    bool operator()(int a, int b) const { return a &gt; b; }
+};
+std::sort(v.begin(), v.end(), Greater{});
+// 或 std::sort(v.begin(), v.end(), std::greater&lt;int&gt;{});
+</code></pre>
+<p><strong>谓词</strong>：返回 <code>bool</code> 的仿函数，如 <code>std::less</code>、<code>std::equal_to</code>。</p>
+<p><strong>内建仿函数</strong>：<code>plus</code>, <code>minus</code>, <code>multiplies</code>, <code>less</code>, <code>logical_and</code> 等。</p>
+<h2>适配器</h2>
+<ul>
+<li><code>stack</code> / <code>queue</code> / <code>priority_queue</code>：容器适配器。</li>
+<li><code>reverse_iterator</code>、<code>insert_iterator</code>：迭代器适配器。</li>
+<li><code>bind1st</code> / <code>bind2nd</code>（C++11 前常用，现多被 lambda 与 <code>std::bind</code> 替代）。</li>
+</ul>
+<h2>容器选择策略</h2>
+<table>
+<thead>
+<tr>
+<th>需求</th>
+<th>推荐</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>随机访问、尾部增删多</td>
+<td><code>vector</code></td>
+</tr>
+<tr>
+<td>中间频繁插入删除、不需随机访问</td>
+<td><code>list</code></td>
+</tr>
+<tr>
+<td>头尾频繁操作</td>
+<td><code>deque</code></td>
+</tr>
+<tr>
+<td>有序、去重、只关心键</td>
+<td><code>set</code></td>
+</tr>
+<tr>
+<td>键值映射</td>
+<td><code>map</code></td>
+</tr>
+<tr>
+<td>只需快速查找、不关心顺序</td>
+<td><code>unordered_map</code> / <code>unordered_set</code></td>
+</tr>
+<tr>
+<td>LIFO / FIFO</td>
+<td><code>stack</code> / <code>queue</code></td>
+</tr>
+</tbody>
+</table>
+<h2>C++11 相关（与 STL 配合）</h2>
+<ul>
+<li><code>auto</code>、<code>nullptr</code>、范围 for：<code>for (auto&amp; x : v)</code></li>
+<li><strong>Lambda</strong>：<code>std::sort(v.begin(), v.end(), [](int a, int b){ return a &gt; b; });</code></li>
+<li>移动语义：<code>push_back(std::move(x))</code> 减少拷贝</li>
+</ul>
+]]></content>
+    <author>
+      <name>Sekiro</name>
+    </author>
+    <category term="StudyNotes"></category>
+  </entry>
+  <entry>
+    <title>【CPP】模板</title>
+    <link href="https://lysj.work/posts/studynotes/cpp/cpp%E6%A8%A1%E6%9D%BF/" rel="alternate" type="text/html"/>
+    <id>https://lysj.work/posts/studynotes/cpp/cpp%E6%A8%A1%E6%9D%BF/</id>
+    <published>2026-03-27T00:00:00.000Z</published>
+    <updated>2026-03-27T00:00:00.000Z</updated>
+    <summary>函数模板与类模板、特化、实例化及与 STL 的关系。</summary>
+    <content type="html"><![CDATA[<h2>泛型编程</h2>
+<ul>
+<li><strong>面向对象</strong>：关注数据与类型的绑定（多态）。</li>
+<li><strong>泛型 / 模板</strong>：关注<strong>算法</strong>与数据结构，将类型参数化，编译期生成具体代码。</li>
+</ul>
+<p>STL 即泛型编程的典型应用。</p>
+<h2>函数模板</h2>
+<pre><code>template&lt;typename T&gt;
+T maximum(T a, T b) {
+    return (a &gt; b) ? a : b;
+}
+
+int m = maximum(3, 5);           // 推导 T = int
+double d = maximum&lt;double&gt;(3.1, 2.2);  // 显式指定
+</code></pre>
+<p><strong>要点</strong>：</p>
+<ul>
+<li>模板<strong>不是</strong>函数，是生成函数的“模具”；每个使用的 <code>(T, 实参类型组合)</code> 会实例化一份函数。</li>
+<li>定义通常在头文件中（或显式实例化在 .cpp），否则链接阶段找不到实例。</li>
+<li>函数模板<strong>一般不支持</strong>与内置类型相同的隐式窄化转换规则（实参类型必须匹配或能推导）。</li>
+</ul>
+<h3>与普通函数共存</h3>
+<pre><code>int add(int a, int b) { return a + b; }
+
+template&lt;typename T&gt;
+T add(T a, T b) { return a + b; }
+
+add(1, 2);              // 优先非模板 add(int,int)
+add&lt;&gt;(1, 2);            // 强制使用模板实例 add&lt;int&gt;
+add&lt;double&gt;(1, 2);      // 显式模板
+</code></pre>
+<h3>重载与特化</h3>
+<ul>
+<li>多个模板或模板与非模板可构成重载集。</li>
+<li><strong>全特化</strong>：针对特定类型单独实现。</li>
+<li><strong>偏特化</strong>：仅类模板支持偏特化，函数模板只有全特化。</li>
+</ul>
+<pre><code>template&lt;&gt;
+const char* maximum&lt;const char*&gt;(const char* a, const char* b) {
+    return strcmp(a, b) &gt; 0 ? a : b;
+}
+</code></pre>
+<h3>局限性处理</h3>
+<p>对模板不适用的类型（如指针比较语义），可：</p>
+<ol>
+<li>重载非模板函数；</li>
+<li>模板特化；</li>
+<li>C++20 <strong>约束</strong>（<code>requires</code> / concepts）限制模板参数。</li>
+</ol>
+<h2>类模板</h2>
+<pre><code>template&lt;typename T&gt;
+class Stack {
+    std::vector&lt;T&gt; data;
+public:
+    void push(const T&amp; v) { data.push_back(v); }
+    void pop() { if (!data.empty()) data.pop_back(); }
+    T&amp; top() { return data.back(); }
+};
+
+Stack&lt;int&gt; s;
+Stack&lt;std::string&gt; ss;
+</code></pre>
+<p><strong>要点</strong>：</p>
+<ul>
+<li><strong>不能</strong>像函数模板那样自动推导类模板参数（C++17 起类模板参数推导 CTAD 有例外，如 <code>pair p(1, 2.0);</code>）。</li>
+<li>成员函数若在类外实现，须带模板声明：</li>
+</ul>
+<pre><code>template&lt;typename T&gt;
+void Stack&lt;T&gt;::push(const T&amp; v) { /* ... */ }
+</code></pre>
+<h3>类模板作函数参数</h3>
+<pre><code>template&lt;typename T&gt;
+void process(Stack&lt;T&gt;&amp; st) { /* ... */ }
+</code></pre>
+<h3>普通类继承类模板实例</h3>
+<pre><code>template&lt;typename T&gt;
+class Vector { /* ... */ };
+
+class MyVec : public Vector&lt;int&gt; {};  // 继承某一实例化
+</code></pre>
+<h3>类模板与友元、静态成员</h3>
+<p>每个 <code>Stack&lt;int&gt;</code>、<code>Stack&lt;double&gt;</code> 是<strong>不同类型</strong>，静态成员、友元各自独立。</p>
+<h2>编译模型（两次编译）</h2>
+<ol>
+<li><strong>模板定义阶段</strong>：检查模板语法。</li>
+<li><strong>实例化阶段</strong>：根据调用生成具体函数/类，再编译。</li>
+</ol>
+<p>因此错误可能在<strong>实例化时</strong>才暴露。</p>
+<h2>与 STL 的关系</h2>
+<p>容器 <code>vector&lt;T&gt;</code>、算法 <code>sort</code>、迭代器均为模板；详见 <a href="./%5BCPP%5DSTL.md">[CPP]STL.md</a>。</p>
+]]></content>
+    <author>
+      <name>Sekiro</name>
+    </author>
+    <category term="StudyNotes"></category>
+  </entry>
+  <entry>
+    <title>【CPP】类型转换与异常</title>
+    <link href="https://lysj.work/posts/studynotes/cpp/cpp%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E4%B8%8E%E5%BC%82%E5%B8%B8/" rel="alternate" type="text/html"/>
+    <id>https://lysj.work/posts/studynotes/cpp/cpp%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E4%B8%8E%E5%BC%82%E5%B8%B8/</id>
+    <published>2026-03-27T00:00:00.000Z</published>
+    <updated>2026-03-27T00:00:00.000Z</updated>
+    <summary>static_cast 等四种 cast、异常处理机制与 RTTI。</summary>
+    <content type="html"><![CDATA[<h2>为什么 C++ 需要新的转换方式</h2>
+<p>C 风格 <code>(Type)expr</code> 与 <code>Type(expr)</code> 可在一次转换中完成多种语义（截断、指针转换、去掉 const 等），<strong>难以在代码中一眼看出意图</strong>，也不易在编译期拦截错误。</p>
+<p>C++ 提供四种<strong>命名</strong>的转换，语义清晰、可检索。</p>
+<h2>四种 cast</h2>
+<table>
+<thead>
+<tr>
+<th>转换</th>
+<th>用途</th>
+<th>安全性</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>static_cast</code></td>
+<td>相关类型之间的编译期转换</td>
+<td>由程序员保证</td>
+</tr>
+<tr>
+<td><code>dynamic_cast</code></td>
+<td>多态类型的运行时下行转换</td>
+<td>有 RTTI 检查</td>
+</tr>
+<tr>
+<td><code>const_cast</code></td>
+<td>增加或去掉 <code>const</code>/<code>volatile</code></td>
+<td>仅改 cv 限定，不改类型布局</td>
+</tr>
+<tr>
+<td><code>reinterpret_cast</code></td>
+<td>比特级重新解释</td>
+<td>危险，极少使用</td>
+</tr>
+</tbody>
+</table>
+<h3><code>static_cast</code></h3>
+<pre><code>double d = 3.14;
+int i = static_cast&lt;int&gt;(d);
+
+Derived* pd = static_cast&lt;Derived*&gt;(pBase);  // 下行：无运行时检查，不安全
+</code></pre>
+<ul>
+<li>数值转换、显式调用单参数构造函数、<strong>无虚函数</strong>时的上行/下行指针转换。</li>
+<li><strong>不能</strong>去掉 <code>const</code>（用 <code>const_cast</code>）。</li>
+</ul>
+<h3><code>dynamic_cast</code></h3>
+<p>要求基类至少有一个 <strong>虚函数</strong>（多态类型）。</p>
+<pre><code>Base* pb = /* 指向 Derived */;
+Derived* pd = dynamic_cast&lt;Derived*&gt;(pb);
+if (pd) { /* 确实是 Derived */ }
+
+try {
+    Derived&amp; dr = dynamic_cast&lt;Derived&amp;&gt;(*pb);
+} catch (const std::bad_cast&amp;) { /* 引用失败抛异常 */ }
+</code></pre>
+<ul>
+<li>指针失败 → <code>nullptr</code>；引用失败 → <code>std::bad_cast</code>。</li>
+<li>有运行时开销（RTTI）。</li>
+</ul>
+<h3><code>const_cast</code></h3>
+<pre><code>const int ci = 10;
+int* p = const_cast&lt;int*&gt;(&amp;ci);
+// *p = 20;  // 若 ci 在只读段，未定义行为
+</code></pre>
+<p>仅用于去掉/添加 const、volatile；<strong>不能</strong>改变除 cv 外的类型。</p>
+<h3><code>reinterpret_cast</code></h3>
+<pre><code>intptr_t addr = reinterpret_cast&lt;intptr_t&gt;(ptr);
+</code></pre>
+<p>用于指针与整数、无关类型指针之间；<strong>可移植性差</strong>，除非底层/互操作必需，否则避免。</p>
+<h2>父类转子类（原笔记要点）</h2>
+<ul>
+<li><strong>上行</strong>（派生 → 基类）：隐式、安全。</li>
+<li><strong>下行</strong>（基类 → 派生）：应用 <code>dynamic_cast</code> 或确保对象真实类型，避免 <code>static_cast</code> 盲目下行。</li>
+</ul>
+<h2>异常 (exception)</h2>
+<p><strong>异常</strong>：程序运行时出现的错误或非预期路径，通过 <code>throw</code> 抛出，沿调用栈展开，由匹配的 <code>catch</code> 处理。</p>
+<pre><code>double divide(double a, double b) {
+    if (b == 0) throw std::invalid_argument("division by zero");
+    return a / b;
+}
+
+try {
+    double r = divide(1, 0);
+} catch (const std::invalid_argument&amp; e) {
+    std::cerr &lt;&lt; e.what() &lt;&lt; '\n';
+} catch (...) {
+    std::cerr &lt;&lt; "unknown error\n";
+}
+</code></pre>
+<p><strong>机制</strong>：</p>
+<ol>
+<li><code>try</code>：可能抛异常的代码。</li>
+<li><code>throw</code>：抛出对象（通常是 <code>std::exception</code> 派生类）。</li>
+<li><code>catch</code>：按类型匹配；派生类 catch 须写在基类之前。</li>
+<li>未捕获异常 → 调用 <code>std::terminate</code>。</li>
+</ol>
+<p><strong>规范</strong>：</p>
+<ul>
+<li>按<strong>const 引用</strong>捕获，避免切片：<code>catch (const std::exception&amp; e)</code>。</li>
+<li>析构函数默认 <code>noexcept</code>；析构中抛异常危险。</li>
+<li>资源管理配合 RAII，异常安全等级（基本/强/不抛）与智能指针、移动语义相关。</li>
+</ul>
+<p><strong>不宜用异常的场景</strong>：极热路径、嵌入式无异常支持的编译选项（<code>-fno-exceptions</code>）。</p>
+<h2>RTTI</h2>
+<p><strong>Runtime Type Identification</strong>：<code>typeid</code>、<code>dynamic_cast</code> 依赖运行时类型信息。可 <code>-fno-rtti</code> 关闭以减小体积（则 <code>dynamic_cast</code> 受限）。</p>
+]]></content>
+    <author>
+      <name>Sekiro</name>
+    </author>
+    <category term="StudyNotes"></category>
+  </entry>
+  <entry>
+    <title>【CPP】继承与多态</title>
+    <link href="https://lysj.work/posts/studynotes/cpp/cpp%E7%BB%A7%E6%89%BF%E4%B8%8E%E5%A4%9A%E6%80%81/" rel="alternate" type="text/html"/>
+    <id>https://lysj.work/posts/studynotes/cpp/cpp%E7%BB%A7%E6%89%BF%E4%B8%8E%E5%A4%9A%E6%80%81/</id>
+    <published>2026-03-26T00:00:00.000Z</published>
+    <updated>2026-03-26T00:00:00.000Z</updated>
+    <summary>继承方式、虚函数、纯虚函数、菱形继承与 dynamic_cast。</summary>
+    <content type="html"><![CDATA[<h2>类之间的关系</h2>
+<table>
+<thead>
+<tr>
+<th>关系</th>
+<th>英文</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>继承</td>
+<td>is-a</td>
+<td>派生类是一种基类</td>
+</tr>
+<tr>
+<td>组合/聚合</td>
+<td>has-a</td>
+<td>整体包含部分</td>
+</tr>
+<tr>
+<td>依赖/关联</td>
+<td>uses-a</td>
+<td>一个类使用另一个类</td>
+</tr>
+<tr>
+<td>实现</td>
+<td>implements</td>
+<td>类实现接口（抽象类/纯虚）</td>
+</tr>
+</tbody>
+</table>
+<p>另有 <strong>instance-of</strong>：对象是类的实例。</p>
+<h2>Liskov 替换原则 (LSP)</h2>
+<blockquote>
+<p>子类型必须能够替换其基类型，且程序行为不变。</p>
+</blockquote>
+<p>经典反例：从 <code>Rectangle</code> 派生 <code>Square</code>，若基类允许独立修改宽和高，正方形约束被破坏，<strong>行为上</strong>不能替换矩形。</p>
+<p><strong>实践</strong>：</p>
+<ul>
+<li>继承应基于<strong>可替换的行为</strong>，不仅是分类直觉。</li>
+<li>子类<strong>扩展</strong>基类，不要破坏基类契约。</li>
+</ul>
+<h2>继承方式与访问</h2>
+<pre><code>class Base {
+public:
+    int pub;
+protected:
+    int prot;
+private:
+    int priv;
+};
+
+class D_pub  : public    Base {};  // is-a，最常用
+class D_prot : protected Base {};
+class D_priv : private   Base {};
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>继承方式</th>
+<th>基类 public</th>
+<th>基类 protected</th>
+<th>基类 private</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>public</td>
+<td>public</td>
+<td>protected</td>
+<td>不可访问</td>
+</tr>
+<tr>
+<td>protected</td>
+<td>protected</td>
+<td>protected</td>
+<td>不可访问</td>
+</tr>
+<tr>
+<td>private</td>
+<td>private</td>
+<td>private</td>
+<td>不可访问</td>
+</tr>
+</tbody>
+</table>
+<p><strong>只有 public 继承</strong>才保持典型的 <strong>is-a</strong> 语义，适合多态。</p>
+<h2>成员继承与构造/析构</h2>
+<table>
+<thead>
+<tr>
+<th>成员/函数</th>
+<th>是否继承</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>普通成员函数</td>
+<td>✓</td>
+<td>子类同名函数<strong>隐藏</strong>基类所有重载（可用 <code>using Base::f</code> 引入）</td>
+</tr>
+<tr>
+<td>虚函数</td>
+<td>✓</td>
+<td>可 <strong>override</strong>（C++11 建议显式写 <code>override</code>）</td>
+</tr>
+<tr>
+<td>静态成员函数</td>
+<td>✓</td>
+<td>子类同名同样隐藏基类同名</td>
+</tr>
+<tr>
+<td>构造函数</td>
+<td>✗</td>
+<td>子类须在初始化列表调用基类构造</td>
+</tr>
+<tr>
+<td>析构函数</td>
+<td>部分</td>
+<td>子类析构自动调用基类析构</td>
+</tr>
+<tr>
+<td>友元</td>
+<td>✗</td>
+<td>友元不传递</td>
+</tr>
+</tbody>
+</table>
+<p><strong>注意</strong>：若基类<strong>没有默认构造</strong>且子类未在初始化列表中调用基类合适构造，子类的默认构造会被 <strong><code>= delete</code></strong>。</p>
+<pre><code>class Base { public: Base(int) {} };
+class Derived : public Base {
+public:
+    Derived() : Base(0) {}  // 必须显式调用
+};
+</code></pre>
+<p>C++11：<code>using Base::Base;</code> 可继承构造函数。</p>
+<h2>多态与虚函数</h2>
+<p><strong>编译期多态</strong>：函数重载、模板。<br />
+<strong>运行期多态</strong>：通过基类指针/引用调用 <strong>virtual</strong> 函数，根据<strong>对象实际类型</strong>分派。</p>
+<pre><code>struct Animal {
+    virtual void speak() const { std::cout &lt;&lt; "?\n"; }
+    virtual ~Animal() = default;  // 多态基类必备
+};
+struct Dog : Animal {
+    void speak() const override { std::cout &lt;&lt; "woof\n"; }
+};
+
+void call(const Animal&amp; a) { a.speak(); }  // 运行时决定
+</code></pre>
+<p>实现上，含虚函数的类常有 <strong>虚表指针 (vptr)</strong> 指向虚函数表；因此对象大小可能多一个指针。</p>
+<h3>纯虚函数与抽象类</h3>
+<pre><code>class Shape {
+public:
+    virtual double area() const = 0;  // 纯虚
+    virtual ~Shape() = default;
+};
+// Shape s;           // 错误：不能实例化抽象类
+class Circle : public Shape {
+public:
+    double area() const override { return 3.14 * r * r; }
+private:
+    double r;
+};
+</code></pre>
+<ul>
+<li>含<strong>至少一个</strong>纯虚函数的类为<strong>抽象类</strong>。</li>
+<li>派生类<strong>必须实现</strong>所有纯虚函数才能实例化（除非自己也成为抽象类）。</li>
+<li>接口类：抽象类中<strong>全部为</strong>纯虚函数。</li>
+</ul>
+<h3><code>override</code> 与 <code>final</code></h3>
+<pre><code>void f() override;   // 编译期检查是否真的覆盖
+void g() final;      // 禁止进一步 override
+</code></pre>
+<h2>多继承与菱形继承</h2>
+<pre><code>class A { public: int x; };
+class B : public A {};
+class C : public A {};
+class D : public B, public C {};  // D 中有两份 A::x
+</code></pre>
+<p><strong>问题</strong>：<code>D</code> 对象含<strong>两份</strong> <code>A</code> 子对象 → 二义性、浪费。</p>
+<p><strong>解决：虚继承</strong></p>
+<pre><code>class B : virtual public A {};
+class C : virtual public A {};
+class D : public B, public C {};  // 仅一份 A
+</code></pre>
+<p>虚继承增加实现复杂度，应谨慎使用；优先组合往往更清晰。</p>
+<h2>指针/引用的转换</h2>
+<table>
+<thead>
+<tr>
+<th>转换</th>
+<th>方向</th>
+<th>安全性</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>上行</td>
+<td>派生 → 基类</td>
+<td>安全（隐式）</td>
+</tr>
+<tr>
+<td>下行</td>
+<td>基类 → 派生</td>
+<td>不安全，需 <code>dynamic_cast</code> 等</td>
+</tr>
+</tbody>
+</table>
+<pre><code>Dog d;
+Animal* pa = &amp;d;           // OK
+
+Animal* pa = /* ... */;
+Dog* pd = dynamic_cast&lt;Dog*&gt;(pa);  // 失败返回 nullptr（指针形式）
+</code></pre>
+<h2>重写 vs 重载（原笔记疑问）</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>重载 (overload)</th>
+<th>重写/覆盖 (override)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>作用域</td>
+<td>同一作用域</td>
+<td>基类与派生类</td>
+</tr>
+<tr>
+<td>函数签名</td>
+<td>参数不同</td>
+<td>参数相同（协变返回类型例外）</td>
+</tr>
+<tr>
+<td>绑定</td>
+<td>编译期</td>
+<td>运行期（虚函数）</td>
+</tr>
+<tr>
+<td>关键字</td>
+<td>无</td>
+<td><code>virtual</code> / <code>override</code></td>
+</tr>
+</tbody>
+</table>
+]]></content>
+    <author>
+      <name>Sekiro</name>
+    </author>
+    <category term="StudyNotes"></category>
+  </entry>
+  <entry>
+    <title>【CPP】类</title>
+    <link href="https://lysj.work/posts/studynotes/cpp/cpp%E7%B1%BB/" rel="alternate" type="text/html"/>
+    <id>https://lysj.work/posts/studynotes/cpp/cpp%E7%B1%BB/</id>
+    <published>2026-03-24T00:00:00.000Z</published>
+    <updated>2026-03-24T00:00:00.000Z</updated>
+    <summary>封装、构造与析构、拷贝、静态成员、友元及 const 成员函数。</summary>
+    <content type="html"><![CDATA[<blockquote>
+<p>整理自 0319、0320、0323、0324 相关章节，已校对并补充。</p>
+</blockquote>
+<h2>类与对象</h2>
+<ul>
+<li><strong>类</strong>：类型的蓝图，描述属性（成员变量）与行为（成员函数）。</li>
+<li><strong>对象</strong>：类的实例。</li>
+</ul>
+<h3>访问控制</h3>
+<table>
+<thead>
+<tr>
+<th>关键字</th>
+<th>类内</th>
+<th>派生类</th>
+<th>类外</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>public</code></td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td><code>protected</code></td>
+<td>✓</td>
+<td>✓</td>
+<td>✗</td>
+</tr>
+<tr>
+<td><code>private</code></td>
+<td>✓</td>
+<td>✗</td>
+<td>✗</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>默认成员访问权限为 <strong><code>private</code></strong>（<code>struct</code> 默认为 <code>public</code>）。</li>
+<li>访问说明符作用到<strong>下一个说明符或类结束</strong>。</li>
+</ul>
+<pre><code>class Demo {
+    int num;           // private
+public:
+    void setNum(int v);
+};
+
+void Demo::setNum(int v) {
+    this-&gt;num = v;     // 成员函数内可用 this
+}
+</code></pre>
+<h3>类外定义成员函数</h3>
+<pre><code>class Stock {
+public:
+    void set_tot();
+};
+
+// 类内声明、类外定义；若在类外定义且希望内联，可加 inline
+inline void Stock::set_tot() { /* ... */ }
+</code></pre>
+<p>在类内定义的函数<strong>隐式为 inline</strong>（是否真内联由编译器决定）。</p>
+<h2>构造函数</h2>
+<ul>
+<li>与类名相同，<strong>无返回值</strong>（不写 <code>void</code>）。</li>
+<li>创建对象时<strong>自动</strong>调用，可重载。</li>
+<li>未自定义任何构造函数时，编译器生成<strong>默认构造函数</strong>（无参或带默认参数）。</li>
+<li><strong>自定义了任意构造函数后，编译器不再自动生成默认构造函数</strong>；需要时应显式写 <code>= default</code> 或自己写无参构造。</li>
+</ul>
+<pre><code>class Foo {
+public:
+    Foo() = default;
+    Foo(int x) : x_(x) {}
+private:
+    int x_;
+};
+</code></pre>
+<h3>初始化列表</h3>
+<p>构造函数后加 <code>: 成员(初值), ...</code>，按<strong>成员在类中声明顺序</strong>初始化（与列表书写顺序无关）。</p>
+<p><strong>必须使用初始化列表的情况</strong>：</p>
+<ul>
+<li><code>const</code> 成员</li>
+<li>引用成员</li>
+<li>没有默认构造函数的子对象成员</li>
+<li>基类需特定参数时（在派生类构造中）</li>
+</ul>
+<pre><code>class Member {
+public:
+    explicit Member(int) {}  // 无默认构造
+};
+
+class MyClass {
+    Member m;
+    const int id;
+public:
+    MyClass(int val, int id) : m(val), id(id) {}  // 正确
+    // MyClass(int val, int id) { m = Member(val); }  // 错误：无法先默认构造 m
+};
+</code></pre>
+<h3>拷贝构造函数</h3>
+<p><strong>触发</strong>：用同类对象初始化新对象（值传递、按值返回、显式拷贝构造等）。</p>
+<pre><code>class Widget {
+public:
+    Widget(const Widget&amp; other);  // 形参必须是引用，否则无限递归
+};
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>拷贝方式</th>
+<th>行为</th>
+<th>风险</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>浅拷贝</strong></td>
+<td>复制指针值，共享堆内存</td>
+<td>双重释放、悬垂</td>
+</tr>
+<tr>
+<td><strong>深拷贝</strong></td>
+<td>复制指针指向的内容</td>
+<td>安全但可能昂贵</td>
+</tr>
+</tbody>
+</table>
+<p>含动态资源的类应实现<strong>深拷贝</strong>，或禁用拷贝（<code>delete</code>）、改用移动语义。</p>
+<p><strong>Rule of Three / Five</strong>：若自定义析构、拷贝构造、拷贝赋值之一，通常需考虑三者（C++11 起再加移动构造、移动赋值）。</p>
+<h3><code>explicit</code>（原笔记空缺，已补充）</h3>
+<p>阻止<strong>隐式</strong>单参数转换：</p>
+<pre><code>class String {
+public:
+    explicit String(int size) { /* 分配 size */ }
+};
+
+// String s = 100;   // 错误
+String s(100);       // OK
+String s{100};       // OK
+</code></pre>
+<h2>析构函数</h2>
+<ul>
+<li>函数名 <code>~类名()</code>，无参、无返回值、<strong>不可重载</strong>。</li>
+<li>对象生命周期结束时自动调用（离开作用域、<code>delete</code>、临时对象结束等）。</li>
+<li>未自定义时编译器生成<strong>默认析构</strong>；对含指针成员仅“浅释放”的类，默认析构<strong>不会</strong> <code>delete</code> 指针指向的堆内存。</li>
+</ul>
+<p><strong>应自定义析构的情况</strong>：</p>
+<ul>
+<li><code>new</code> 分配的内存</li>
+<li>文件句柄、套接字、锁等需显式释放的资源</li>
+</ul>
+<p><strong>多态基类</strong>：基类析构函数应声明为 <strong><code>virtual</code></strong>，否则通过基类指针 <code>delete</code> 派生对象时可能只调用基类析构，造成资源泄漏。</p>
+<pre><code>struct Base {
+    virtual ~Base() = default;
+};
+</code></pre>
+<h2>静态成员</h2>
+<p>属于<strong>类</strong>而非某个对象；所有对象共享一份。</p>
+<pre><code>class Counter {
+public:
+    static int count;
+    static void inc() { ++count; }
+};
+int Counter::count = 0;  // 类外定义（C++17 起 inline 静态成员可在类内初始化）
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>类内</th>
+<th>类外</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>静态数据成员</td>
+<td>声明</td>
+<td>定义（除非 <code>inline</code>）</td>
+</tr>
+<tr>
+<td>静态成员函数</td>
+<td>声明/定义</td>
+<td>无 <code>this</code>，只能直接访问静态成员</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>静态成员函数<strong>不能</strong>访问非静态成员（无 <code>this</code>）。</li>
+<li><code>const</code> 整型静态成员可在类内初始化；字符串等非字面量类型等规则见标准（C++17 <code>inline</code> 变量简化很多场景）。</li>
+</ul>
+<h2>对象模型与 <code>this</code></h2>
+<ul>
+<li><strong>类本身</strong>不占运行时内存；<strong>对象</strong>大小由非静态数据成员、对齐、虚表指针等决定。</li>
+<li><strong>不影响对象大小</strong>：静态成员、成员函数（在代码段）。</li>
+<li><strong><code>this</code></strong>：非静态成员函数隐式传入的指针，指向当前对象；类型为 <code>T* const</code>（不能改指向别的对象）。</li>
+<li><strong>链式调用</strong>：成员函数返回 <code>*this</code> 的引用。</li>
+</ul>
+<pre><code>class Builder {
+public:
+    Builder&amp; step1() { /* ... */ return *this; }
+    Builder&amp; step2() { /* ... */ return *this; }
+};
+</code></pre>
+<p>静态成员函数<strong>没有</strong> <code>this</code>。</p>
+<h2><code>const</code> 与 <code>mutable</code></h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th><code>const</code> 对象</th>
+<th><code>const</code> 成员函数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>修改数据成员</td>
+<td>一般禁止</td>
+<td>一般禁止</td>
+</tr>
+<tr>
+<td>调用非 const 成员函数</td>
+<td>禁止</td>
+<td>—</td>
+</tr>
+<tr>
+<td>调用 const 成员函数</td>
+<td>允许</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<pre><code>class Cache {
+    mutable int hits = 0;  // 即使在 const 成员函数中也可修改
+public:
+    int get() const { ++hits; return 42; }
+};
+</code></pre>
+<h2>友元</h2>
+<p>允许指定函数或类访问 <strong>private / protected</strong> 成员。友元<strong>不</strong>是成员，<strong>不</strong>传递、<strong>不</strong>继承。</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>友元函数</td>
+<td>普通函数或另一类的成员函数</td>
+</tr>
+<tr>
+<td>友元类</td>
+<td>整个类的所有成员函数</td>
+</tr>
+<tr>
+<td>友元成员函数</td>
+<td>只授权另一个类的某个成员函数</td>
+</tr>
+</tbody>
+</table>
+<pre><code>class B;  // 前向声明
+
+class A {
+    friend void show(const A&amp;);
+    friend class B;
+    int secret = 0;
+};
+</code></pre>
+<p>友元关系需在类定义内<strong>显式声明</strong>；友元类若定义在后，需前向声明。</p>
+]]></content>
+    <author>
+      <name>Sekiro</name>
+    </author>
+    <category term="StudyNotes"></category>
+  </entry>
+  <entry>
+    <title>【CPP】运算符重载</title>
+    <link href="https://lysj.work/posts/studynotes/cpp/cpp%E8%BF%90%E7%AE%97%E7%AC%A6%E9%87%8D%E8%BD%BD/" rel="alternate" type="text/html"/>
+    <id>https://lysj.work/posts/studynotes/cpp/cpp%E8%BF%90%E7%AE%97%E7%AC%A6%E9%87%8D%E8%BD%BD/</id>
+    <published>2026-03-24T00:00:00.000Z</published>
+    <updated>2026-03-24T00:00:00.000Z</updated>
+    <summary>运算符重载规则、成员与非成员选择及常见重载示例。</summary>
+    <content type="html"><![CDATA[<blockquote>
+<p>整理自 0324.md，已校对并补充示例与选择建议。</p>
+</blockquote>
+<h2>目的</h2>
+<p>让自定义类型能像内置类型一样使用 <code>+</code>、<code>-</code>、<code>&lt;&lt;</code> 等运算符，提高可读性并封装逻辑。</p>
+<h2>基本规则</h2>
+<ol>
+<li>至少有一个操作数是<strong>用户定义类型</strong>（类、枚举、模板实例等）。</li>
+<li><strong>不能</strong>创造新运算符，只能重载已有运算符。</li>
+<li><strong>不能</strong>改变优先级与结合性。</li>
+<li><strong>不能</strong>改变操作数个数（元数）。</li>
+<li><strong>不能</strong>重载的运算符：
+<ul>
+<li><code>::</code>、<code>.</code>、<code>.*</code></li>
+<li><code>?:</code></li>
+<li><code>sizeof</code>、<code>typeid</code>、<code>alignof</code>（C++11 起）</li>
+<li><code>.*</code> 等成员访问相关</li>
+</ul>
+</li>
+</ol>
+<h2>成员函数 vs 非成员函数</h2>
+<table>
+<thead>
+<tr>
+<th>形式</th>
+<th>一元运算符</th>
+<th>二元运算符</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>成员函数</strong></td>
+<td>无显式参数（<code>this</code> 为操作数）</td>
+<td>一个显式参数（<code>this</code> 为左操作数）</td>
+</tr>
+<tr>
+<td><strong>非成员函数</strong></td>
+<td>一个参数</td>
+<td>两个参数</td>
+</tr>
+</tbody>
+</table>
+<p><strong>“元”</strong>：操作数的个数。一元一个，二元两个。</p>
+<h3>必须以成员函数重载</h3>
+<ul>
+<li><code>=</code> 赋值</li>
+<li><code>()</code> 函数调用</li>
+<li><code>[]</code> 下标</li>
+<li><code>-&gt;</code> 成员访问（箭头）</li>
+</ul>
+<h3>建议用非成员 <code>friend</code> 或自由函数重载</h3>
+<ul>
+<li>二元运算符且需要<strong>左操作数不是本类</strong>（如 <code>cout &lt;&lt; obj</code>）：</li>
+</ul>
+<pre><code>class Point {
+    int x, y;
+    friend std::ostream&amp; operator&lt;&lt;(std::ostream&amp; os, const Point&amp; p);
+public:
+    Point(int x, int y) : x(x), y(y) {}
+};
+
+std::ostream&amp; operator&lt;&lt;(std::ostream&amp; os, const Point&amp; p) {
+    return os &lt;&lt; '(' &lt;&lt; p.x &lt;&lt; ',' &lt;&lt; p.y &lt;&lt; ')';
+}
+</code></pre>
+<h3>选择建议（原笔记“什么情况用哪种”）</h3>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>推荐</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>修改左操作数且左操作数是本类</td>
+<td>成员（如 <code>+=</code>）</td>
+</tr>
+<tr>
+<td>对称二元运算（<code>a + b</code> 与 <code>b + a</code>）</td>
+<td>非成员，常配合 <code>friend</code></td>
+</tr>
+<tr>
+<td>需要支持隐式转换的一侧在左</td>
+<td>非成员</td>
+</tr>
+<tr>
+<td><code>=</code>、<code>[]</code>、<code>()</code>、<code>-&gt;</code></td>
+<td>成员</td>
+</tr>
+</tbody>
+</table>
+<h2>常见示例</h2>
+<h3>一元 <code>++</code></h3>
+<pre><code>class Counter {
+    int n = 0;
+public:
+    Counter&amp; operator++() { ++n; return *this; }       // 前置
+    Counter operator++(int) { Counter tmp = *this; ++n; return tmp; }  // 后置
+};
+</code></pre>
+<h3>二元 <code>+</code></h3>
+<pre><code>class Vec2 {
+public:
+    double x, y;
+    Vec2 operator+(const Vec2&amp; rhs) const {
+        return {x + rhs.x, y + rhs.y};
+    }
+};
+</code></pre>
+<h3>赋值 <code>=</code></h3>
+<p>编译器生成的拷贝/移动赋值在多数情况下够用；涉及资源管理时需自定义，并注意<strong>自赋值</strong>与<strong>拷贝交换惯用法</strong>。</p>
+<pre><code>Widget&amp; operator=(const Widget&amp; rhs) {
+    if (this == &amp;rhs) return *this;
+    // 释放旧资源，深拷贝 rhs
+    return *this;
+}
+</code></pre>
+<h2>注意</h2>
+<ul>
+<li>重载不改变内置类型运算：<code>int + int</code> 仍按内置规则。</li>
+<li>不要为炫技重载 <code>&amp;&amp;</code>、<code>||</code>（会失去短路求值）。</li>
+<li>与 <code>explicit</code> 类似，谨慎重载可隐式转换的运算符。</li>
+</ul>
+]]></content>
+    <author>
+      <name>Sekiro</name>
+    </author>
+    <category term="StudyNotes"></category>
+  </entry>
+  <entry>
+    <title>【CPP】设计模式</title>
+    <link href="https://lysj.work/posts/studynotes/cpp/cpp%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="alternate" type="text/html"/>
+    <id>https://lysj.work/posts/studynotes/cpp/cpp%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/</id>
+    <published>2026-03-23T00:00:00.000Z</published>
+    <updated>2026-03-23T00:00:00.000Z</updated>
+    <summary>单例模式原理、Meyers 单例与饿汉懒汉实现对比。</summary>
+    <content type="html"><![CDATA[<h2>设计模式简述</h2>
+<p>针对 recurring 问题的可复用<strong>面向对象</strong>方案，通常包含：模式名、问题、解决方案、效果。</p>
+<h2>单例 (Singleton)</h2>
+<p><strong>意图</strong>：保证一个类在程序生命周期内<strong>只有一个实例</strong>，并提供全局访问点。</p>
+<h3>现代推荐：Meyers 单例（局部静态）</h3>
+<pre><code>class Singleton {
+public:
+    static Singleton&amp; getInstance() {
+        static Singleton instance;  // C++11 起：初始化线程安全
+        return instance;
+    }
+
+    Singleton(const Singleton&amp;) = delete;
+    Singleton&amp; operator=(const Singleton&amp;) = delete;
+
+    void doSomething() const;
+
+private:
+    Singleton() = default;
+    ~Singleton() = default;
+};
+</code></pre>
+<p><strong>优点</strong>：</p>
+<ul>
+<li>懒加载（首次调用时构造）。</li>
+<li>自动析构（程序结束时按静态对象销毁顺序）。</li>
+<li>无需手动 <code>delete</code>。</li>
+<li>C++11 保证局部静态初始化<strong>线程安全</strong>。</li>
+</ul>
+<p><strong>原笔记勘误</strong>：懒汉式 <code>new</code> 单例若从不 <code>delete</code>，会<strong>泄漏</strong>；Meyers 单例无此问题。</p>
+<h3>饿汉式（静态成员对象）</h3>
+<pre><code>class SingletonEager {
+public:
+    static SingletonEager&amp; getInstance() { return instance; }
+    SingletonEager(const SingletonEager&amp;) = delete;
+    SingletonEager&amp; operator=(const SingletonEager&amp;) = delete;
+private:
+    SingletonEager() = default;
+    static SingletonEager instance;
+};
+SingletonEager SingletonEager::instance;  // 程序启动时构造（main 前或静态初始化阶段）
+</code></pre>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>饿汉</th>
+<th>Meyers 懒汉</th>
+<th>指针懒汉 + 双重检查</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>初始化时机</td>
+<td>静态存储期开始</td>
+<td>首次 <code>getInstance</code></td>
+<td>首次 <code>getInstance</code></td>
+</tr>
+<tr>
+<td>线程安全</td>
+<td>静态初始化保证</td>
+<td>C++11 局部静态保证</td>
+<td>需 <code>mutex</code> + DCL</td>
+</tr>
+<tr>
+<td>内存</td>
+<td>自动释放</td>
+<td>自动释放</td>
+<td>常泄漏 unless 注册 <code>atexit</code></td>
+</tr>
+<tr>
+<td>析构顺序</td>
+<td>与其他静态对象顺序有关</td>
+<td>同左</td>
+<td>可控制性差</td>
+</tr>
+</tbody>
+</table>
+<h3>懒汉式（指针，仅作了解）</h3>
+<pre><code>class SingletonLazy {
+public:
+    static SingletonLazy* getInstance() {
+        if (!instance) {
+            instance = new SingletonLazy();
+        }
+        return instance;
+    }
+    // delete 拷贝...
+private:
+    static SingletonLazy* instance;
+};
+</code></pre>
+<p>多线程下上述代码<strong>不安全</strong>，需双重检查锁定（DCLP）；且 <code>new</code> 分配的内存在进程结束前通常<strong>不会</strong>释放。C++11 后应优先 <strong>Meyers</strong> 或：</p>
+<pre><code>static std::unique_ptr&lt;Singleton&gt; instance;
+// 在 getInstance 内用 std::call_once + make_unique
+</code></pre>
+<h3>设计要点</h3>
+<ol>
+<li>构造函数、拷贝构造、赋值<strong>私有化或 delete</strong>。</li>
+<li>提供 <code>getInstance()</code> 等静态访问接口。</li>
+<li>多线程环境避免手写 DCLP，用 Meyers 或 <code>std::call_once</code>。</li>
+<li>单例<strong>不是</strong>银弹：隐藏依赖、难测试，过度使用等同全局变量；优先考虑依赖注入。</li>
+</ol>
+<h3>单例 vs 全局变量</h3>
+<p>单例可延迟初始化、可禁止拷贝、可封装行为；但本质仍是<strong>全局状态</strong>，应克制使用。</p>
+]]></content>
+    <author>
+      <name>Sekiro</name>
+    </author>
+    <category term="StudyNotes"></category>
+  </entry>
+  <entry>
+    <title>【CPP】内存与指针</title>
+    <link href="https://lysj.work/posts/studynotes/cpp/cpp%E5%86%85%E5%AD%98%E4%B8%8E%E6%8C%87%E9%92%88/" rel="alternate" type="text/html"/>
+    <id>https://lysj.work/posts/studynotes/cpp/cpp%E5%86%85%E5%AD%98%E4%B8%8E%E6%8C%87%E9%92%88/</id>
+    <published>2026-03-19T00:00:00.000Z</published>
+    <updated>2026-03-19T00:00:00.000Z</updated>
+    <summary>进程地址空间、new/delete、malloc/free 及智能指针 RAII 要点。</summary>
+    <content type="html"><![CDATA[<h2>进程地址空间（典型模型）</h2>
+<pre><code>高地址 +------------------+
+      |  命令行参数/环境   |
+      +------------------+
+      |       栈 ↓        |  局部变量、函数调用帧
+      |       ...         |
+      |       堆 ↑        |  动态分配（new/malloc）
+      +------------------+
+      |  BSS（未初始化静态）|
+      +------------------+
+      |  数据段 .data     |  已初始化全局/静态
+      +------------------+
+      |  代码段 .text     |
+低地址 +------------------+
+</code></pre>
+<p><strong>说明</strong>：具体布局因 OS/ABI 略有差异；<strong>栈向低地址增长、堆向高地址增长</strong>是常见教学模型。</p>
+<table>
+<thead>
+<tr>
+<th>分配方式</th>
+<th>时机</th>
+<th>存储区域</th>
+<th>释放</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>静态/栈</td>
+<td>编译期或进入作用域</td>
+<td>栈 / 静态区</td>
+<td>自动</td>
+</tr>
+<tr>
+<td>动态</td>
+<td>运行时 <code>new</code>/<code>malloc</code></td>
+<td>堆</td>
+<td>手动 <code>delete</code>/<code>free</code> 或智能指针</td>
+</tr>
+</tbody>
+</table>
+<pre><code>int arr[10];           // 栈上，大小须编译期常量
+int* heap = new int[10];
+delete[] heap;
+</code></pre>
+<h2>C 风格：<code>malloc</code> / <code>free</code></h2>
+<pre><code>void* malloc(size_t size);
+void* calloc(size_t nmemb, size_t size);  /* 分配并置零 */
+void* realloc(void* ptr, size_t size);
+void free(void* ptr);
+</code></pre>
+<ul>
+<li>返回 <code>void*</code>，在 C++ 中应转为具体类型指针。</li>
+<li><strong>不会</strong>调用构造函数；<strong>不会</strong>自动类型安全。</li>
+<li>与 <code>new</code>/<code>delete</code> <strong>不要混用</strong>同一块内存。</li>
+</ul>
+<h2>C++ 风格：<code>new</code> / <code>delete</code></h2>
+<pre><code>int* p = new int(10);
+delete p;
+
+int* arr = new int[10]{1,2,3};
+delete[] arr;
+</code></pre>
+<p><strong>规则</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>规则</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>new</code> 配 <code>delete</code></td>
+<td>单对象</td>
+</tr>
+<tr>
+<td><code>new[]</code> 配 <code>delete[]</code></td>
+<td>数组</td>
+</tr>
+<tr>
+<td>勿重复 <code>delete</code></td>
+<td>未定义行为</td>
+</tr>
+<tr>
+<td>勿 <code>delete</code> 非 <code>new</code> 分配的内存</td>
+<td>未定义行为</td>
+</tr>
+<tr>
+<td>对空指针 <code>delete</code></td>
+<td>安全，无操作</td>
+</tr>
+</tbody>
+</table>
+<p><strong>与 malloc 区别</strong>：<code>new</code> 分配后会调用构造函数，<code>delete</code> 前会调用析构函数。</p>
+<h2>指针基础（补充）</h2>
+<pre><code>int x = 10;
+int* p = &amp;x;      // p 存 x 的地址
+*p = 20;          // 解引用修改 x
+int* q = nullptr; // C++11 推荐 nullptr，而非 NULL
+</code></pre>
+<ul>
+<li><strong>野指针</strong>：未初始化或已释放仍使用。</li>
+<li><strong>悬垂指针</strong>：指向已销毁对象（局部变量地址、已 <code>delete</code> 的内存）。</li>
+<li><strong>内存泄漏</strong>：<code>new</code> 后未 <code>delete</code>，且无智能指针管理。</li>
+</ul>
+<h2>智能指针（RAII）</h2>
+<p>用类对象<strong>自动</strong>管理堆内存，析构时释放。</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>所有权</th>
+<th>典型场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>std::unique_ptr&lt;T&gt;</code></td>
+<td>独占</td>
+<td>默认首选，不可拷贝，可移动</td>
+</tr>
+<tr>
+<td><code>std::shared_ptr&lt;T&gt;</code></td>
+<td>共享引用计数</td>
+<td>多处共享同一资源</td>
+</tr>
+<tr>
+<td><code>std::weak_ptr&lt;T&gt;</code></td>
+<td>不增加计数，观察 <code>shared_ptr</code></td>
+<td>打破循环引用</td>
+</tr>
+</tbody>
+</table>
+<pre><code>auto p = std::make_unique&lt;int&gt;(100);   // 推荐，异常安全
+auto sp = std::make_shared&lt;std::string&gt;("hi");
+
+// 不要 delete unique_ptr.get() 返回的裸指针后再让智能指针析构
+</code></pre>
+<p><strong>原则</strong>：现代 C++ 中，裸 <code>new</code>/<code>delete</code> 应出现在<strong>资源管理类的实现内部</strong>，业务代码优先智能指针。</p>
+<h2>原笔记相关勘误</h2>
+<ol>
+<li>“动态指的时程序运行时” → 应为<strong>动态指的是</strong>程序运行时分配。</li>
+<li>C 中 <code>const</code> “存在符号表、改地址仍从符号表读” —— 属于<strong>编译器实现细节</strong>，标准只保证 <code>const</code> 语义；以标准与可移植行为为准。</li>
+<li>C++ “不支持 VLA”正确；<code>vector</code> 等容器用于运行期决定长度。</li>
+</ol>
+]]></content>
+    <author>
+      <name>Sekiro</name>
+    </author>
+    <category term="StudyNotes"></category>
+  </entry>
+  <entry>
+    <title>【CPP】基础与命名空间</title>
+    <link href="https://lysj.work/posts/studynotes/cpp/cpp%E5%9F%BA%E7%A1%80%E4%B8%8E%E5%91%BD%E5%90%8D%E7%A9%BA%E9%97%B4/" rel="alternate" type="text/html"/>
+    <id>https://lysj.work/posts/studynotes/cpp/cpp%E5%9F%BA%E7%A1%80%E4%B8%8E%E5%91%BD%E5%90%8D%E7%A9%BA%E9%97%B4/</id>
+    <published>2026-03-18T00:00:00.000Z</published>
+    <updated>2026-03-18T00:00:00.000Z</updated>
+    <summary>C/C++ 差异、命名空间、函数重载及面向对象三大特征速查。</summary>
+    <content type="html"><![CDATA[<h2>C++ 与 C 的关系</h2>
+<ul>
+<li>C++ 在 C 基础上增加<strong>面向对象</strong>与<strong>泛型编程</strong>（模板、STL），<strong>不是</strong>完全独立的语言。</li>
+<li>多数 C 代码可被 C++ 编译器编译，但反过来不成立。</li>
+<li>面向过程：以函数/步骤为中心，数据与操作分离。</li>
+<li>面向对象：以对象为中心，数据（属性）与操作（方法）封装在类中。</li>
+</ul>
+<h2>C 与 C++ 主要差异（速查）</h2>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>C</th>
+<th>C++</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>重复声明</td>
+<td>允许</td>
+<td>同一作用域内不允许</td>
+</tr>
+<tr>
+<td>函数返回值省略</td>
+<td>旧式 C 可省略（不推荐）</td>
+<td>不能省略</td>
+</tr>
+<tr>
+<td>空参数列表 <code>f()</code></td>
+<td>表示参数未指定（旧语义）</td>
+<td>表示<strong>无参数</strong></td>
+</tr>
+<tr>
+<td>类型转换</td>
+<td>较宽松</td>
+<td>更严格，多用显式转换</td>
+</tr>
+<tr>
+<td>引用</td>
+<td>无</td>
+<td>有</td>
+</tr>
+<tr>
+<td><code>bool</code></td>
+<td>C99 起有</td>
+<td>内置</td>
+</tr>
+<tr>
+<td>结构体标签</td>
+<td>定义变量常需 <code>struct</code> 前缀</td>
+<td>标签名即类型名，可含成员函数</td>
+</tr>
+<tr>
+<td>变长数组 VLA</td>
+<td>C99 支持</td>
+<td><strong>不支持</strong>，数组长度须为编译期常量</td>
+</tr>
+<tr>
+<td><code>const</code></td>
+<td>可通过指针间接修改（视实现）</td>
+<td>语义更强；真正的常量语义</td>
+</tr>
+</tbody>
+</table>
+<h3><code>#define</code> 与 <code>const</code> 定义常量</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th><code>#define</code></th>
+<th><code>const</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>类型</td>
+<td>无类型（预处理替换）</td>
+<td>有类型，受类型检查</td>
+</tr>
+<tr>
+<td>作用域</td>
+<td>不受命名空间约束</td>
+<td>受命名空间与作用域约束</td>
+</tr>
+<tr>
+<td>调试</td>
+<td>符号表中难追踪</td>
+<td>可调试</td>
+</tr>
+</tbody>
+</table>
+<h2>命名空间</h2>
+<p><strong>目的</strong>：划分声明区域，避免多人协作或引入第三方库时的标识符冲突。</p>
+<pre><code>namespace MyNamespace {
+    int value = 0;
+    void func() { /* ... */ }
+    namespace inside { int temp = 0; }  // 可嵌套
+}
+
+// 同名命名空间自动合并
+namespace fun { void test(); }
+namespace fun { void test() { std::cout &lt;&lt; "定义\n"; } }
+
+// 别名
+namespace name { int num = 3; }
+namespace other_name = name;
+</code></pre>
+<h3>匿名命名空间</h3>
+<pre><code>int value = 100;
+
+namespace {
+    int value = 200;  // 仅本翻译单元可见，内部链接
+}
+
+int main() {
+    std::cout &lt;&lt; value &lt;&lt; '\n';    // 200（未限定名优先找到匿名命名空间成员）
+    std::cout &lt;&lt; ::value &lt;&lt; '\n';  // 100（显式全局）
+}
+</code></pre>
+<p><strong>要点</strong>：</p>
+<ul>
+<li>不能定义在块作用域内（只能文件作用域）。</li>
+<li>等价于用 <code>static</code> 限制链接属性的全局实体，但可包含类、函数等，语法更统一。</li>
+<li>C++17 起也可写 <code>inline namespace</code> 做版本兼容，笔记未涉及，此处不展开。</li>
+</ul>
+<h3>使用方式</h3>
+<table>
+<thead>
+<tr>
+<th>方式</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>using</code> 声明</td>
+<td>将<strong>单个</strong>名字引入当前作用域</td>
+</tr>
+<tr>
+<td><code>using namespace</code> 指令</td>
+<td>将整个命名空间名字引入当前作用域</td>
+</tr>
+<tr>
+<td><code>::</code> 作用域解析</td>
+<td>显式指定所属作用域</td>
+</tr>
+</tbody>
+</table>
+<pre><code>namespace Test {
+    int num = 10;
+    void show() { std::cout &lt;&lt; "Test::show\n"; }
+}
+
+// using 声明：若当前作用域已有同名，冲突
+// int num = 20;
+// using Test::num;  // 错误：重复定义
+
+using namespace Test;
+int num = 20;           // 局部变量遮蔽 Test::num
+std::cout &lt;&lt; num;       // 20（局部）
+std::cout &lt;&lt; Test::num; // 10
+show();                 // Test::show
+</code></pre>
+<h3>常见误区（原笔记已修正）</h3>
+<ol>
+<li><strong><code>using namespace Test</code> 后 <code>cout &lt;&lt; num</code> 输出 20</strong> —— 原稿写“输出 20”的语境需有<strong>局部同名变量</strong>；若只有 <code>Test::num</code>，则输出 10。</li>
+<li><strong><code>::</code> 的查找顺序</strong> —— <code>::name</code> 表示从<strong>全局命名空间</strong>起查找；未加 <code>::</code> 的名字按 C++ <strong>未限定名查找</strong>规则（内层作用域 → 外层 → using 引入的名字等），<strong>不是</strong>“先全局再匿名再局部”的固定三步。</li>
+<li><strong>不要在头文件中使用 <code>using namespace</code></strong> —— 会污染所有包含该头文件的翻译单元。</li>
+</ol>
+<h2>函数重载</h2>
+<ul>
+<li>同一作用域内，<strong>函数名相同、参数列表不同</strong>（类型或个数）构成重载；<strong>与返回值类型无关</strong>。</li>
+<li>默认参数：从<strong>右向左</strong>连续设置，中间不能“跳空”。</li>
+<li><strong>占位参数</strong>（只有类型没有名字）：调用时仍须传实参，常用于预留接口。</li>
+</ul>
+<pre><code>void f(int) {}
+void f(double) {}  // OK
+
+// void f(int);      // 仅重复声明，不构成重载
+// int  f(int);      // 错误：仅返回值不同
+</code></pre>
+<h2>面向对象三大特征（简述）</h2>
+<table>
+<thead>
+<tr>
+<th>特征</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>封装</td>
+<td>隐藏实现细节，通过公有接口访问</td>
+</tr>
+<tr>
+<td>继承</td>
+<td>派生类获得基类成员，实现代码复用</td>
+</tr>
+<tr>
+<td>多态</td>
+<td>同一接口不同实现；编译期（重载）与运行期（虚函数）</td>
+</tr>
+</tbody>
+</table>
+]]></content>
+    <author>
+      <name>Sekiro</name>
+    </author>
+    <category term="StudyNotes"></category>
+  </entry>
+  <entry>
+    <title>【CPP】引用与值类别</title>
+    <link href="https://lysj.work/posts/studynotes/cpp/cpp%E5%BC%95%E7%94%A8%E4%B8%8E%E5%80%BC%E7%B1%BB%E5%88%AB/" rel="alternate" type="text/html"/>
+    <id>https://lysj.work/posts/studynotes/cpp/cpp%E5%BC%95%E7%94%A8%E4%B8%8E%E5%80%BC%E7%B1%BB%E5%88%AB/</id>
+    <published>2026-03-18T00:00:00.000Z</published>
+    <updated>2026-03-18T00:00:00.000Z</updated>
+    <summary>左值右值、左值引用与右值引用、const 引用及移动语义入门。</summary>
+    <content type="html"><![CDATA[<blockquote>
+<p>整理自 0318.md，已校对并补充移动语义入门。</p>
+</blockquote>
+<h2>左值与右值</h2>
+<table>
+<thead>
+<tr>
+<th>类别</th>
+<th>特征</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>左值 (lvalue)</strong></td>
+<td>有身份、可取地址、可出现在赋值号左侧（在合适类型下）</td>
+<td>变量、数组元素、返回左值引用的函数</td>
+</tr>
+<tr>
+<td><strong>右值 (rvalue)</strong></td>
+<td>临时对象、字面量、即将销毁的值</td>
+<td><code>42</code>、<code>std::move(x)</code> 的结果、返回值的临时对象</td>
+</tr>
+</tbody>
+</table>
+<p>C++11 进一步细分：</p>
+<ul>
+<li><strong>纯右值 (prvalue)</strong>：如 <code>42</code>、<code>std::string("hi")</code> 的临时结果。</li>
+<li><strong>将亡值 (xvalue)</strong>：通过 <code>std::move</code> 或即将被移动的资源。</li>
+<li><strong>左值 (lvalue)</strong> / <strong>亡值 (glvalue)</strong>：统称“有身份”的表达式。</li>
+</ul>
+<p>日常口诀：<strong>能取地址的通常是左值；字面量和临时量是右值。</strong></p>
+<h2>左值引用</h2>
+<p>已存在对象的别名，<strong>不是指针</strong>。</p>
+<pre><code>int a = 10;
+int&amp; ref = a;   // 必须初始化
+ref = 20;       // 修改 ref 即修改 a
+</code></pre>
+<p><strong>规则</strong>：</p>
+<ol>
+<li>声明时必须初始化。</li>
+<li>初始化后<strong>不能改绑</strong>到其他对象（指针可以改指向）。</li>
+<li>不存在“空引用”，必须绑定到合法对象。</li>
+<li>传参用引用可避免拷贝（对大对象尤其重要）。</li>
+</ol>
+<h3>引用与指针的区别</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>引用</th>
+<th>指针</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>空值</td>
+<td>不允许</td>
+<td>允许 <code>nullptr</code></td>
+</tr>
+<tr>
+<td>重新绑定</td>
+<td>不允许</td>
+<td>允许</td>
+</tr>
+<tr>
+<td>语法</td>
+<td>像别名，无需解引用</td>
+<td>需 <code>*</code> / <code>-&gt;</code></td>
+</tr>
+<tr>
+<td>sizeof</td>
+<td>不占额外空间（实现上常是指针）</td>
+<td>占指针大小</td>
+</tr>
+</tbody>
+</table>
+<h3>各种类型的引用</h3>
+<pre><code>int x = 10;
+int&amp; r = x;
+
+int arr[5] = {1,2,3,4,5};
+int (&amp;r_arr)[5] = arr;   // 数组引用
+
+int* p = &amp;x;
+int*&amp; r_p = p;           // 指针的引用
+r_p = &amp;y;                // 修改的是 p 本身，不是“引用改绑”
+</code></pre>
+<h3>返回引用</h3>
+<p><strong>禁止</strong>返回局部变量的引用（悬垂引用）：</p>
+<pre><code>int&amp; bad() {
+    int local = 1;
+    return local;  // 未定义行为
+}
+</code></pre>
+<p><strong>可以</strong>返回：</p>
+<ul>
+<li>静态或全局对象</li>
+<li>成员变量（<code>return *this</code> 链式调用）</li>
+<li>由参数传入的对象的引用</li>
+</ul>
+<pre><code>class Builder {
+    int value = 0;
+public:
+    Builder&amp; set(int v) { value = v; return *this; }
+};
+// Builder().set(1).set(2);  // 注意：临时对象的链式调用生命期极短，易出错
+</code></pre>
+<h2>右值引用</h2>
+<p>绑定到右值，为<strong>移动语义</strong>服务：</p>
+<pre><code>int&amp;&amp; r = 42;        // 绑定到字面量
+std::string&amp;&amp; s = std::string("hello");
+
+int x = 10;
+int&amp;&amp; rr = std::move(x);  // 显式将左值转为右值引用
+</code></pre>
+<ul>
+<li>右值引用变量本身是<strong>左值</strong>（有名字就能取地址），若要继续传递为右值，需再 <code>std::move</code>。</li>
+<li><strong>移动构造函数 / 移动赋值</strong>接受右值引用，可“窃取”资源而非深拷贝。</li>
+</ul>
+<h2>常量引用 <code>const T&amp;</code></h2>
+<ul>
+<li>不能通过该引用修改对象（除非原对象本身可变且通过其他途径修改）。</li>
+<li><strong>可绑定到右值</strong>，延长临时对象生命期（绑定到 <code>const</code> 左值引用时）：</li>
+</ul>
+<pre><code>// int&amp; r = 90;           // 错误：非 const 左值引用不能绑右值
+const int&amp; r = 90;        // OK
+const std::string&amp; s = std::string("tmp");  // 临时对象生命期延长至 s 所在作用域结束
+</code></pre>
+<p><strong>典型用途</strong>：</p>
+<ol>
+<li>只读传参，避免拷贝：<code>void f(const std::string&amp; name);</code></li>
+<li>接受字面量或临时量。</li>
+<li>接口中表达“不修改实参”的约定。</li>
+</ol>
+<h2>补充：万能引用与转发（C++11）</h2>
+<pre><code>template&lt;typename T&gt;
+void wrapper(T&amp;&amp; arg) {  // 转发引用（原称万能引用）
+    process(std::forward&lt;T&gt;(arg));
+}
+</code></pre>
+<p><code>T&amp;&amp;</code> 在模板推导中可能是左值引用或右值引用，需配合 <code>std::forward</code> 保持值类别。初学阶段知道存在即可，与 <code>std::move</code> 成对学习。</p>
+]]></content>
+    <author>
+      <name>Sekiro</name>
+    </author>
+    <category term="StudyNotes"></category>
   </entry>
   <entry>
     <title>Markdown Extended Features</title>
