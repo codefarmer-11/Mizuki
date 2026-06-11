@@ -16,6 +16,7 @@ const SpecMarkdown = specRendered?.Content;
 const title = i18n(I18nKey.extensionComponent);
 const intro = i18n(I18nKey.extensionToolsIntro);
 const qrHref = url("/extension/qr/");
+const blankHref = url("/extension/blank/");
 ---
 
 <MainGridLayout title={title} description={intro}>
@@ -54,6 +55,23 @@ const qrHref = url("/extension/qr/");
 					</span>
 					<p class="mt-2 flex-1 text-sm text-50 leading-relaxed">
 						{i18n(I18nKey.extensionToolQrDesc)}
+					</p>
+					<span
+						class="mt-4 inline-flex self-start text-sm font-medium text-[var(--primary)] group-hover:underline"
+					>
+						{i18n(I18nKey.extensionToolOpen)} →
+					</span>
+				</a>
+				<a
+					href={blankHref}
+					class="group flex flex-col rounded-[var(--radius-large)] border border-black/10 dark:border-white/10
+						bg-[var(--card-bg)] p-6 transition hover:border-[var(--primary)] hover:bg-[var(--btn-card-bg-hover)]"
+				>
+					<span class="text-lg font-bold text-75 group-hover:text-[var(--primary)] transition-colors">
+						{i18n(I18nKey.extensionToolBlankTitle)}
+					</span>
+					<p class="mt-2 flex-1 text-sm text-50 leading-relaxed">
+						{i18n(I18nKey.extensionToolBlankDesc)}
 					</p>
 					<span
 						class="mt-4 inline-flex self-start text-sm font-medium text-[var(--primary)] group-hover:underline"

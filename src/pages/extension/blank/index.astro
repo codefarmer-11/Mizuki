@@ -1,0 +1,37 @@
+---
+import Comment from "@components/comment/index.astro";
+import BlankCharPanel from "@components/features/extension/BlankCharPanel.svelte";
+import { PageHeader } from "@components/features/page-header";
+import MainGridLayout from "@layouts/MainGridLayout.astro";
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
+import { url } from "@utils/url-utils";
+
+export const prerender = true;
+
+const title = i18n(I18nKey.extensionToolBlankTitle);
+const desc = i18n(I18nKey.extensionToolBlankDesc);
+---
+
+<MainGridLayout title={title} description={desc}>
+	<script>
+		import("../../../scripts/right-sidebar-layout.js");
+	</script>
+	<div
+		class="flex w-full rounded-[var(--radius-large)] overflow-hidden relative min-h-32"
+	>
+		<div class="card-base z-10 px-6 sm:px-9 py-6 relative w-full">
+			<a
+				href={url("/extension/")}
+				class="mb-4 inline-block text-sm text-50 transition hover:text-[var(--primary)]"
+			>
+				← {i18n(I18nKey.extensionComponent)}
+			</a>
+			<PageHeader title={title} subtitle={desc} />
+			<BlankCharPanel client:load />
+		</div>
+	</div>
+	<div class="mt-4">
+		<Comment path="/extension/blank/" />
+	</div>
+</MainGridLayout>
