@@ -105,31 +105,23 @@ export class SwupHooksManager {
 	private registerContentReplaceHook(): void {
 		window.swup!.hooks.on("content:replace", () => {
 			this.clearCache();
-
-			// 初始化新页面的图片、公式、滚动条和 TOC
-			this.handlers.initFancybox?.();
-			this.handlers.checkKatex?.();
-			this.handlers.initCustomScrollbar?.();
-
-			// 处理 TOC 重新初始化
-			this.handleTOCReinit();
-
-			// 重新初始化 semifull 模式滚动检测
-			this.reinitSemifullScrollDetection();
 		});
 	}
 
-	/**
-	 * visit:start 钩子
-	 * 处理页面访问开始时的状态
-	 */
 	private registerVisitStartHook(): void {
-		window.swup!.hooks.on("visit:start", () => {
-			// 清理上一页的 Fancybox
+		window.swup!.hooks.on("visit:start", (visit: VisitObject) => {
+			const isHomePage = pathsEqual(visit.to.url, url("/"));
+
 			this.handlers.cleanupFancybox?.();
 
-			// 布局/Banner 类名变更延后到 visit:end，避免与 Swup 过渡叠加导致卡顿
+			// 在动画开始前瞬时切换到目标页布局，避免过渡中与 visit:end 后的布局跳变
+			this.applyTargetPageLayout(isHomePage);
 			this.hideTOC();
+
+			window.scrollTo({
+				top: 0,
+				behavior: "instant",
+			});
 		});
 	}
 
@@ -139,35 +131,40 @@ export class SwupHooksManager {
 	 */
 	private registerPageViewHook(): void {
 		window.swup!.hooks.on("page:view", () => {
-			// 滚动到页面顶部
-			window.scrollTo({
-				top: 0,
-				behavior: "instant",
-			});
-
-			// 同步主题状态
 			this.syncThemeState();
-
-			// 触发页面加载完成事件
 			this.dispatchPageLoadedEvent();
 		});
 	}
 
-	/**
-	 * visit:end 钩子
-	 * 处理页面访问结束时的清理
-	 */
 	private registerVisitEndHook(): void {
-		window.swup!.hooks.on("visit:end", (visit: VisitObject) => {
-			const isHomePage = pathsEqual(visit.to.url, url("/"));
-
-			// 过渡结束后再切换布局，避免主内容 top 位移与 Swup 动画叠加
-			this.handleBodyClass(isHomePage);
-			this.handleBannerTextVisibility(isHomePage);
-			this.handleNavbarState(isHomePage);
-			this.handleMobileBannerVisibility(isHomePage);
+		window.swup!.hooks.on("visit:end", () => {
 			this.showTOC();
+			this.schedulePostTransitionEnhancements();
 		});
+	}
+
+	/** 将 Fancybox / KaTeX / TOC 等重初始化延后到过渡结束后，避免阻塞动画帧 */
+	private schedulePostTransitionEnhancements(): void {
+		const run = () => {
+			this.handleTOCReinit();
+			this.reinitSemifullScrollDetection();
+			this.handlers.initFancybox?.();
+			this.handlers.checkKatex?.();
+			this.handlers.initCustomScrollbar?.();
+		};
+
+		if (typeof requestIdleCallback !== "undefined") {
+			requestIdleCallback(run, { timeout: 400 });
+		} else {
+			setTimeout(run, 16);
+		}
+	}
+
+	private applyTargetPageLayout(isHomePage: boolean): void {
+		this.handleBodyClass(isHomePage);
+		this.handleBannerTextVisibility(isHomePage);
+		this.handleNavbarState(isHomePage);
+		this.handleMobileBannerVisibility(isHomePage);
 	}
 
 	// ==================== 私有辅助方法 ====================

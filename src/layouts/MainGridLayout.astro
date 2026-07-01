@@ -146,7 +146,7 @@ const defaultPostListLayout = siteConfig.postListLayout?.defaultMode || "list";
 		<div class="relative max-w-(--page-width) mx-auto pointer-events-auto">
 			<div
 				id="main-grid"
-				class={`transition duration-700 w-full left-0 right-0 grid ${gridCols} grid-rows-none md:grid-rows-[auto] mx-auto gap-4 px-2 md:px-4 ${!mobileShowSidebar || !hasMobileDrawerComponents ? "mobile-no-sidebar" : ""} ${hasRightSidebarComponents ? "mobile-both-sidebar" : ""}`}
+				class={`w-full left-0 right-0 grid ${gridCols} grid-rows-none md:grid-rows-[auto] mx-auto gap-4 px-2 md:px-4 ${!mobileShowSidebar || !hasMobileDrawerComponents ? "mobile-no-sidebar" : ""} ${hasRightSidebarComponents ? "mobile-both-sidebar" : ""}`}
 				data-layout-mode={defaultPostListLayout}
 			>
 				<!-- Banner image credit -->
@@ -216,24 +216,17 @@ const defaultPostListLayout = siteConfig.postListLayout?.defaultMode || "list";
 					id="swup-container"
 					class={`${mainContentClass} transition-main`}
 				>
-					<div
-						id="content-wrapper"
-						class="transition-leaving"
-					>
+					<div id="content-wrapper">
 						<!-- the overflow-hidden here prevent long text break the layout-->
 						<!-- make id different from windows.swup global property -->
 						<slot />
-						<div
-							class="footer col-span-full onload-animation hidden lg:block"
-						>
+						<div class="footer col-span-full hidden lg:block">
 							<Footer />
 						</div>
 					</div>
 				</main>
 
-				<div
-					class="footer col-span-full onload-animation block lg:hidden"
-				>
+				<div class="footer col-span-full block lg:hidden">
 					<Footer />
 				</div>
 			</div>

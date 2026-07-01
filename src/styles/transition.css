@@ -1,39 +1,30 @@
 @import "./_transition-vars.css";
 
-/* 主要内容区域的过渡动画 - 纯垂直效果 */
+/* 主要内容区域的过渡动画 - 仅透明度 */
 .transition-main {
-  transition:
-    opacity var(--transition-duration) var(--transition-easing),
-    transform var(--transition-duration) var(--transition-easing);
+  transition: opacity var(--transition-duration) var(--transition-easing);
 }
 
-/* 离开动画 */
+/* 离开动画（保留 class 供 Swup 识别，不再单独做 transform） */
 .transition-leaving {
-  transition:
-    transform var(--transition-duration) var(--transition-easing-out),
-    opacity var(--transition-duration) var(--transition-easing-out);
+  transition: opacity var(--transition-duration) var(--transition-easing-out);
 }
 
 html.is-changing .transition-main {
-  transition:
-    opacity var(--transition-duration) var(--transition-easing),
-    transform var(--transition-duration) var(--transition-easing);
+  transition: opacity var(--transition-duration) var(--transition-easing);
 }
 
 html.is-leaving .transition-main {
-  transition:
-    opacity var(--transition-duration) var(--transition-easing-out),
-    transform var(--transition-duration) var(--transition-easing-out);
+  transition: opacity var(--transition-duration) var(--transition-easing-out);
 }
 
-/* 进入/离开动画 - 仅透明度，避免与 Banner/主内容 top 位移动画叠加卡顿 */
+/* 进入/离开动画 - 仅透明度 */
 html.is-animating .transition-main {
   opacity: 0;
 }
 
 html.is-animating.is-leaving .transition-leaving {
   opacity: 0;
-  transform: none;
 }
 
 /* Swup fade 动画 */
@@ -142,6 +133,14 @@ html.is-animating .transition-swup-fade {
   transform: translateX(0);
 }
 
+/* Swup 启用后：容器内不再叠加 onload 入场动画，只保留 Swup 淡入淡出 */
+html.swup-enabled #swup-container .onload-animation {
+  animation: none !important;
+  opacity: 1 !important;
+  transform: none !important;
+  transition: none !important;
+}
+
 /* Swup 切换期间冻结外层布局过渡，防止 Banner/主内容 top 与页面过渡打架 */
 html.is-changing #main-grid,
 html.is-animating #main-grid,
@@ -150,8 +149,18 @@ html.is-animating .absolute.w-full.z-30,
 html.is-changing #banner-wrapper,
 html.is-animating #banner-wrapper,
 html.is-changing #top-row,
-html.is-animating #top-row {
+html.is-animating #top-row,
+html.is-changing .enable-banner #main-grid,
+html.is-animating .enable-banner #main-grid {
   transition: none !important;
+}
+
+/* 切换期间暂停 Banner 水波纹等重型动画，释放 GPU */
+html.is-changing .waves > .parallax use,
+html.is-animating .waves > .parallax use,
+html.is-changing .banner-kb,
+html.is-animating .banner-kb {
+  animation-play-state: paused !important;
 }
 
 /* Swup 切换时仅容器过渡，避免子元素叠加动画导致卡顿 */
@@ -175,8 +184,7 @@ html.is-changing .transition-main,
 html.is-animating .transition-main,
 html.is-changing .transition-leaving,
 html.is-animating .transition-leaving {
-  transform: translateZ(0);
-  will-change: transform, opacity;
+  will-change: opacity;
 }
 
 .onload-animation,

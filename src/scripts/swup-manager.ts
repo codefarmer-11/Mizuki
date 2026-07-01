@@ -124,12 +124,14 @@ export class SwupManager {
 
 		// 如果 Swup 已经就绪，直接设置钩子
 		if (window?.swup?.hooks) {
+			document.documentElement.classList.add("swup-enabled");
 			initFancybox();
 			checkKatex();
 			this.hooksManager.registerHooks();
 		} else {
 			// 监听 Swup 就绪事件
 			document.addEventListener("swup:enable", () => {
+				document.documentElement.classList.add("swup-enabled");
 				if (this.hooksManager) {
 					this.hooksManager.registerHooks();
 				}
