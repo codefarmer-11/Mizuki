@@ -91,6 +91,12 @@ export class SwupHooksManager {
 				"0ms",
 			);
 
+			// 标记 Swup 导航中：禁用 onload-animation、冻结主网格布局过渡
+			document.documentElement.classList.add("is-swup-navigating");
+			document.getElementById("main-grid")?.classList.add(
+				"swup-layout-frozen",
+			);
+
 			// 处理 navbar 隐藏
 			if (this.bannerEnabled) {
 				this.handleNavbarHideOnLinkClick();
@@ -105,17 +111,7 @@ export class SwupHooksManager {
 	private registerContentReplaceHook(): void {
 		window.swup!.hooks.on("content:replace", () => {
 			this.clearCache();
-
-			// 初始化新页面的图片、公式、滚动条和 TOC
-			this.handlers.initFancybox?.();
-			this.handlers.checkKatex?.();
-			this.handlers.initCustomScrollbar?.();
-
-			// 处理 TOC 重新初始化
-			this.handleTOCReinit();
-
-			// 重新初始化 semifull 模式滚动检测
-			this.reinitSemifullScrollDetection();
+			// 重型初始化延后到 visit:end，避免与过渡动画争抢主线程
 		});
 	}
 
@@ -172,6 +168,11 @@ export class SwupHooksManager {
 	 */
 	private registerVisitEndHook(): void {
 		window.swup!.hooks.on("visit:end", (_visit: VisitObject) => {
+			document.documentElement.classList.remove("is-swup-navigating");
+			document
+				.getElementById("main-grid")
+				?.classList.remove("swup-layout-frozen");
+
 			setTimeout(() => {
 				// 隐藏高度扩展元素
 				this.extendPageHeight(true);
@@ -179,7 +180,28 @@ export class SwupHooksManager {
 				// 显示 TOC
 				this.showTOC();
 			}, ANIMATION_CONFIG.heightExtendDelay);
+
+			this.schedulePostTransitionInit();
 		});
+	}
+
+	/**
+	 * 过渡结束后在空闲时初始化页面组件，避免切换卡顿
+	 */
+	private schedulePostTransitionInit(): void {
+		const run = () => {
+			this.handlers.initFancybox?.();
+			this.handlers.checkKatex?.();
+			this.handlers.initCustomScrollbar?.();
+			this.handleTOCReinit();
+			this.reinitSemifullScrollDetection();
+		};
+
+		if ("requestIdleCallback" in window) {
+			requestIdleCallback(run, { timeout: 500 });
+		} else {
+			setTimeout(run, 16);
+		}
 	}
 
 	// ==================== 私有辅助方法 ====================

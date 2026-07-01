@@ -56,6 +56,11 @@ const favicons: Favicon[] =
 }
 <meta name="author" content={profileConfig.name} />
 
+<!-- 预取常用导航页，加速 Swup 切换 -->
+<link rel="prefetch" href={url("/archives/")} />
+<link rel="prefetch" href={url("/studyNotes/")} />
+<link rel="prefetch" href={url("/essay/")} />
+
 <!-- Open Graph Tags -->
 <meta property="og:site_name" content={siteConfig.title} />
 <meta property="og:url" content={Astro.url} />
