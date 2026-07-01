@@ -1,16 +1,5 @@
 /* 动画增强样式 - 参考 yukina 主题优化 */
 
-/* 页面切换状态类 */
-html.is-leaving .transition-leaving {
-  transform: translateY(-1rem);
-  opacity: 0;
-}
-
-html.is-entering .transition-main {
-  transform: translateY(1.5rem);
-  opacity: 0;
-}
-
 /* 离开动画类 */
 .animate-leave {
   transform: translateY(-1rem) !important;

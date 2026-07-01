@@ -144,16 +144,36 @@ html.is-animating .transition-swup-fade {
   transform: translateX(0);
 }
 
-/* 性能优化 */
+/* Swup 切换时仅容器过渡，避免子元素叠加动画导致卡顿 */
+html.is-changing #swup-container .onload-animation,
+html.is-animating #swup-container .onload-animation {
+  animation: none !important;
+  opacity: 1;
+  transform: none;
+  transition: none !important;
+  will-change: auto;
+}
+
+/* 性能优化：仅在过渡期间启用 GPU 提示 */
 .transition-main,
-.transition-leaving,
+.transition-leaving {
+  backface-visibility: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+html.is-changing .transition-main,
+html.is-animating .transition-main,
+html.is-changing .transition-leaving,
+html.is-animating .transition-leaving {
+  transform: translateZ(0);
+  will-change: transform, opacity;
+}
+
 .onload-animation,
 .transition-slide-in,
 .card-animation {
   backface-visibility: hidden;
   -webkit-font-smoothing: antialiased;
-  transform: translateZ(0);
-  will-change: transform;
 }
 
 /* GPU 加速优化 - 用于 wave 等重型动画 */
