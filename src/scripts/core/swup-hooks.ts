@@ -124,21 +124,11 @@ export class SwupHooksManager {
 	 * 处理页面访问开始时的状态
 	 */
 	private registerVisitStartHook(): void {
-		window.swup!.hooks.on("visit:start", (visit: VisitObject) => {
+		window.swup!.hooks.on("visit:start", () => {
 			// 清理上一页的 Fancybox
 			this.handlers.cleanupFancybox?.();
 
-			// 处理页面状态
-			const isHomePage = pathsEqual(visit.to.url, url("/"));
-			this.handleBodyClass(isHomePage);
-			this.handleBannerTextVisibility(isHomePage);
-			this.handleNavbarState(isHomePage);
-			this.handleMobileBannerVisibility(isHomePage);
-
-			// 扩展页面高度防止滚动动画跳跃
-			this.extendPageHeight(false);
-
-			// 隐藏 TOC
+			// 布局/Banner 类名变更延后到 visit:end，避免与 Swup 过渡叠加导致卡顿
 			this.hideTOC();
 		});
 	}
@@ -149,9 +139,6 @@ export class SwupHooksManager {
 	 */
 	private registerPageViewHook(): void {
 		window.swup!.hooks.on("page:view", () => {
-			// 扩展页面高度
-			this.extendPageHeight(false);
-
 			// 滚动到页面顶部
 			window.scrollTo({
 				top: 0,
@@ -171,14 +158,15 @@ export class SwupHooksManager {
 	 * 处理页面访问结束时的清理
 	 */
 	private registerVisitEndHook(): void {
-		window.swup!.hooks.on("visit:end", (_visit: VisitObject) => {
-			setTimeout(() => {
-				// 隐藏高度扩展元素
-				this.extendPageHeight(true);
+		window.swup!.hooks.on("visit:end", (visit: VisitObject) => {
+			const isHomePage = pathsEqual(visit.to.url, url("/"));
 
-				// 显示 TOC
-				this.showTOC();
-			}, ANIMATION_CONFIG.heightExtendDelay);
+			// 过渡结束后再切换布局，避免主内容 top 位移与 Swup 动画叠加
+			this.handleBodyClass(isHomePage);
+			this.handleBannerTextVisibility(isHomePage);
+			this.handleNavbarState(isHomePage);
+			this.handleMobileBannerVisibility(isHomePage);
+			this.showTOC();
 		});
 	}
 
@@ -312,21 +300,11 @@ export class SwupHooksManager {
 
 		if (bannerWrapper && mainContentWrapper) {
 			if (isHomePage) {
-				// 首页：延迟移除隐藏类
-				setTimeout(() => {
-					bannerWrapper.classList.remove("mobile-hide-banner");
-				}, ANIMATION_CONFIG.mobileBannerDelay);
-				setTimeout(() => {
-					mainContentWrapper.classList.remove(
-						"mobile-main-no-banner",
-					);
-				}, ANIMATION_CONFIG.mobileContentDelay);
+				bannerWrapper.classList.remove("mobile-hide-banner");
+				mainContentWrapper.classList.remove("mobile-main-no-banner");
 			} else {
-				// 非首页：分阶段隐藏
 				bannerWrapper.classList.add("mobile-hide-banner");
-				setTimeout(() => {
-					mainContentWrapper.classList.add("mobile-main-no-banner");
-				}, ANIMATION_CONFIG.mobileBannerDelay);
+				mainContentWrapper.classList.add("mobile-main-no-banner");
 			}
 		}
 	}

@@ -26,16 +26,14 @@ html.is-leaving .transition-main {
     transform var(--transition-duration) var(--transition-easing-out);
 }
 
-/* 进入动画 - 纯垂直 */
+/* 进入/离开动画 - 仅透明度，避免与 Banner/主内容 top 位移动画叠加卡顿 */
 html.is-animating .transition-main {
   opacity: 0;
-  transform: translateY(var(--transition-translate));
 }
 
-/* 离开动画 - 向上滑出 */
 html.is-animating.is-leaving .transition-leaving {
-  transform: translateY(calc(var(--transition-translate) * -1));
   opacity: 0;
+  transform: none;
 }
 
 /* Swup fade 动画 */
@@ -142,6 +140,18 @@ html.is-animating .transition-swup-fade {
 .nav-animation.loaded {
   opacity: 1;
   transform: translateX(0);
+}
+
+/* Swup 切换期间冻结外层布局过渡，防止 Banner/主内容 top 与页面过渡打架 */
+html.is-changing #main-grid,
+html.is-animating #main-grid,
+html.is-changing .absolute.w-full.z-30,
+html.is-animating .absolute.w-full.z-30,
+html.is-changing #banner-wrapper,
+html.is-animating #banner-wrapper,
+html.is-changing #top-row,
+html.is-animating #top-row {
+  transition: none !important;
 }
 
 /* Swup 切换时仅容器过渡，避免子元素叠加动画导致卡顿 */

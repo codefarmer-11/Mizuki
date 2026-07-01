@@ -55,7 +55,7 @@ export default defineConfig({
 			containers: ["main"],
 			smoothScrolling: false, // 禁用平滑滚动以提升性能，避免与锚点导航冲突
 			cache: true,
-			preload: false, // 禁用预加载以提升性能
+			preload: true,
 			accessibility: true,
 			updateHead: process.env.NODE_ENV === "production",
 			updateBodyClass: false,
