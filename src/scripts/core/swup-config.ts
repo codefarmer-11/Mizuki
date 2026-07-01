@@ -54,10 +54,10 @@ export interface TransitionConfig {
 
 // 过渡动画默认配置 - 灵感来自 Firefly 主题的快速流畅体验
 export const TRANSITION_CONFIG: TransitionConfig = {
-	duration: 90,
-	easing: "cubic-bezier(0.4, 0, 0.2, 1)",
-	easingOut: "cubic-bezier(0.4, 0, 1, 1)",
-	translateDistance: "1.5rem",
+	duration: 180,
+	easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+	easingOut: "cubic-bezier(0.4, 0, 0.6, 1)",
+	translateDistance: "0.75rem",
 	staggerDelay: 35,
 } as const;
 

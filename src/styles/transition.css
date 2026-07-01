@@ -1,30 +1,40 @@
 @import "./_transition-vars.css";
 
-/* 主要内容区域的过渡动画 - 仅透明度 */
+/* 主要内容区域 — 淡入 + 轻微垂直位移（仅 #swup-container，不影响外层布局） */
 .transition-main {
-  transition: opacity var(--transition-duration) var(--transition-easing);
+  transition:
+    opacity var(--transition-duration) var(--transition-easing),
+    transform var(--transition-duration) var(--transition-easing);
 }
 
-/* 离开动画（保留 class 供 Swup 识别，不再单独做 transform） */
 .transition-leaving {
-  transition: opacity var(--transition-duration) var(--transition-easing-out);
+  transition:
+    opacity var(--transition-duration) var(--transition-easing-out),
+    transform var(--transition-duration) var(--transition-easing-out);
 }
 
 html.is-changing .transition-main {
-  transition: opacity var(--transition-duration) var(--transition-easing);
+  transition:
+    opacity var(--transition-duration) var(--transition-easing),
+    transform var(--transition-duration) var(--transition-easing);
 }
 
 html.is-leaving .transition-main {
-  transition: opacity var(--transition-duration) var(--transition-easing-out);
+  transition:
+    opacity var(--transition-duration) var(--transition-easing-out),
+    transform var(--transition-duration) var(--transition-easing-out);
 }
 
-/* 进入/离开动画 - 仅透明度 */
+/* 进入：从下方滑入 */
 html.is-animating .transition-main {
   opacity: 0;
+  transform: translateY(var(--transition-translate));
 }
 
-html.is-animating.is-leaving .transition-leaving {
+/* 离开：向上滑出 */
+html.is-animating.is-leaving .transition-main {
   opacity: 0;
+  transform: translateY(calc(var(--transition-translate) * -0.85));
 }
 
 /* Swup fade 动画 */
@@ -184,7 +194,8 @@ html.is-changing .transition-main,
 html.is-animating .transition-main,
 html.is-changing .transition-leaving,
 html.is-animating .transition-leaving {
-  will-change: opacity;
+  transform: translateZ(0);
+  will-change: transform, opacity;
 }
 
 .onload-animation,
