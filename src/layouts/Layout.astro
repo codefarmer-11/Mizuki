@@ -349,8 +349,8 @@ if (siteConfig.font) {
 
 	// 非关键脚本延后到空闲时加载，避免与 Swup 初始化争抢主线程
 	function loadDeferredScripts() {
-		void import("../scripts/code-collapse.js");
-		void import("../scripts/theme-optimizer.js");
+		void import("../scripts/load-code-collapse");
+		void import("../scripts/load-theme-optimizer");
 	}
 
 	if ("requestIdleCallback" in window) {
