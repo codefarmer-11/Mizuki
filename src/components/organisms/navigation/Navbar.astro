@@ -93,20 +93,12 @@ const iconWebpSrc = hasIconPngFallback ? iconSrc.replace(/\.png$/i, ".webp") : i
         </div>
         <div class="flex items-center gap-1 justify-self-end col-start-3 row-start-1 shrink-0">
             <div id="search-container" class="navbar-btn-slot">
-                <Search client:load>
-                    <button slot="fallback" aria-label="Search" class="btn-plain scale-animation rounded-lg h-11 w-11 active:scale-90">
-                        <Icon name="material-symbols:search" class="text-[1.25rem]"></Icon>
-                    </button>
-                </Search>
+                <Search client:only="svelte"></Search>
             </div>
             {/* 只在 sidebar 模式下显示移动端 TOC 按钮 */}
 			{siteConfig.toc.enable && siteConfig.toc.mobileTop && (
                 <div class="navbar-btn-slot">
-                    <MobileTOC client:load>
-                        <button slot="fallback" aria-label="Table of Contents" class="btn-plain scale-animation rounded-lg h-11 w-11 active:scale-90 xl:hidden">
-                            <Icon name="material-symbols:toc" class="text-[1.25rem]"></Icon>
-                        </button>
-                    </MobileTOC>
+                    <MobileTOC client:only="svelte"></MobileTOC>
                 </div>
             )}
             {!siteConfig.themeColor.fixed && (
@@ -116,11 +108,7 @@ const iconWebpSrc = hasIconPngFallback ? iconSrc.replace(/\.png$/i, ".webp") : i
             )}
             {siteConfig.postListLayout.allowSwitch && (
                 <div class="navbar-btn-slot hidden xl:block">
-                    <LayoutSwitch client:load currentLayout={siteConfig.postListLayout.defaultMode}>
-                        <button slot="fallback" aria-label="Switch layout" class="btn-plain scale-animation rounded-lg h-11 w-11 active:scale-90">
-                            <Icon name="material-symbols:view-list" class="text-[1.25rem]"></Icon>
-                        </button>
-                    </LayoutSwitch>
+                    <LayoutSwitch client:only="svelte" currentLayout={siteConfig.postListLayout.defaultMode}></LayoutSwitch>
                 </div>
             )}
             <!-- 整体布局方案切换按钮：根据配置决定在哪些设备上显示 -->
@@ -131,25 +119,17 @@ const iconWebpSrc = hasIconPngFallback ? iconSrc.replace(/\.png$/i, ".webp") : i
                 modeSwitchDisplay === "desktop" ? "hidden md:block" :
                 modeSwitchDisplay === "both" ? "block" : "hidden md:block"
             ]}>
-                <WallpaperSwitch client:load>
-                    <button slot="fallback" aria-label="Wallpaper Mode" class="btn-plain scale-animation rounded-lg h-11 w-11 active:scale-90">
-                        <Icon name="material-symbols:image-outline" class="text-[1.25rem]"></Icon>
-                    </button>
-                </WallpaperSwitch>
+                <WallpaperSwitch client:only="svelte"></WallpaperSwitch>
             </div>
             <div class="navbar-btn-slot">
-                <ThemeSwitch client:load>
-                    <button slot="fallback" aria-label="Light/Dark Mode" class="btn-plain scale-animation rounded-lg h-11 w-11 active:scale-90 theme-switch-btn">
-                        <Icon name="material-symbols:wb-sunny-outline-rounded" class="text-[1.25rem]"></Icon>
-                    </button>
-                </ThemeSwitch>
+                <ThemeSwitch client:only="svelte"></ThemeSwitch>
             </div>
             <button aria-label="Menu" name="Nav Menu" class="btn-plain scale-animation rounded-lg w-11 h-11 active:scale-90 md:!hidden shrink-0" id="nav-menu-switch">
                 <Icon name="material-symbols:unfold-more" class="text-[1.25rem]"></Icon>
             </button>
         </div>
         <NavMenuPanel links={links}></NavMenuPanel>
-        <DisplaySettings client:idle></DisplaySettings>
+        <DisplaySettings client:only="svelte"></DisplaySettings>
     </div>
 </div>
 

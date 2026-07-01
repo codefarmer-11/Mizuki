@@ -91,7 +91,7 @@ const hasBannerLink = !!siteConfig.banner.credit.url;
 						class="object-cover h-full w-full"
 						src={mobileImages[0]}
 						position={siteConfig.banner.position}
-						widths={[640, 1024, 1280]}
+						widths={[640, 1024, 1536]}
 						sizes="100vw"
 						loading="eager"
 						fetchpriority="high"
@@ -105,9 +105,10 @@ const hasBannerLink = !!siteConfig.banner.credit.url;
 						class="object-cover h-full w-full"
 						src={src}
 						position={siteConfig.banner.position}
-						widths={[640, 1024, 1280]}
+						widths={[640, 1024, 1536]}
 						sizes="100vw"
-						loading="lazy"
+						loading="eager"
+						fetchpriority="high"
 					/>
 				</template>
 			))}
@@ -121,7 +122,7 @@ const hasBannerLink = !!siteConfig.banner.credit.url;
 						class="object-cover h-full w-full"
 						src={desktopImages[0]}
 						position={siteConfig.banner.position}
-						widths={[1280, 1536, 1920]}
+						widths={[1024, 1536, 2048, 2560]}
 						sizes="100vw"
 						loading="eager"
 						fetchpriority="high"
@@ -135,9 +136,10 @@ const hasBannerLink = !!siteConfig.banner.credit.url;
 						class="object-cover h-full w-full"
 						src={src}
 						position={siteConfig.banner.position}
-						widths={[1280, 1536, 1920]}
+						widths={[1024, 1536, 2048, 2560]}
 						sizes="100vw"
-						loading="lazy"
+						loading="eager"
+						fetchpriority="high"
 					/>
 				</template>
 			))}
@@ -186,10 +188,9 @@ const hasBannerLink = !!siteConfig.banner.credit.url;
 						const mobileImg = document.createElement("img");
 						mobileImg.alt = "Mobile banner image of the blog";
 						mobileImg.className =
-							"block md:hidden object-cover h-full w-full opacity-100";
+							"block md:hidden object-cover h-full w-full transition duration-700 opacity-100";
 						mobileImg.src = mobileSrc;
 						mobileImg.loading = "eager";
-						mobileImg.decoding = "async";
 						mobileImg.fetchPriority = "high";
 						mobileImg.dataset.position = position;
 						container.appendChild(mobileImg);
@@ -200,10 +201,9 @@ const hasBannerLink = !!siteConfig.banner.credit.url;
 						desktopImg.id = "banner";
 						desktopImg.alt = "Desktop banner image of the blog";
 						desktopImg.className =
-							"hidden md:block object-cover h-full w-full opacity-100";
+							"hidden md:block object-cover h-full w-full transition duration-700 opacity-100";
 						desktopImg.src = desktopSrc;
 						desktopImg.loading = "eager";
-						desktopImg.decoding = "async";
 						desktopImg.fetchPriority = "high";
 						desktopImg.dataset.position = position;
 						container.appendChild(desktopImg);

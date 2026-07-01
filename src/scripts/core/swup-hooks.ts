@@ -105,23 +105,41 @@ export class SwupHooksManager {
 	private registerContentReplaceHook(): void {
 		window.swup!.hooks.on("content:replace", () => {
 			this.clearCache();
+
+			// 初始化新页面的图片、公式、滚动条和 TOC
+			this.handlers.initFancybox?.();
+			this.handlers.checkKatex?.();
+			this.handlers.initCustomScrollbar?.();
+
+			// 处理 TOC 重新初始化
+			this.handleTOCReinit();
+
+			// 重新初始化 semifull 模式滚动检测
+			this.reinitSemifullScrollDetection();
 		});
 	}
 
+	/**
+	 * visit:start 钩子
+	 * 处理页面访问开始时的状态
+	 */
 	private registerVisitStartHook(): void {
 		window.swup!.hooks.on("visit:start", (visit: VisitObject) => {
-			const isHomePage = pathsEqual(visit.to.url, url("/"));
-
+			// 清理上一页的 Fancybox
 			this.handlers.cleanupFancybox?.();
 
-			// 在动画开始前瞬时切换到目标页布局，避免过渡中与 visit:end 后的布局跳变
-			this.applyTargetPageLayout(isHomePage);
-			this.hideTOC();
+			// 处理页面状态
+			const isHomePage = pathsEqual(visit.to.url, url("/"));
+			this.handleBodyClass(isHomePage);
+			this.handleBannerTextVisibility(isHomePage);
+			this.handleNavbarState(isHomePage);
+			this.handleMobileBannerVisibility(isHomePage);
 
-			window.scrollTo({
-				top: 0,
-				behavior: "instant",
-			});
+			// 扩展页面高度防止滚动动画跳跃
+			this.extendPageHeight(false);
+
+			// 隐藏 TOC
+			this.hideTOC();
 		});
 	}
 
@@ -131,40 +149,37 @@ export class SwupHooksManager {
 	 */
 	private registerPageViewHook(): void {
 		window.swup!.hooks.on("page:view", () => {
+			// 扩展页面高度
+			this.extendPageHeight(false);
+
+			// 滚动到页面顶部
+			window.scrollTo({
+				top: 0,
+				behavior: "instant",
+			});
+
+			// 同步主题状态
 			this.syncThemeState();
+
+			// 触发页面加载完成事件
 			this.dispatchPageLoadedEvent();
 		});
 	}
 
+	/**
+	 * visit:end 钩子
+	 * 处理页面访问结束时的清理
+	 */
 	private registerVisitEndHook(): void {
-		window.swup!.hooks.on("visit:end", () => {
-			this.showTOC();
-			this.schedulePostTransitionEnhancements();
+		window.swup!.hooks.on("visit:end", (_visit: VisitObject) => {
+			setTimeout(() => {
+				// 隐藏高度扩展元素
+				this.extendPageHeight(true);
+
+				// 显示 TOC
+				this.showTOC();
+			}, ANIMATION_CONFIG.heightExtendDelay);
 		});
-	}
-
-	/** 将 Fancybox / KaTeX / TOC 等重初始化延后到过渡结束后，避免阻塞动画帧 */
-	private schedulePostTransitionEnhancements(): void {
-		const run = () => {
-			this.handleTOCReinit();
-			this.reinitSemifullScrollDetection();
-			this.handlers.initFancybox?.();
-			this.handlers.checkKatex?.();
-			this.handlers.initCustomScrollbar?.();
-		};
-
-		if (typeof requestIdleCallback !== "undefined") {
-			requestIdleCallback(run, { timeout: 400 });
-		} else {
-			setTimeout(run, 16);
-		}
-	}
-
-	private applyTargetPageLayout(isHomePage: boolean): void {
-		this.handleBodyClass(isHomePage);
-		this.handleBannerTextVisibility(isHomePage);
-		this.handleNavbarState(isHomePage);
-		this.handleMobileBannerVisibility(isHomePage);
 	}
 
 	// ==================== 私有辅助方法 ====================
@@ -297,11 +312,21 @@ export class SwupHooksManager {
 
 		if (bannerWrapper && mainContentWrapper) {
 			if (isHomePage) {
-				bannerWrapper.classList.remove("mobile-hide-banner");
-				mainContentWrapper.classList.remove("mobile-main-no-banner");
+				// 首页：延迟移除隐藏类
+				setTimeout(() => {
+					bannerWrapper.classList.remove("mobile-hide-banner");
+				}, ANIMATION_CONFIG.mobileBannerDelay);
+				setTimeout(() => {
+					mainContentWrapper.classList.remove(
+						"mobile-main-no-banner",
+					);
+				}, ANIMATION_CONFIG.mobileContentDelay);
 			} else {
+				// 非首页：分阶段隐藏
 				bannerWrapper.classList.add("mobile-hide-banner");
-				mainContentWrapper.classList.add("mobile-main-no-banner");
+				setTimeout(() => {
+					mainContentWrapper.classList.add("mobile-main-no-banner");
+				}, ANIMATION_CONFIG.mobileBannerDelay);
 			}
 		}
 	}

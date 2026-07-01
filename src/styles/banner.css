@@ -393,12 +393,14 @@ body.wallpaper-transparent #toc-inner-wrapper:has(table-of-contents[data-loaded=
 
   /* 手机端非首页时主内容区域从顶部开始 */
   .absolute.w-full.z-30 {
-    transition: none !important;
+    transition: top 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.1s;
+    will-change: top;
   }
 
   .absolute.w-full.z-30.mobile-main-no-banner {
     top: 5.5rem !important;
     min-height: calc(100vh - 5.5rem) !important;
+    transition: top 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s !important;
   }
 }
 

@@ -1,16 +1,17 @@
 @import "./_transition-vars.css";
 
-/* 主要内容区域 — 淡入 + 轻微垂直位移（仅 #swup-container，不影响外层布局） */
+/* 主要内容区域的过渡动画 - 纯垂直效果 */
 .transition-main {
   transition:
     opacity var(--transition-duration) var(--transition-easing),
     transform var(--transition-duration) var(--transition-easing);
 }
 
+/* 离开动画 */
 .transition-leaving {
   transition:
-    opacity var(--transition-duration) var(--transition-easing-out),
-    transform var(--transition-duration) var(--transition-easing-out);
+    transform var(--transition-duration) var(--transition-easing-out),
+    opacity var(--transition-duration) var(--transition-easing-out);
 }
 
 html.is-changing .transition-main {
@@ -25,16 +26,16 @@ html.is-leaving .transition-main {
     transform var(--transition-duration) var(--transition-easing-out);
 }
 
-/* 进入：从下方滑入 */
+/* 进入动画 - 纯垂直 */
 html.is-animating .transition-main {
   opacity: 0;
   transform: translateY(var(--transition-translate));
 }
 
-/* 离开：向上滑出 */
-html.is-animating.is-leaving .transition-main {
+/* 离开动画 - 向上滑出 */
+html.is-animating.is-leaving .transition-leaving {
+  transform: translateY(calc(var(--transition-translate) * -1));
   opacity: 0;
-  transform: translateY(calc(var(--transition-translate) * -0.85));
 }
 
 /* Swup fade 动画 */
@@ -143,66 +144,16 @@ html.is-animating .transition-swup-fade {
   transform: translateX(0);
 }
 
-/* Swup 启用后：容器内不再叠加 onload 入场动画，只保留 Swup 淡入淡出 */
-html.swup-enabled #swup-container .onload-animation {
-  animation: none !important;
-  opacity: 1 !important;
-  transform: none !important;
-  transition: none !important;
-}
-
-/* Swup 切换期间冻结外层布局过渡，防止 Banner/主内容 top 与页面过渡打架 */
-html.is-changing #main-grid,
-html.is-animating #main-grid,
-html.is-changing .absolute.w-full.z-30,
-html.is-animating .absolute.w-full.z-30,
-html.is-changing #banner-wrapper,
-html.is-animating #banner-wrapper,
-html.is-changing #top-row,
-html.is-animating #top-row,
-html.is-changing .enable-banner #main-grid,
-html.is-animating .enable-banner #main-grid {
-  transition: none !important;
-}
-
-/* 切换期间暂停 Banner 水波纹等重型动画，释放 GPU */
-html.is-changing .waves > .parallax use,
-html.is-animating .waves > .parallax use,
-html.is-changing .banner-kb,
-html.is-animating .banner-kb {
-  animation-play-state: paused !important;
-}
-
-/* Swup 切换时仅容器过渡，避免子元素叠加动画导致卡顿 */
-html.is-changing #swup-container .onload-animation,
-html.is-animating #swup-container .onload-animation {
-  animation: none !important;
-  opacity: 1;
-  transform: none;
-  transition: none !important;
-  will-change: auto;
-}
-
-/* 性能优化：仅在过渡期间启用 GPU 提示 */
+/* 性能优化 */
 .transition-main,
-.transition-leaving {
-  backface-visibility: hidden;
-  -webkit-font-smoothing: antialiased;
-}
-
-html.is-changing .transition-main,
-html.is-animating .transition-main,
-html.is-changing .transition-leaving,
-html.is-animating .transition-leaving {
-  transform: translateZ(0);
-  will-change: transform, opacity;
-}
-
+.transition-leaving,
 .onload-animation,
 .transition-slide-in,
 .card-animation {
   backface-visibility: hidden;
   -webkit-font-smoothing: antialiased;
+  transform: translateZ(0);
+  will-change: transform;
 }
 
 /* GPU 加速优化 - 用于 wave 等重型动画 */
