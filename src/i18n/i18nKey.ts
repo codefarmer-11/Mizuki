@@ -25,7 +25,7 @@ enum I18nKey {
 	toolbox = "toolbox",
 	cookbook = "cookbook",
 	extensionComponent = "extensionComponent",
-	/** 顶栏中指向站务/内容聚合的父级菜单（原与「关于」页同名的分组） */
+	/** 顶栏「关于」分组下的「本站」子菜单 */
 	navSiteMenu = "navSiteMenu",
 
 	/** 扩展工具页：工具列表说明 */

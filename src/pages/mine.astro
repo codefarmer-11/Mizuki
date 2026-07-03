@@ -10,7 +10,7 @@ import { i18n } from "../i18n/translation";
 
 export const prerender = true;
 
-const entry = await getEntry("spec", "test");
+const entry = await getEntry("spec", "mine");
 const specRendered = entry ? await render(entry) : null;
 const SpecMarkdown = specRendered?.Content;
 const title = i18n(I18nKey.navMy);
@@ -32,7 +32,7 @@ const title = i18n(I18nKey.navMy);
 					) : (
 						<p>
 							在内容仓库的 <code>spec/</code> 下添加{" "}
-							<code>test.md</code> 后即可显示正文。
+							<code>mine.md</code> 后即可显示正文。
 						</p>
 					)
 				}
@@ -40,6 +40,6 @@ const title = i18n(I18nKey.navMy);
 		</div>
 	</div>
 	<div class="mt-4">
-		<Comment path="/test/" />
+		<Comment path="/mine/" />
 	</div>
 </MainGridLayout>

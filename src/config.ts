@@ -318,19 +318,24 @@ export const navBarConfig: NavBarConfig = {
 			],
 		},
 		{
-			name: "SiteMenu",
+			name: "AboutMenu",
 			url: "#",
 			icon: "material-symbols:info",
 			children: [
 				{
-					name: "About",
+					name: "SiteMenu",
 					url: "/about/",
-					icon: "material-symbols:person",
+					icon: "material-symbols:public",
 				},
 				{
 					name: "My",
-					url: "/test/",
+					url: "/mine/",
 					icon: "material-symbols:person",
+				},
+				{
+					name: "Anime",
+					url: "/anime/",
+					icon: "material-symbols:movie",
 				},
 			],
 		}
