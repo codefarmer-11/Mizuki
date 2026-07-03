@@ -79,6 +79,9 @@ export class SwupManager {
 		// 初始化链接预加载
 		this.initPreloading();
 
+		// 空闲时预取常用页面
+		this.prefetchCommonPages();
+
 		this.initialized = true;
 		console.log("SwupManager: 初始化完成");
 	}
@@ -171,6 +174,47 @@ export class SwupManager {
 			});
 		} else {
 			initLinkPreloading();
+		}
+	}
+
+	/**
+	 * 空闲时预取导航常用页面，减少首次切换白屏
+	 */
+	private prefetchCommonPages(): void {
+		const run = () => {
+			if (!window.swup?.preload) {
+				return;
+			}
+
+			const conn = (navigator as Navigator & {
+				connection?: { effectiveType?: string };
+			}).connection;
+			if (
+				conn?.effectiveType === "2g" ||
+				conn?.effectiveType === "slow-2g"
+			) {
+				return;
+			}
+
+			const paths = [
+				"/archives/",
+				"/studyNotes/",
+				"/essay/",
+				"/about/",
+			];
+			for (const path of paths) {
+				try {
+					window.swup.preload(path);
+				} catch {
+					// 忽略预取失败
+				}
+			}
+		};
+
+		if ("requestIdleCallback" in window) {
+			requestIdleCallback(run, { timeout: 4000 });
+		} else {
+			setTimeout(run, 2000);
 		}
 	}
 

@@ -1,5 +1,22 @@
 @import "./_transition-vars.css";
 
+/* Swup 导航期间：禁用 onload-animation，避免与容器过渡叠加 */
+html.is-swup-navigating .onload-animation {
+  animation: none !important;
+  opacity: 1;
+  transform: none;
+}
+
+/* Swup 导航期间：冻结主网格 700ms 布局过渡 */
+#main-grid.swup-layout-frozen {
+  transition: none !important;
+}
+
+/* Swup 脚本加载完成前提示等待，不阻止原生导航 */
+html.swup-not-ready a[href^="/"]:not([target="_blank"]) {
+  cursor: wait;
+}
+
 /* 主要内容区域的过渡动画 - 纯垂直效果 */
 .transition-main {
   transition:
@@ -144,7 +161,7 @@ html.is-animating .transition-swup-fade {
   transform: translateX(0);
 }
 
-/* 性能优化 */
+/* 性能优化：仅在过渡期间提示 GPU 合成 */
 .transition-main,
 .transition-leaving,
 .onload-animation,
@@ -152,8 +169,11 @@ html.is-animating .transition-swup-fade {
 .card-animation {
   backface-visibility: hidden;
   -webkit-font-smoothing: antialiased;
-  transform: translateZ(0);
-  will-change: transform;
+}
+
+html.is-changing .transition-main,
+html.is-changing .transition-leaving {
+  will-change: transform, opacity;
 }
 
 /* GPU 加速优化 - 用于 wave 等重型动画 */
@@ -202,17 +222,19 @@ html.is-animating .transition-swup-fade {
 
 /* 移动端性能优化 */
 @media (max-width: 768px) {
+  :root {
+    --transition-translate: 0.5rem;
+    --transition-duration: 150ms;
+    --transition-stagger: 0ms;
+  }
+
   .transition-main,
   .transition-leaving,
   .onload-animation,
   .transition-slide-in,
   .card-animation {
-    -webkit-transform: translateZ(0);
-    transform: translateZ(0);
     -webkit-backface-visibility: hidden;
     backface-visibility: hidden;
-    -webkit-perspective: 1000;
-    perspective: 1000;
   }
 }
 

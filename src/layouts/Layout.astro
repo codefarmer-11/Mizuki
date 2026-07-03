@@ -222,6 +222,25 @@ if (siteConfig.font) {
 		style={bodyFontFamily ? `font-family: ${bodyFontFamily};` : ""}
 		data-overlayscrollbars-initialize
 	>
+		<script is:inline>
+			(function () {
+				if (window.swup) {
+					document.documentElement.classList.add("swup-ready");
+					return;
+				}
+				document.documentElement.classList.add("swup-not-ready");
+				document.addEventListener(
+					"swup:enable",
+					function () {
+						document.documentElement.classList.remove(
+							"swup-not-ready",
+						);
+						document.documentElement.classList.add("swup-ready");
+					},
+					{ once: true },
+				);
+			})();
+		</script>
 		<noscript
 			><iframe
 				src="https://www.googletagmanager.com/ns.html?id=GTM-KRX3XGVH"
@@ -324,19 +343,19 @@ if (siteConfig.font) {
 
 <script>
 	// Swup 页面过渡管理器 - 统一入口
-	// 所有功能已重构为模块化架构，详见 src/scripts/ 目录
 	import { initSwupManager } from "../scripts/swup-manager";
 
-	// 初始化 Swup 管理器
 	initSwupManager();
-</script>
 
-<!-- 代码块折叠功能 -->
-<script>
-	import "../scripts/code-collapse.js";
-</script>
+	// 非关键脚本延后到空闲时加载，避免与 Swup 初始化争抢主线程
+	function loadDeferredScripts() {
+		void import("../scripts/load-code-collapse");
+		void import("../scripts/load-theme-optimizer");
+	}
 
-<!-- 主题切换综合性能优化器（包含代码块优化、重型元素优化、性能诊断） -->
-<script>
-	import "../scripts/theme-optimizer.js";
+	if ("requestIdleCallback" in window) {
+		requestIdleCallback(loadDeferredScripts, { timeout: 3000 });
+	} else {
+		setTimeout(loadDeferredScripts, 1500);
+	}
 </script>
