@@ -4,6 +4,7 @@ import type { PageHeaderProps } from "./types";
 const {
 	title,
 	subtitle,
+	source,
 	class: className = "",
 } = Astro.props as PageHeaderProps;
 ---
@@ -16,6 +17,21 @@ const {
 	>
 		{title}
 	</h1>
+	{
+		source && (
+			<p class="text-sm text-black/45 dark:text-white/45 mb-1">
+				{source.label}
+				<a
+					href={source.href}
+					target="_blank"
+					rel="noopener noreferrer"
+					class="text-[var(--primary)] hover:text-[var(--primary)]/80 underline decoration-[var(--primary)]/30 hover:decoration-[var(--primary)]/60 underline-offset-2 transition-colors"
+				>
+					{source.linkLabel}
+				</a>
+			</p>
+		)
+	}
 	{
 		subtitle && (
 			<p class="text-lg text-black/60 dark:text-white/60">{subtitle}</p>

@@ -125,6 +125,7 @@ export const zh_CN: Translation = {
 	// 番剧页面
 	[Key.animeTitle]: "我的追番记录",
 	[Key.animeSubtitle]: "记录我的二次元之旅",
+	[Key.animeDataSource]: "数据来源：",
 	[Key.animeStatusWatching]: "在看",
 	[Key.animeStatusCompleted]: "看过",
 	[Key.animeStatusPlanned]: "想看",

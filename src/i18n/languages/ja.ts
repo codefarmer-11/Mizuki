@@ -127,6 +127,7 @@ export const ja: Translation = {
 	// アニメページ
 	[Key.animeTitle]: "視聴したアニメ",
 	[Key.animeSubtitle]: "アニメの旅の記録です",
+	[Key.animeDataSource]: "データ提供：",
 	[Key.animeStatusWatching]: "視聴中",
 	[Key.animeStatusCompleted]: "完了",
 	[Key.animeStatusPlanned]: "検討中",
