@@ -257,6 +257,27 @@ export const ja: Translation = {
 	[Key.rssCopyFailed]:
 		"コピーに失敗しました。リンクを手動で追加してください。",
 
+	[Key.rssReader]: "RSSリーダー",
+	[Key.rssReaderSubtitle]:
+		"RSS / Atomフィードを追加して、ブラウザで最新記事を読めます",
+	[Key.rssReaderUrlPlaceholder]:
+		"フィードURLを貼り付け（例: https://example.com/rss.xml）",
+	[Key.rssReaderAdd]: "追加",
+	[Key.rssReaderRefresh]: "更新",
+	[Key.rssReaderRemove]: "削除",
+	[Key.rssReaderSubscriptions]: "購読一覧",
+	[Key.rssReaderEmptySubs]:
+		"まだ購読がありません。上にRSS / AtomのURLを入力して追加してください。",
+	[Key.rssReaderEmptyItems]: "表示できる記事がありません。",
+	[Key.rssReaderLoading]: "フィードを読み込み中…",
+	[Key.rssReaderError]:
+		"フィードを読み込めませんでした。URLを確認するか、後でもう一度お試しください。",
+	[Key.rssReaderInvalidUrl]: "有効なhttp(s)のフィードURLを入力してください。",
+	[Key.rssReaderDuplicate]: "このフィードはすでに追加されています。",
+	[Key.rssReaderOpenOriginal]: "元の記事を開く",
+	[Key.rssReaderAllFeeds]: "すべてのフィード",
+	[Key.rssReaderItemCount]: "件の記事",
+
 	// Atomページ
 	[Key.atom]: "Atomフィード",
 	[Key.atomDescription]: "最新情報を受け取るために購読する",

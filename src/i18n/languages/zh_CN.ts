@@ -326,6 +326,23 @@ export const zh_CN: Translation = {
 	[Key.rssCopied]: "RSS 链接已复制到剪贴板！",
 	[Key.rssCopyFailed]: "复制失败，请手动复制链接",
 
+	[Key.rssReader]: "RSS 阅读器",
+	[Key.rssReaderSubtitle]: "添加 RSS / Atom 订阅源，在浏览器中阅读最新文章",
+	[Key.rssReaderUrlPlaceholder]: "粘贴订阅源 URL，例如 https://example.com/rss.xml",
+	[Key.rssReaderAdd]: "添加订阅",
+	[Key.rssReaderRefresh]: "刷新",
+	[Key.rssReaderRemove]: "移除",
+	[Key.rssReaderSubscriptions]: "我的订阅",
+	[Key.rssReaderEmptySubs]: "还没有订阅。在上方输入 RSS / Atom 地址后添加。",
+	[Key.rssReaderEmptyItems]: "当前没有可显示的文章。",
+	[Key.rssReaderLoading]: "正在加载订阅…",
+	[Key.rssReaderError]: "无法加载该订阅源，请检查地址或稍后重试。",
+	[Key.rssReaderInvalidUrl]: "请输入有效的 http(s) 订阅地址。",
+	[Key.rssReaderDuplicate]: "该订阅已存在。",
+	[Key.rssReaderOpenOriginal]: "阅读原文",
+	[Key.rssReaderAllFeeds]: "全部订阅",
+	[Key.rssReaderItemCount]: "篇文章",
+
 	// Atom 页面
 	[Key.atom]: "Atom 订阅",
 	[Key.atomDescription]: "订阅获取最新更新",

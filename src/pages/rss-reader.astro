@@ -1,0 +1,28 @@
+---
+import RssReaderPanel from "@components/features/rss-reader/RssReaderPanel.svelte";
+import { PageHeader } from "@components/features/page-header";
+import MainGridLayout from "@layouts/MainGridLayout.astro";
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
+
+export const prerender = true;
+
+const title = i18n(I18nKey.rssReader);
+const subtitle = i18n(I18nKey.rssReaderSubtitle);
+---
+
+<MainGridLayout title={title} description={subtitle}>
+	<script>
+		import("../scripts/right-sidebar-layout.js");
+	</script>
+	<div
+		class="flex w-full rounded-[var(--radius-large)] overflow-hidden relative min-h-32"
+	>
+		<div class="card-base z-10 px-6 sm:px-9 py-6 relative w-full">
+			<PageHeader title={title} subtitle={subtitle} />
+			<div class="mt-6">
+				<RssReaderPanel client:load />
+			</div>
+		</div>
+	</div>
+</MainGridLayout>
