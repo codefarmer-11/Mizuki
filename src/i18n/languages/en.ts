@@ -255,27 +255,6 @@ export const en: Translation = {
 	[Key.rssCopied]: "RSS link copied to clipboard!",
 	[Key.rssCopyFailed]: "Copy failed, please copy the link manually",
 
-	[Key.rssReader]: "RSS Reader",
-	[Key.rssReaderSubtitle]:
-		"Add RSS / Atom feeds and read the latest posts in your browser",
-	[Key.rssReaderUrlPlaceholder]:
-		"Paste a feed URL, e.g. https://example.com/rss.xml",
-	[Key.rssReaderAdd]: "Add feed",
-	[Key.rssReaderRefresh]: "Refresh",
-	[Key.rssReaderRemove]: "Remove",
-	[Key.rssReaderSubscriptions]: "Subscriptions",
-	[Key.rssReaderEmptySubs]:
-		"No subscriptions yet. Paste an RSS / Atom URL above to get started.",
-	[Key.rssReaderEmptyItems]: "No articles to show.",
-	[Key.rssReaderLoading]: "Loading feeds…",
-	[Key.rssReaderError]:
-		"Could not load this feed. Check the URL or try again later.",
-	[Key.rssReaderInvalidUrl]: "Please enter a valid http(s) feed URL.",
-	[Key.rssReaderDuplicate]: "This feed is already subscribed.",
-	[Key.rssReaderOpenOriginal]: "Read original",
-	[Key.rssReaderAllFeeds]: "All feeds",
-	[Key.rssReaderItemCount]: "articles",
-
 	// Atom Page
 	[Key.atom]: "Atom Feed",
 	[Key.atomDescription]: "Subscribe to get latest updates",

@@ -318,11 +318,6 @@ export const navBarConfig: NavBarConfig = {
 			],
 		},
 		{
-			name: "RSSReader",
-			url: "/rss-reader/",
-			icon: "material-symbols:rss-feed",
-		},
-		{
 			name: "AboutMenu",
 			url: "#",
 			icon: "material-symbols:info",
